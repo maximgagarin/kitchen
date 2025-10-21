@@ -1,0 +1,368 @@
+<template>
+    <!-- холодильник -->
+    <div class=" border-t mt-3" >
+        <h2 class="text-md  mt-3">Холодильник</h2>
+
+        <!-- Выбор положения -->
+        <div class="mt-3">
+            <div class="flex space-x-4 ">
+            <h3 class="text-xs font-semibold text-gray-700 ">Положение</h3>
+
+                <button @click="handleLeft"
+                 :class="[
+                    'px-1 py-1 rounded-md border text-xs font-medium transition flex items-center gap-2',
+                    selectedSide === 'left'
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                ]"
+               >
+                    Слева
+                </button>
+
+                <button @click="handleRight" 
+                :class="[
+                    'px-2 py-1 rounded-md border text-xs transition p-1',
+                    selectedSide === 'right'
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                ]">
+                    Справа
+                </button>
+
+             
+
+            </div>
+        </div>
+
+        <!-- Кнопка добавления -->
+         <div class="flex space-x-4 mt-3">
+                   <button
+            class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-2 px-2 rounded-lg shadow transition-colors duration-200"
+             :disabled="(props.isLeftEndPenal && selectedSide == 'left') || (props.isRightEndPenal && selectedSide == 'right') "
+            @click="kitchenStore.fridge.isSet ? deleteFridge() : addFridge()">
+            {{ kitchenStore.fridge.isSet ? 'Удалить холодильник' : 'Добавить холодильник' }}
+            
+        </button>
+        <label class="flex items-center cursor-pointer">
+                <input
+                    id="checkDefault"
+                    type="checkbox"
+                    class="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    v-model="kitchenStore.fridge.inSideInput"
+                    @change="changeInsideOutside"
+                   
+                />
+                <span class="ml-2 text-xs text-gray-700">Входит в габариты</span>
+        </label>
+         </div>
+     
+
+    </div>
+</template>
+
+<script setup>
+import { inject, ref } from 'vue';
+import { useRowSegmentsStore } from '../../../pinia/RowSegments'
+import { usePenalStore } from '../../../pinia/penals'
+import { useKitchenSizesStore } from '../../../pinia/kitchenSizes'
+
+const penalStore = usePenalStore();
+const kitchenStore = useKitchenSizesStore();
+const rowSegmentsStore = useRowSegmentsStore();
+
+
+const cabinetBuilder = inject("cabinetBuilder");
+const penalBuilder = inject("penalBuilder");
+
+
+
+
+// есть торцевой пенал слева или справа
+const props = defineProps({
+  isLeftEndPenal: Boolean,
+  isRightEndPenal: Boolean
+})
+
+const sideSizes = kitchenStore.sideSizes
+const FRIDGE_WIDTH = 0.6
+const selectedSide = ref('left')
+const model = penalBuilder.value.loaderModels.get('fridge')
+if (!model) {
+    console.log('model not found!')
+}
+
+function handleLeft(){
+    selectedSide.value = 'left'
+    if(kitchenStore.fridge.isSet){
+        if(props.isLeftEndPenal && selectedSide.value === 'left') return
+        deleteFridge()
+        addFridge()
+    }
+}
+
+function handleRight(){
+    selectedSide.value = 'right'
+    if(props.isRightEndPenal && selectedSide.value === 'right') return
+
+    if(kitchenStore.fridge.isSet){
+        deleteFridge()
+        addFridge()
+    }
+}
+
+//чекбокс внутри габарита
+function changeInsideOutside(){
+    console.log('inSideFridge', kitchenStore.fridge.inSideFridge)
+    console.log('inSideInput', kitchenStore.fridge.inSideInput)
+
+    if(props.isLeftEndPenal && selectedSide.value === 'left') return
+    if(props.isRightEndPenal && selectedSide.value === 'right') return
+
+
+     if(kitchenStore.fridge.isSet){
+        deleteFridge()
+        addFridge()
+    }
+}
+
+
+function addFridge() {
+
+    const side = selectedSide.value
+    const kitchenType = kitchenStore.type
+    model.visible = true
+    cabinetBuilder.value.scene.add(model)
+
+    const rules = {
+        direct: {
+            left: {
+                side: 'directLeft', x: +0.6, segment: 'direct', offset: -0.6,
+                row: 'side_a', xPos: FRIDGE_WIDTH / 2, zPos: FRIDGE_WIDTH / 2, rotation: 0 , start: 0, end:0.6
+            },
+
+            right: {
+                side: 'directRight', x: -0.6, segment: 'direct', offset: -0.6,
+                row: 'side_a', xPos: sideSizes.side_a - FRIDGE_WIDTH / 2, zPos: FRIDGE_WIDTH / 2, rotation: 0 , start: sideSizes.side_a - FRIDGE_WIDTH , end:sideSizes.side_a 
+            },
+        },
+        left: {
+            left: {
+                side: 'left', z: -0.6, segment: 'left', offset: -0.6, row: 'side_c',
+                xPos: FRIDGE_WIDTH / 2, zPos: sideSizes.side_c - FRIDGE_WIDTH / 2, rotation: Math.PI / 2, start: sideSizes.side_c - FRIDGE_WIDTH , end:sideSizes.side_c 
+            },
+
+            right: {
+                side: 'directRight', x: -0.6, segment: 'direct', offset: -0.6, row: 'side_a',
+                xPos: sideSizes.side_a - FRIDGE_WIDTH / 2, zPos: FRIDGE_WIDTH / 2, rotation: 0 , start: sideSizes.side_a - FRIDGE_WIDTH , end:sideSizes.side_a 
+            }
+        },
+        uShaped: {
+            left: {
+                side: 'left', z: -0.6, segment: 'left', offset: -0.6, row: 'side_c',
+                xPos: FRIDGE_WIDTH / 2, zPos: sideSizes.side_c - FRIDGE_WIDTH / 2, rotation: Math.PI / 2 ,start: sideSizes.side_c - FRIDGE_WIDTH , end:sideSizes.side_c 
+            },
+
+            right: {
+                side: 'right', z: -0.6, segment: 'right', offset: -0.6, row: 'side_d',
+                xPos: sideSizes.side_a - FRIDGE_WIDTH / 2, zPos: sideSizes.side_d - FRIDGE_WIDTH / 2, rotation: -Math.PI / 2, start: sideSizes.side_d - FRIDGE_WIDTH , end:sideSizes.side_d 
+            }
+        }
+    }
+
+    
+    const rulesOutside = {
+        direct: {
+            left: {
+                side: 'directLeft', x: +0.6, segment: 'direct', offset: -0.6,
+                row: 'side_a', xPos: - FRIDGE_WIDTH / 2, zPos: FRIDGE_WIDTH / 2, rotation: 0 
+            },
+
+            right: {
+                side: 'directRight', x: -0.6, segment: 'direct', offset: -0.6,
+                row: 'side_a', xPos: sideSizes.side_a + FRIDGE_WIDTH / 2, zPos: FRIDGE_WIDTH / 2, rotation: 0 , 
+            },
+        },
+        left: {
+            left: {
+                side: 'left', z: -0.6, segment: 'left', offset: -0.6, row: 'side_c',
+                xPos: FRIDGE_WIDTH / 2, zPos: sideSizes.side_c + FRIDGE_WIDTH / 2, rotation: Math.PI / 2
+            },
+
+            right: {
+                side: 'directRight', x: -0.6, segment: 'direct', offset: -0.6, row: 'side_a',
+                xPos: sideSizes.side_a + FRIDGE_WIDTH / 2, zPos: FRIDGE_WIDTH / 2, rotation: 0 
+            }
+        },
+        uShaped: {
+            left: {
+                side: 'left', z: -0.6, segment: 'left', offset: -0.6, row: 'side_c',
+                xPos: FRIDGE_WIDTH / 2, zPos: sideSizes.side_c + FRIDGE_WIDTH / 2, rotation: Math.PI / 2 
+            },
+
+            right: {
+                side: 'right', z: -0.6, segment: 'right', offset: -0.6, row: 'side_d',
+                xPos: sideSizes.side_a - FRIDGE_WIDTH / 2, zPos: sideSizes.side_d + FRIDGE_WIDTH / 2, rotation: -Math.PI / 2
+            }
+        }
+    }
+
+    let rule
+
+    //есди холодильник входит в  размеры
+    if(kitchenStore.fridge.inSideInput){
+      rule = rules[kitchenStore.type]?.[side]
+      kitchenStore.fridge.inSideFridge = true
+      console.log('ruleIn', rule)
+    
+      move(rule)
+      penalBuilder.value.builder();
+    } else {
+      rule = rulesOutside[kitchenStore.type]?.[side]
+      console.log('ruleOut', rule)
+
+      kitchenStore.fridge.isSet = true
+      kitchenStore.fridge.side = rule.side
+      kitchenStore.fridge.row = rule.row
+      kitchenStore.fridge.inSideFridge = false
+
+      
+    }
+    model.position.set(rule.xPos, 0, rule.zPos)
+    model.rotation.y = rule.rotation
+    model.name = 'fridge'
+
+    console.log(kitchenStore.rowSizesWithPanels)
+   
+    
+    cabinetBuilder.value.executeConfig("actual", "currect");
+}
+
+//сдвиг модулей 
+function move(rule){
+    console.log('ruleMove', rule)
+    
+    const penals = penalStore.penals.filter(penal => penal.side === rule.side)
+    const side = selectedSide.value
+
+    // сдвиг пеналов
+    penals.forEach(penal => {
+        if (rule.x !== undefined) penal.x += rule.x
+        if (rule.z !== undefined) penal.z += rule.z
+    })
+
+    const segment = rowSegmentsStore.segments[rule.segment]
+
+    
+    console.log('segment', segment)
+
+    // сдвиг ряда
+    segment.forEach(segment => {
+        if (segment.type.includes('penal')) {
+            segment.start += rule.offset
+            segment.end += rule.offset
+        }
+    })
+
+
+    rowSegmentsStore.addSegment(rule.segment, {
+    start: rule.start,
+    end: rule.end,
+    width: 0.6,
+    type: 'fridge',
+    id: '1',
+    });
+
+    if (kitchenStore.type === 'direct' && side == 'left') kitchenStore.offsetForLeftRow += FRIDGE_WIDTH
+
+    kitchenStore.rowSizesWithPanels[rule.row] = Number(kitchenStore.rowSizesWithPanels[rule.row]) + Number(rule.offset)
+  
+    penalStore.penalOffsetsState[rule.side] += FRIDGE_WIDTH
+
+    kitchenStore.fridge.isSet = true
+    kitchenStore.fridge.side = rule.side
+    kitchenStore.fridge.row = rule.row
+    kitchenStore.fridge.axis = rule.x ? 'x' : 'z'
+    kitchenStore.fridge.segment = rule.segment
+    kitchenStore.fridge.offset = rule.offset
+
+}
+
+//сдвиг после удаления холод
+function moveAfterDeleteInside(){
+    const side = kitchenStore.fridge.side
+    const seg = kitchenStore.fridge.segment
+    const row = kitchenStore.fridge.row
+
+    penalStore.penalOffsetsState[side] -= FRIDGE_WIDTH
+    let segment = rowSegmentsStore.segments[seg]
+    const penals = penalStore.penals.filter(penal => penal.side === side)
+
+    if (kitchenStore.type === 'direct' && side == 'directLeft') kitchenStore.offsetForLeftRow -= FRIDGE_WIDTH
+
+    kitchenStore.rowSizesWithPanels[row] = Number(kitchenStore.rowSizesWithPanels[row]) + Number(FRIDGE_WIDTH)
+
+    penals.forEach(penal => {
+        const axis = kitchenStore.fridge.axis
+        kitchenStore.fridge.side === 'directLeft'?  penal[axis] -= FRIDGE_WIDTH : penal[axis] += FRIDGE_WIDTH
+    })
+
+    segment.forEach(segment => {
+        if (segment.type.includes('penal')) {
+            segment.start += FRIDGE_WIDTH
+            segment.end += FRIDGE_WIDTH
+        }
+    })
+
+    rowSegmentsStore.segments[seg] = rowSegmentsStore.segments[seg].filter(segment=> segment.type !='fridge')
+}
+
+function clearStore(){  
+    kitchenStore.fridge.isSet = false
+    kitchenStore.fridge.axis = ''
+    kitchenStore.fridge.isSet = false
+    kitchenStore.fridge.side = ''
+    kitchenStore.fridge.row = ''
+    kitchenStore.fridge.inSideFridge = 'false'
+}
+
+function deleteFridge() {
+    if(kitchenStore.fridge.inSideFridge){
+       moveAfterDeleteInside()
+       penalBuilder.value.builder();
+    }
+    clearStore()
+    removeObjectsByName('fridge')  
+    cabinetBuilder.value.executeConfig("actual", "currect");
+}
+
+function removeObjectsByName(name) {
+    const objectsToRemove = [];
+
+    // 1. Находим все объекты с указанным именем
+    cabinetBuilder.value.scene.traverse((object) => {
+      if (object.name === name) {
+        objectsToRemove.push(object);
+      }
+    });
+
+    // 2. Удаляем объекты и очищаем ресурсы
+    objectsToRemove.forEach((object) => {
+      if (object.parent) {
+        object.parent.remove(object);
+      }
+
+      // Очистка ресурсов
+      if (object.geometry) object.geometry.dispose();
+
+      if (object.material) {
+        if (Array.isArray(object.material)) {
+          object.material.forEach((m) => m.dispose());
+        } else {
+          object.material.dispose();
+        }
+      }
+    });
+
+    console.log(`Удалено объектов: ${objectsToRemove.length}`);
+}
+</script>
