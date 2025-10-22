@@ -85,6 +85,7 @@ export const useKitchenSizesStore = defineStore('KitchenSizes', {
     isSet:false,
     side:'direct',
     size:0,
+    location:'', // место в ряду
   },
 
    availableOven:[],

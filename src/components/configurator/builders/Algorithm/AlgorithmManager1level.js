@@ -151,6 +151,8 @@ export class AlgorithmManager1level {
     console.log('left', leftRules)
     console.log('direct', directRules)
 
+ 
+
   if(this.kitchenSizesStore.type === 'direct')  this.buildSideRowDirect(directRules)
   
   if(this.kitchenSizesStore.type === 'left'){
@@ -259,6 +261,7 @@ export class AlgorithmManager1level {
       this.startPosLeft = algorithmConfig.rowStart.left 
 
       algorithmConfig.resultLeft.forEach(elem=>{
+      
       const width = Number((elem.value).toFixed(2));
       const type = typesMap[elem.key] || elem.key;
       const isOven = this.penalStore.isOven
@@ -513,6 +516,8 @@ export class AlgorithmManager1level {
 
 
   variantLeft(variant = 0, variant2 = 0) {
+    const kitchenType = this.kitchenSizesStore.type
+    const sinkLocation = this.kitchenSizesStore.sink.location
  
 
     plannerConfig.modelsLeft.length = 0
@@ -527,39 +532,41 @@ export class AlgorithmManager1level {
 
     let rule = this.algStore.filtredLeftPart1[variant];
     let rule2 = this.algStore.filtredLeftPart2[variant2];
-    this.actualLeft = rule;
-    let result
-
-  //  console.log('rule', rule)
-  //  console.log('rule2', rule2) 
 
 
+
+    
+   
+ 
     if(rule){
-      result = Object.entries(rule).map(([key, value]) => ({ key, value }));
+      let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
+      algorithmConfig.resultLeft.splice(1, 0, ...result)
     } else {
-      result = []
       this.plannerStore.showError();
-
-    }
-    result.reverse()
-
-    if(this.kitchenType === 'left'){
-     
-      if(algorithmConfig.sink.nearLeft)  {
-        result.reverse()
-        result.push({ key: 'm', value: 0.6 });
-      }
+      console.log('нет правил')
     }
 
-    //добавляем мойку в начало или конец массива модулей
-       algorithmConfig.resultLeft.push(...result);
 
-    if (rule2 && Object.keys(rule2).length > 0) {
-      let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
-      result2.reverse()
-      algorithmConfig.resultLeft.push({ key: 'm', value: 0.6 });
-      algorithmConfig.resultLeft.push(...result2);
+
+    if(kitchenType === 'left'){
+      if(sinkLocation ==='leftEnd') algorithmConfig.resultLeft.push({ key: 'm', value: 0.6 });
+      if(sinkLocation ==='leftStart') algorithmConfig.resultLeft.unshift({ key: 'm', value: 0.6 });
+
     }
+
+
+    if(algorithmConfig.left2parts){
+       algorithmConfig.resultLeft.push({ key: 'm', value: 0.6 });
+       if(rule2){
+          let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
+          algorithmConfig.resultLeft.push(...result2);
+       } else {
+          this.plannerStore.showError();
+          console.log('нет правил')
+       }
+    }
+
+    
 
     this.algStore.resultLeft = algorithmConfig.resultLeft
 
@@ -674,15 +681,12 @@ export class AlgorithmManager1level {
   variantDirect(variant = 0, variant2 = 0) {
     const kitchenType = this.kitchenSizesStore.type 
     const direct2parts = algorithmConfig.direct2parts
+    const sinkLocation = this.kitchenSizesStore.sink.location
 
     this.deleteDirect();
 
 
     plannerConfig.modelsDirect.length = 0
-  //  algorithmConfig.resultDirect.length = 0
-
-    //проверка духовка встоена в пенал
-    const isOven =  this.penalStore.isOven
 
 
     let z =  Math.round(this.rowSegmentsStore.duct.z * 20) / 20;
@@ -695,52 +699,41 @@ export class AlgorithmManager1level {
     let rule = this.algStore.filtredDirectPart1[variant];
     let rule2 = this.algStore.filtredDirectPart2[variant2];
 
-   // console.log('ruleDirect', rule)
-   // console.log('rule2Direct', rule2)
 
-
-
-    let result , resultColne
  
     if(rule){
-      result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
-      (direct2parts && kitchenType === 'direct' )?result.reverse() : ''
-      
-    
+      let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
+      algorithmConfig.resultDirect.splice(1, 0, ...result)
     } else {
-     // console.log('нет правила' , )
-      result = []
       this.plannerStore.showError();
-    }
-
-    //result.reverse()
-
-
-    // с какой стороны добавляем мойку
-    if(this.kitchenType === 'direct'){
-      if(!algorithmConfig.direct2parts && !algorithmConfig.sink.nearRight)  result.unshift({ key: 'm', value: 0.6 });
-      if(!algorithmConfig.direct2parts && algorithmConfig.sink.nearRight)  result.push({ key: 'm', value: 0.6 });
+      console.log('нет правил')
     }
 
 
-    if(this.kitchenType === 'left'){
-      if(algorithmConfig.sink.nearRight) {
-      //  result.reverse()
-        result.push({ key: 'm', value: 0.6 });
-      } 
+    if(kitchenType === 'direct' ){
+      if(sinkLocation  === 'end'){
+        algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
+      } else if(!algorithmConfig.direct2parts){
+        algorithmConfig.resultDirect.unshift({ key: 'm', value: 0.6 });
+      }
+    } 
+
+    if(kitchenType === 'left'){
+      if(sinkLocation ==='directEnd') algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
+      if(sinkLocation ==='directStart') algorithmConfig.resultDirect.unshift({ key: 'm', value: 0.6 });
+
     }
 
-   
 
-    algorithmConfig.resultDirect.splice(1, 0, ...result)
-    //algorithmConfig.resultDirect.push(...result)
-    if (rule2 && Object.keys(rule2).length > 0) {    
-      let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
-      algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
-     
-      algorithmConfig.parts_sizes2.dp1_larger? '' : result2.reverse()
-
-      algorithmConfig.resultDirect.push(...result2);
+    if(algorithmConfig.direct2parts){
+       algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
+       if(rule2){
+          let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
+          algorithmConfig.resultDirect.push(...result2);
+       } else {
+          this.plannerStore.showError();
+          console.log('нет правил')
+       }
     }
 
     this.algStore.resultDirect = algorithmConfig.resultDirect
@@ -780,6 +773,8 @@ export class AlgorithmManager1level {
    const length1 = rules[0]?.length || 0 
    const length2 = rules[1]?.length || 0
 
+   this.algStore.partSizes.direct1 = length1
+   this.algStore.partSizes.direct2 = length2
   
 
 
@@ -969,7 +964,7 @@ export class AlgorithmManager1level {
     });
     //this.NamesToDeleteDirect.length = 0;
     plannerConfig.namesToDeleteDirect.length = 0 
-    const filtred1 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000", "m"].includes(item.key))
+    const filtred1 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000"].includes(item.key))
     algorithmConfig.resultDirect = filtred1
   }
 
@@ -982,7 +977,7 @@ export class AlgorithmManager1level {
     //this.NamesToDeleteLeft.length = 0;
     plannerConfig.namesToDeleteLeft.length = 0
 
-    const filtred1 = algorithmConfig.resultLeft.filter(item=> ["b1000left", "module-sink-1000", "m"].includes(item.key))
+    const filtred1 = algorithmConfig.resultLeft.filter(item=> ["b1000left", "module-sink-1000"].includes(item.key))
     algorithmConfig.resultLeft = filtred1
 
   }

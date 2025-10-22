@@ -12,8 +12,10 @@
 
 import { inject , ref } from 'vue';
 import { useAlgorithmStore } from '../../../pinia/Algorithm';
+import { useKitchenSizesStore } from '../../../pinia/kitchenSizes';
 
 const algStore = useAlgorithmStore()
+const kitchenStore = useKitchenSizesStore()
 const algorithmManager = inject("algorithmManager");
 let index = ref(0)
 
@@ -36,7 +38,7 @@ function changeVariant(value){
     algorithmManager.value.algorithm2level.createParts()
 
     algorithmManager.value.algorithm2level.buildDirect();
-    algorithmManager.value.algorithm2level.buildLeft();
+    if(kitchenStore.type === "left") algorithmManager.value.algorithm2level.buildLeft();
 }
 
 </script>

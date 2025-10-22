@@ -82,10 +82,7 @@ export const algorithmConfig = {
   left2parts: false,
   right2parts: false,
 
-  sink:{
-    nearRight:false,
-    nearLeft:false,
-  },
+
 
   //все линии модулей
   lines:[],

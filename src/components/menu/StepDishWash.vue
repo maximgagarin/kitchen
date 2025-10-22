@@ -1,14 +1,14 @@
 <template>
   <div class="p-6">
     <h3 class="text-xl font-semibold mb-4">Будет встроенная посудомоечная машина?</h3>
-
-    <select  v-model="kitchenSizes.dishwasher.size" class="border rounded p-2 w-40">
+    <select v-if="kitchenStore.availableDish.size !==1"  v-model="kitchenStore.dishwasher.size" class="border rounded p-2 w-40">
         <option :value="null" disabled>Выбери размер</option>
-        <option v-for="size in kitchenSizes.availableDish" :key="size" :value="size">
+        <option v-for="size in kitchenStore.availableDish" :key="size" :value="size">
           {{ size }}
         </option>
     </select>
   </div>
+      <h3  v-if="kitchenStore.availableDish.size === 1"  class="text-md font-semibold mb-4"> посудомоечная машина не помещяется</h3>
 </template>
 
 
@@ -18,9 +18,16 @@ import { useKitchenSizesStore } from '../../pinia/kitchenSizes';
 import { useRowSegmentsStore } from '../../pinia/RowSegments';
 
 
-const kitchenSizes = useKitchenSizesStore();
-const rowSegmentsStore = useRowSegmentsStore()
-const rules = kitchenSizes.filtredRules
+const kitchenStore = useKitchenSizesStore();
+
+const rules = kitchenStore.filtredRules
+
+
+//если посудомойка не входит 
+if(kitchenStore.availableDish.size === 1){
+   console.log('не подходит')
+  kitchenStore.filtredRulesTotal = rules
+}
 
 
 
@@ -42,41 +49,44 @@ const selected = ref(null);
   }
 
 
-function filtredDish(result , size){
-    const filteredByOven = result.filter(r => r.dishSize === size).map(r => ({
-    ...r,
-    variants: r.variants.filter(variant => 
-      variant.some(part => part.modules.some(m => m.name === "dishWasher" ))
-    )
-  }))
-  .filter(r => r.variants.length > 0) // оставляем только записи с валидными вариантами
+  function filtredDish(result , size){
+      const filteredByDish = result.filter(r => r.dishSize === size).map(r => ({
+      ...r,
+      variants: r.variants.filter(variant => 
+        variant.some(part => part.modules.some(m => m.name === "dishWasher" ))
+      )
+    }))
+    .filter(r => r.variants.length > 0) // оставляем только записи с валидными вариантами
 
- return filteredByOven
-}
+  return filteredByDish
+  }
 
 
-watch(
-  () => kitchenSizes.dishwasher.size,
-  (newVal) => {
-    if (newVal === 0.45) {
-      console.log('45')
+  watch(
+    () => kitchenStore.dishwasher.size,
+    (newVal) => {
+      if (newVal === 0.45) {
+        console.log('45')
 
-      const filtered = filtredDish(rules, 0.45)
-      console.log('filteredDish', filtered)
+        const filtered = filtredDish(rules, 0.45)
+        console.log('filteredDish', filtered)
 
-      kitchenSizes.filtredRulesTotal = filtered
-   //   printResults(filtered)
-    } 
-    else if (newVal === 0.6) {
-      console.log('60')
+        kitchenStore.filtredRulesTotal = filtered
+    //   printResults(filtered)
+      } 
+      else if (newVal === 0.6) {
+        console.log('60')
 
-      const filtered = filtredDish(rules, 0.6)
-      kitchenSizes.filtredRulesTotal = filtered
-  //    printResults(filtered)
-    }
-  },
-  { immediate: true } // 👈 срабатывает сразу при монтировании компонента
-)
+        const filtered = filtredDish(rules, 0.6)
+        kitchenStore.filtredRulesTotal = filtered
+    //    printResults(filtered)
+      } else {
+        console.log('else')
+        kitchenStore.filtredRulesTotal = rules
+      }
+    },
+    { immediate: true } // 👈 срабатывает сразу при монтировании компонента
+  )
 
 
 

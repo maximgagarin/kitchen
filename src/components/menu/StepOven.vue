@@ -205,7 +205,9 @@ function collectAvailableSizes(results) {
   // Сортируем массивы для удобства и возвращаем
   const toSortedArray = set => Array.from(set).sort((a, b) => a - b);
 
+  available.dishWasher.add(0)
   kitchenSizes.availableDish = available.dishWasher
+  if(available.dishWasher.size === 1) kitchenSizes.dishwasher.size = 0 // если нет вариатнов для dishwasher
 }
 
 
@@ -253,9 +255,6 @@ watch(
 
     }else if(newVal === 0) {
       console.log('0')
-   
-
-
       const filtred = filtredWithoutOven(rules, 0)
       kitchenSizes.filtredRules = filtred
       collectAvailableSizes(filtred)

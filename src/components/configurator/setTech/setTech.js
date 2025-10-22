@@ -555,11 +555,12 @@ export class SetTech {
         posX = KitchenSizes.side_a - sinkSize/2 - penalOffsets.directRight
         algorithmConfig.direct2parts = false
 
-        const size = KitchenSizes.side_a - Number((penalOffsets.directRight - penalOffsets.directLeft - sinkSize).toFixed(2))
+        const size = KitchenSizes.side_a - penalOffsets.directRight - penalOffsets.directLeft - sinkSize
         setSize('directPart1', size )
         algorithmConfig.rowStart.direct += penalOffsets.directLeft
 
         kitchenStore.parts.push({  name: "A1", width: size})
+        kitchenStore.sink.location = "end"
 
 
 
@@ -569,7 +570,7 @@ export class SetTech {
 
 
        const size1 = Number(((x - sinkSize/2) - penalOffsets.directLeft).toFixed(2));
-        const size2 = Number((KitchenSizes.side_a - penalOffsets.directRight  - (x + sinkSize/2)).toFixed(2))
+       const size2 = Number((KitchenSizes.side_a - penalOffsets.directRight  - (x + sinkSize/2)).toFixed(2))
 
 
         setSize('directPart1', size1 )
@@ -618,7 +619,7 @@ export class SetTech {
 
           algorithmConfig.rowStart.direct += ROW_WIDTH
           algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем мойку
-        algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
+         algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
 
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - MSU).toFixed(2)) 
@@ -626,6 +627,8 @@ export class SetTech {
 
         kitchenStore.parts.push({  name: "C1", width: size1})
         kitchenStore.parts.push({  name: "A1", width: size2})
+
+        kitchenStore.sink.location = 'directEnd'
 
 
       }
@@ -642,6 +645,8 @@ export class SetTech {
 
         kitchenStore.parts.push({  name: "C1", width: size1})
         kitchenStore.parts.push({  name: "A1", width: size2})
+
+        kitchenStore.sink.location = 'directStart'
       }
 
       else if(isNearDirectRow){
@@ -658,6 +663,8 @@ export class SetTech {
 
         kitchenStore.parts.push({  name: "C1", width: size1})
         kitchenStore.parts.push({  name: "A1", width: size2})
+
+         kitchenStore.sink.location = 'leftStart'
       }
 
       else if(isNearCornerZleft){
@@ -674,6 +681,8 @@ export class SetTech {
 
         kitchenStore.parts.push({  name: "C1", width: size1})
         kitchenStore.parts.push({  name: "A1", width: size2})
+
+        kitchenStore.sink.location = 'leftEnd'
 
 
       }
@@ -697,6 +706,8 @@ export class SetTech {
       } else if(side === "left") {
         console.log('7')
 
+        algorithmConfig.left2parts = true
+
         
         algorithmConfig.rowStart.left += ROW_WIDTH
         algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем мойку
@@ -711,6 +722,8 @@ export class SetTech {
  
       } else if(side === 'direct'){
         console.log('8')
+
+        algorithmConfig.direct2parts = true
 
           algorithmConfig.rowStart.direct += ROW_WIDTH
           algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем мойку
@@ -844,14 +857,9 @@ export class SetTech {
 
     this.KitchenSizes.availableOven = available.oven
 
-    
-  
-
 
   
-
-
-
+  
    
 
   }

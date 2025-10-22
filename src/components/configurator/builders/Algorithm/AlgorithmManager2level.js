@@ -37,11 +37,7 @@ export class AlgorithmManager2level {
       right: -Math.PI/2,
     };
     this.level2size = null
-    this.startPosOld = {
-      direct:0,
-      left:0,
-      right:0
-    }
+   
   }
 
 
@@ -113,10 +109,11 @@ export class AlgorithmManager2level {
    
     let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
     let ovenSize = Math.round(this.kitchenSizesStore.oven.size * 20) / 20
-    const OVEN_HALF = Math.round( (ovenSize/2) *20) /20
+//    const OVEN_HALF = Math.round( (ovenSize/2) *20) /20
+    const OVEN_HALF = 0.2
+
     const levels = this.kitchenSizesStore.levels
- //   console.log('ovenSize', ovenSize)
- //   console.log('ovenPos', ovenPos)
+
 
     const PU = 0.65
     const ROW_OFFSET  = 0.3
@@ -248,11 +245,14 @@ export class AlgorithmManager2level {
     
     }
 
-    this.startPosOld.direct = algorithmConfig.level2.rowStart.direct
-    this.startPosOld.left = algorithmConfig.level2.rowStart.left
-    this.startPosOld.right = algorithmConfig.level2.rowStart.right
 
-    console.log('sertPos', this.startPosOld)
+   
+      //  Object.values(algorithmConfig.level2.partsSize).forEach(value => {
+      //     console.log(value)
+      //     if(value < 0.15) console.log('второй уровень сторона меньше 0.15')
+      //  })
+
+   
 
   }
 
@@ -310,11 +310,13 @@ export class AlgorithmManager2level {
 
     if (isOvenSide && is2level) {
       // духовка на прямой стороне, 2 уровень
-       const result1 = getRule(partsSize.leftPart1, variant)
+      const result1 = getRule(partsSize.leftPart1, variant)
       const result2 = getRule(partsSize.leftPart2, variant2)
 
       this.algStore.filtredLevel2.leftPart1 = result1.filtered
       this.algStore.filtredLevel2.leftPart2  = result2.filtered
+
+    
 
       // добавляем вытяжку в первую часть
       result1.rule.push(hoodModule)
@@ -332,8 +334,7 @@ export class AlgorithmManager2level {
   buildDirect(variant = 0, variant2 = 0) {
     // Очистка данных
 
-    console.log('var1', variant)
-    console.log('var12', variant2)
+
    
     plannerConfig.models2L.length = 0
     plannerConfig.modelsDirect2L.length = 0
@@ -354,10 +355,10 @@ export class AlgorithmManager2level {
    
     // --- Вспомогательная функция для получения набора по размеру ---
     const getRule = (size, variantIndex) => {
-      console.log('variantIndex', variantIndex)
+    
       const filtered = this.filter2(size)
       const rule = filtered[variantIndex]
-      console.log('rule', rule)
+    
       if (!rule) {
         this.plannerStore.showError()
         return []
