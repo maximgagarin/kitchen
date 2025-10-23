@@ -735,20 +735,10 @@ export class AlgorithmManager1level {
 
       } else if(!algorithmConfig.direct2parts){
 
-      
         algorithmConfig.resultDirect.unshift({ key: 'm', value: 0.6 });
       }
 
-
-
-
-
     } 
-
-
-    
-
-
 
 
     if(kitchenType === 'left'){
@@ -771,8 +761,6 @@ export class AlgorithmManager1level {
     }
 
     this.algStore.resultDirect = algorithmConfig.resultDirect
-
- 
 
     this.prepareDirectModels()
     this.tableTopvisible() 

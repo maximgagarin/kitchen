@@ -68,7 +68,8 @@ provide("plannerManager", plannerManager);
 onMounted(() => {
     setTimeout(() => {
     showLoading.value = false;
-  }, 500);
+  }, 7000);
+  
   const init = new Init()
   init.start()
   sceneSetup = new SceneSetup(canvasContainer.value);
@@ -90,9 +91,6 @@ onMounted(() => {
   algorithmManager.value = new AlgorithmManager(sceneSetup, loaderModels, cabinetBuilder.value)
 
   plannerManager.value = new PlannerManager(sceneSetup, loaderModels)
-
-
-
 
   
 });
