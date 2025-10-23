@@ -75,9 +75,9 @@ export class AlgorithmManager1level {
     plannerConfig.modelsRight.length = 0
 
  
-   const filtred1 = algorithmConfig.resultLeft.filter(item=> ["b1000left", "module-sink-1000", "m"].includes(item.key))
-   const filtred2 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000", "m"].includes(item.key))
-   const filtred3 = algorithmConfig.resultRight.filter(item=> ["b1000left", "module-sink-1000", "m"].includes(item.key))
+   const filtred1 = algorithmConfig.resultLeft.filter(item=> ["b1000left", "module-sink-1000", "m", "b1000", "module-sink-1000-left"].includes(item.key))
+   const filtred2 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000", "m", "b1000", "module-sink-1000-left"].includes(item.key))
+   const filtred3 = algorithmConfig.resultRight.filter(item=> ["b1000left", "module-sink-1000", "m", "b1000", "module-sink-1000-left"].includes(item.key))
 
 
    algorithmConfig.resultLeft = filtred1
@@ -570,6 +570,9 @@ export class AlgorithmManager1level {
        }
     }
 
+
+    
+
     
 
     this.algStore.resultLeft = algorithmConfig.resultLeft
@@ -968,7 +971,7 @@ export class AlgorithmManager1level {
     });
     //this.NamesToDeleteDirect.length = 0;
     plannerConfig.namesToDeleteDirect.length = 0 
-    const filtred1 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000"].includes(item.key))
+    const filtred1 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000", "module-sink-1000-left", "b1000"].includes(item.key))
     algorithmConfig.resultDirect = filtred1
   }
 
@@ -981,7 +984,7 @@ export class AlgorithmManager1level {
     //this.NamesToDeleteLeft.length = 0;
     plannerConfig.namesToDeleteLeft.length = 0
 
-    const filtred1 = algorithmConfig.resultLeft.filter(item=> ["b1000left", "module-sink-1000"].includes(item.key))
+    const filtred1 = algorithmConfig.resultLeft.filter(item=> ["b1000left", "module-sink-1000", "module-sink-1000-left", "b1000"].includes(item.key))
     algorithmConfig.resultLeft = filtred1
 
   }

@@ -661,7 +661,7 @@ export class SetTech {
         console.log('4')
 
         algorithmConfig.rowStart.left += ROW_WIDTH
-        algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем мойку
+        algorithmConfig.resultDirect.push({key:'b1000', value:1}) // вставляем мойку
         algorithmConfig.resultLeft.push({key:'m', value:sinkSize})
            kitchenStore.su.side = 'direct'
 
@@ -707,7 +707,7 @@ export class SetTech {
 
         algorithmConfig.rowStart.direct += ROW_WIDTH
 
-         algorithmConfig.resultLeft.push({key:'module-sink-1000', value:1})
+        algorithmConfig.resultLeft.push({key:'module-sink-1000-left', value:1})
 
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - SINK_1000).toFixed(2)) 
