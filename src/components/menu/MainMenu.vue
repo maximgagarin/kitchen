@@ -1,5 +1,5 @@
 <template>
-  <div
+  <!-- <div
     class="fixed top-4 left-[5vh] w-[40px] h-[40px] mr-4 bg-gray-100 hover:bg-gray-300 transition-colors duration-200 cursor-pointer pointer-events-auto rounded-md shadow-lg flex items-center justify-center"
     @click="showLines()"
     title="Показать / скрыть линии"
@@ -41,7 +41,7 @@
         d="M3 3l18 18M4 4h16v16H4V4z"
       />
     </svg>
-  </div>
+  </div> -->
 
   <div
     v-if="kitchenSizes.step != 5"
@@ -104,7 +104,7 @@
           Далее
         </button>
       </div>
-       <button @click="showConfig">конфиг</button>
+       <!-- <button @click="showConfig">конфиг</button> -->
     </div>
   </div>
 </template>
