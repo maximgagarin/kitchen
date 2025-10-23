@@ -108,12 +108,12 @@ export class Service {
   printResults(results) {
     
     results.forEach(r => {
-      console.log(`\n=== [${r.set}] oven=${r.ovenSize ?? "-"} | dish=${r.dishSize ?? "-"} ===`);
+  //    console.log(`\n=== [${r.set}] oven=${r.ovenSize ?? "-"} | dish=${r.dishSize ?? "-"} ===`);
       r.variants.forEach((variant, i) => {
-        console.log(`  Вариант ${i + 1}:`);
+   //     console.log(`  Вариант ${i + 1}:`);
         variant.forEach(p => {
           const content = p.modules.map(m => `${m.name}(${m.size})`).join(", ") || "пусто";
-          console.log(`    ${p.name}: ${content}`);
+     //     console.log(`    ${p.name}: ${content}`);
         });
       });
     });

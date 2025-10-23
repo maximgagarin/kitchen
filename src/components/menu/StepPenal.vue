@@ -256,7 +256,7 @@ const rightPenals = computed(() =>
   penalStore.penals.filter(p => p.side === 'right' || p.side === 'directRight')
 )
 
-const PENAL_END = 180 // размер торцевого пенала
+const PENAL_END = 200 // размер торцевого пенала
 
 
 // если шкаф торцевой(10) то ширина 450

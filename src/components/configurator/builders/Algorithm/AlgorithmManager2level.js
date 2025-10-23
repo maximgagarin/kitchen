@@ -100,9 +100,10 @@ export class AlgorithmManager2level {
     algorithmConfig.level2.resultLeft.length = 0
     algorithmConfig.level2.resultRight.length = 0
 
-    //  const puModule =    modules_height.height2level === 0.7  ? { key: 'ПУ', value: 'ПУ-0.65' }  : modules_height.height2level === 0.9
-    //   ? { key: 'ПУ', value: 'ПУ900-0.65' }
-    //   : null
+     const puModule =    this.kitchenSizesStore.modules_height.height2level === 0.7  ? { key: 'ПУ', value: 'ПУ-0.65' }  :
+      this.kitchenSizesStore.modules_height.height2level === 0.9
+      ? { key: 'ПУ', value: 'ПУ900-0.65' }
+      : null
 
 
     const kitchenType = this.kitchenSizesStore.type
@@ -149,7 +150,7 @@ export class AlgorithmManager2level {
         setSize('leftPart2', sideSizes.side_c - offsets.left - (ovenPos + OVEN_HALF))
         setSize('directPart1', sideSizes.side_a - offsets.directRight - (levels.left2 ? ROW_OFFSET : 0))
 
-        levels.left2? algorithmConfig.level2.resultLeft.unshift({ key: 'ПУ', value: 'ПУ-0.65' } ) : ''
+        levels.left2? algorithmConfig.level2.resultLeft.unshift(puModule ) : ''
 
         algorithmConfig.level2.rowStart.direct += levels.left2? ROW_OFFSET : 0
       }
@@ -160,7 +161,7 @@ export class AlgorithmManager2level {
         setSize('leftPart1', sideSizes.side_c - offsets.left -  (levels.direct2? ROW_OFFSET : 0))
         setSize('directPart1', sideSizes.side_a - offsets.directRight - PU)
 
-        levels.direct2? algorithmConfig.level2.resultDirect.unshift({ key: 'ПУ', value: 'ПУ-0.65' } ) : ''
+        levels.direct2? algorithmConfig.level2.resultDirect.unshift(puModule ) : ''
 
         algorithmConfig.level2.rowStart.left += levels.direct2? ROW_OFFSET : 0
 
@@ -172,7 +173,7 @@ export class AlgorithmManager2level {
         setSize('directPart2', sideSizes.side_a - offsets.directRight - (ovenPos + OVEN_HALF))
         setSize('leftPart1', sideSizes.side_c - offsets.left -  (levels.direct2? ROW_OFFSET : 0))
 
-        levels.direct2? algorithmConfig.level2.resultDirect.unshift({ key: 'ПУ', value: 'ПУ-0.65' } ) : ''
+        levels.direct2? algorithmConfig.level2.resultDirect.unshift(puModule ) : ''
         algorithmConfig.level2.rowStart.left += levels.direct2? ROW_OFFSET : 0
         
       }

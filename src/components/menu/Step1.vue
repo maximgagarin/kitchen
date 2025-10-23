@@ -64,7 +64,7 @@
       </label>
 
       <!-- П-образная кухня -->
-      <label
+      <!-- <label
         for="uShaped"
         class="relative border-2 w-20 rounded-lg p-1 cursor-pointer transition-all duration-200"
         :class="{
@@ -91,7 +91,7 @@
           />
           <span class="text-xs font-medium text-gray-700">П-образная</span>
         </div>
-      </label>
+      </label> -->
     </div>
 
     <div class="mt-8">

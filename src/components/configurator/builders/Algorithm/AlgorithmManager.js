@@ -24,7 +24,7 @@ export class AlgorithmManager {
     this.kitchenSizesStore.algorythm.start = true;
     this.algorithm1level.run();
     this.algorithm2level.run();
-   // this.tableTop.create() 
-  //  this.tableTop.setMaterial()
+    this.tableTop.create() 
+    this.tableTop.setMaterial()
   }
 }

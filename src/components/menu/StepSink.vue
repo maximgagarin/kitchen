@@ -4,10 +4,10 @@
   </div>
   <div class="radio-group">
     
-    <label class="radio-card" for="variant1">
+    <!-- <label class="radio-card" for="variant1">
       <input type="radio"  class="selectInput" name="type" id="variant1" value="variant1" v-model="selectedVariant">
       <p> задать размеры до вывода хвс, гвс и канализации</p>
-     </label>
+     </label> -->
 
 
 
@@ -18,18 +18,7 @@
     </label>
 
 
-          <select 
-          id="selectedOven" 
-        
-          class="w-20 px-1 py-1 text-xs border-gray-300 rounded-md border focus:ring-indigo-500 focus:border-indigo-500"
-         
-        >
-          <!-- <option value="0">нет</option>  -->
-          <option value="0.5">50 см</option>
-          <option value="0.6">60 см</option>
-          <option value="0.8">60 см</option>
-        </select>
-
+     
  
    
   </div>

@@ -603,6 +603,7 @@ export class SetTech {
         console.log('1')
 
         algorithmConfig.resultDirect.push({key:'module-sink-1000', value:1})
+        kitchenStore.sink.location = 'directCorner'
 
         kitchenStore.sink.size = 1
 
@@ -698,6 +699,8 @@ export class SetTech {
         console.log('6')
 
         module = "module-sink-1000-left";
+        kitchenStore.sink.location = 'leftCorner'
+
         posZ = 0.5;
 
         kitchenStore.sink.size = 1
@@ -718,6 +721,9 @@ export class SetTech {
 
         algorithmConfig.left2parts = true
 
+        kitchenStore.sink.location = 'leftMiddle'
+
+
         
         algorithmConfig.rowStart.left += ROW_WIDTH
         algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем су
@@ -735,6 +741,8 @@ export class SetTech {
         console.log('8')
 
         algorithmConfig.direct2parts = true
+        kitchenStore.sink.location = 'directMiddle'
+
 
           algorithmConfig.rowStart.direct += ROW_WIDTH
           algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем су
@@ -884,6 +892,32 @@ export class SetTech {
    // this.currect()
   }
 
+  filterAvaiableRules({result:result, side:side}){
+    const MIN_SPACE = 0.15
+      result.forEach(rule => {
+      rule.variants = rule.variants.filter(group => {
+        const shouldRemove = group.some(item => {
+          if (item.name !== side || !item.modules?.length) return false
+
+          const w = Math.round(item.width * 100) / 100
+
+          // суммируем размеры всех модулей
+          const totalModuleSize = item.modules.reduce((sum, mod) => sum + (mod.size || 0), 0)
+
+          // остаток пространства
+          const remaining = Math.round((w - totalModuleSize) * 100) / 100
+
+          // если остаток меньше минимального — удаляем
+          if (remaining < MIN_SPACE) return true
+
+          return false
+        })
+
+        return !shouldRemove
+      })
+    })
+
+  }
 
   currect2(result){
     
@@ -891,55 +925,56 @@ export class SetTech {
     const sinkSide = this.KitchenSizes.sink.side
     const sinkSize = this.KitchenSizes.sink.size
     const suSide = this.KitchenSizes.su.side
-    const sinkCornerDirect = sinkSide === 'direct' && sinkSize === 1
-    const sinkCornerLeft = sinkSide === 'left' && sinkSize === 1
 
-    if(sinkCornerLeft){
-      
-    // result.forEach(rule => {
-    //   rule.variants = rule.variants.filter(group =>
-    //     !(
-    //       group.some(item =>
-    //         (item.name === 'A1' && rule.ovenSize === 0.45 && item.set === "oven" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) ||
-    //         (item.name === 'A1' && rule.ovenSize === 0.6 && item.set === "oven" && Math.round(item.width * 100) / 100 <= 0.75 && item.modules.length === 1) ||
-    //         (item.name === 'A1' && rule.dishSize === 0.45 && item.set === "dishWasher" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) ||
-    //         (item.name === 'A1' && rule.dishSize === 0.6 &&  item.set === "dishWasher" && Math.round(item.width * 100) / 100 <= 0.75 && item.modules.length === 1) ||
-    //         (item.name === 'A1' && rule.ovenSize === 0.45 && item.set === "oven+dishWasher" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) ||
-    //         (item.name === 'A1' &&(rule.ovenSize === 0.45 && rule.dishSize === 0.65 ) && item.set === "oven+dishWasher" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) 
-    //       )
-    //     )
-    //   )
-    // })
+    const sinkDirectCorner = this.KitchenSizes.sink.location === 'directCorner'
+    const sinkDirectMiddle = this.KitchenSizes.sink.location === 'directMiddle'
+  //  const sinkDirectStart = this.KitchenSizes.sink.location === 'directStart'
+    const sinkDirectEnd = this.KitchenSizes.sink.location === 'directEnd'
 
+    const sinkLeftCorner = this.KitchenSizes.sink.location === 'leftCorner'
+    const sinkLeftMiddle = this.KitchenSizes.sink.location === 'leftMiddle'
+  //  const sinkLeftStart = this.KitchenSizes.sink.location === 'leftStart'
+    const sinkLeftEnd = this.KitchenSizes.sink.location === 'leftEnd'
 
-const MIN_SPACE = 0.15
+  
 
+    
 
+    if(sinkLeftCorner){
+      console.log('1')
 
-result.forEach(rule => {
-  rule.variants = rule.variants.filter(group => {
-    const shouldRemove = group.some(item => {
-      if (item.name !== 'A1' || !item.modules?.length) return false
-
-      const w = Math.round(item.width * 100) / 100
-
-      // суммируем размеры всех модулей
-      const totalModuleSize = item.modules.reduce((sum, mod) => sum + (mod.size || 0), 0)
-
-      // остаток пространства
-      const remaining = Math.round((w - totalModuleSize) * 100) / 100
-
-      // если остаток меньше минимального — удаляем
-      if (remaining < MIN_SPACE) return true
-
-      return false
-    })
-
-    return !shouldRemove
-  })
-})
-
-
+      const side = 'A1'
+      this.filterAvaiableRules( {result:result, side:side})
+      console.log('result Filtr', result)
+    }
+    if(sinkDirectCorner){
+      console.log('2')
+      const side = 'C1'
+      this.filterAvaiableRules( {result:result, side:side})
+      console.log('result Filtr', result)
+    }
+    if(sinkDirectMiddle){
+      console.log('3')
+      const side = 'A1'
+      this.filterAvaiableRules( {result:result, side:side})
+      console.log('result Filtr', result)
+    }
+    if(sinkDirectEnd){
+      console.log('3')
+      const side = 'A1'
+      this.filterAvaiableRules( {result:result, side:side})
+      console.log('result Filtr', result)
+    }
+    if(sinkLeftMiddle){
+      console.log('4')
+      const side = 'C2'
+      this.filterAvaiableRules( {result:result, side:side})
+      console.log('result Filtr', result)
+    }
+      if(sinkLeftEnd){
+      console.log('4')
+      const side = 'C1'
+      this.filterAvaiableRules( {result:result, side:side})
       console.log('result Filtr', result)
     }
 

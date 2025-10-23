@@ -45,7 +45,7 @@
 
  
 
-  <div v-if="kitchenSizes.step !=5" class="  fixed left-[50px] top-5 w-2/3 h-[100px] bg-white  text-xs  ">
+  <div v-if="kitchenSizes.step !=5" class="  fixed left-[15%] top-5 w-1/2 h-[50px] bg-white  text-md  ">
     <div class="flex flex-row">
          <div 
       v-for="(item, index) in menuItems" 

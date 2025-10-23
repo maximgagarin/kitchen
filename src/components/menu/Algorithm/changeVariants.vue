@@ -3,13 +3,13 @@
   <div class="flex flex-col gap-1 ">
     <!-- Уровень 2 -->
     <div class="bg-white p-1 rounded-lg shadow-xs">
-      <!-- <h2 class="text-lg font-bold text-gray-800 mb-3">2 уровень</h2> -->
+         <p class="text-xs font-medium text-gray-600">второй уровень</p>
       
       <div class="grid grid-cols-3 gap-3">
         <!-- Группы кнопок -->
  
          <div v-if="algStore.filtredLevel2.leftPart2?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Левые 2</p>
+       
           <div class="flex gap-1">
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft2l2(-1)" :disabled="index2level.left2 <= 0">←</button>
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft2l2(+1)" :disabled="index2level.left2 >= algStore.filtredLevel2.leftPart2.length - 1">→</button>
@@ -18,7 +18,7 @@
 
 
         <div v-if="algStore.filtredLevel2.leftPart1?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Левые</p>
+         
           <div class="flex gap-1">
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft1l2(-1)" :disabled="index2level.left1 <= 0">←</button>
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft1l2(+1)" :disabled="index2level.left1 >= algStore.filtredLevel2.leftPart1.length - 1">→</button>
@@ -27,7 +27,7 @@
 
 
         <div v-if="algStore.filtredLevel2.directPart1?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Правые</p>
+       
           <div class="flex gap-1">
             <button class="compact-btn" @click="changeVariantDirectl2(-1)" :disabled="index2level.direct1 <= 0">←</button>
             <button class="compact-btn" @click="changeVariantDirectl2(+1)" :disabled="index2level.direct1 >= algStore.filtredLevel2.directPart1.length - 1">→</button>
@@ -35,7 +35,7 @@
         </div>
 
         <div v-if="algStore.filtredLevel2.directPart2?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Правые 2</p>
+        
           <div class="flex gap-1">
             <button class="compact-btn " @click="changeVariantDirect2l2(-1)" :disabled="index2level.direct2 <= 0">←</button>
             <button class="compact-btn" @click="changeVariantDirect2l2(+1)" :disabled="index2level.direct2 >= algStore.filtredLevel2.directPart2.length - 1">→</button>
@@ -48,13 +48,14 @@
 
     <!-- Уровень 1 -->
     <div class="bg-white p-1 rounded-lg shadow-xs">
-      <!-- <h2 class="text-lg font-bold text-gray-800 mb-3">1 уровень</h2> -->
+
+      <p class="text-xs font-medium text-gray-600">первый уровень</p>
       
       <div class="grid grid-cols-3 gap-2">
         <!-- Аналогичные группы кнопок для уровня 1 -->
 
         <div v-if="algStore.filtredLeftPart2?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Левые 2</p>
+   
           <div class="flex gap-1">
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft2(-1)" :disabled="index.left2 <= 0">←</button>
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft2(+1)" :disabled="index.left2 >= algStore.filtredLeftPart2.length - 1">→</button>
@@ -62,7 +63,7 @@
         </div>
 
         <div v-if="algStore.filtredLeftPart1?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Левые</p>
+    
           <div class="flex gap-1">
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft1(-1)" :disabled="index.left1 <= 0">←</button>
             <button class="compact-btn bg-amber-500 hover:bg-amber-600" @click="changeVariantLeft1(+1)" :disabled="index.left1 >= algStore.filtredLeftPart1.length - 1">→</button>
@@ -73,7 +74,7 @@
 
 
         <div v-if="algStore.filtredDirectPart1?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Правые</p>
+
           <div class="flex gap-1">
             <button class="compact-btn" @click="changeVariantDirect(-1)" :disabled="index.direct1 <= 0">←</button>
             <button class="compact-btn" @click="changeVariantDirect(+1)" :disabled="index.direct1 >= algStore.filtredDirectPart1.length - 1">→</button>
@@ -81,7 +82,7 @@
         </div>
 
         <div v-if="algStore.filtredDirectPart2?.length" class="space-y-1">
-          <p class="text-xs font-medium text-gray-600">Правые 2</p>
+     
           <div class="flex gap-1">
             <button class="compact-btn" @click="changeVariantDirect2(-1)" :disabled="index.direct2 <= 0">←</button>
             <button class="compact-btn" @click="changeVariantDirect2(+1)" :disabled="index.direct2 >= algStore.filtredDirectPart2.length - 1">→</button>

@@ -26,7 +26,7 @@
 
 
   <!-- Компонент опций -->
-  <Options @select="changeOvenDish" />
+  <!-- <Options @select="changeOvenDish" /> -->
 
   <div class="mt-5 flex justify-between">
     <!-- Кнопка запуска -->
