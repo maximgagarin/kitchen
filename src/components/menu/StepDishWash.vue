@@ -17,13 +17,14 @@
         {{ size }}
       </option>
     </select>
-  </div>
-  <h3
+     <h3
     v-if="kitchenStore.availableDish.size === 1"
     class="text-md font-semibold mb-4"
   >
     посудомоечная машина не помещяется
   </h3>
+  </div>
+ 
 </template>
 
 <script setup>

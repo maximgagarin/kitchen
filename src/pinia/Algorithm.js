@@ -10,13 +10,20 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
  const resultRight = ref([])
 
  const partSizes  = ref({
-     direct1:0,
+    direct1:0,
     direct2:0,
     left1:0,
     left2:0,
     right1:0,
     right2:0
  })
+
+ const reverse = {
+  A1:false,
+  A2:false,
+  C1:false,
+  C2:false,
+ }
 
   
   const filtredDirectPart1 = ref([])
@@ -72,6 +79,7 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
     resultDirect,
     resultLeft,
     resultRight,
-    partSizes
+    partSizes,
+    reverse
   };
 });

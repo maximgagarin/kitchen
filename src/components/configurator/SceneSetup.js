@@ -23,6 +23,7 @@ export class SceneSetup {
 
     //this.axis = new THREE.AxesHelper(3)
     //this.scene.add(this.axios)
+        this.scene.fog = new THREE.Fog(0xf2f2f2, 8, 15);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -40,7 +41,7 @@ export class SceneSetup {
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.minDistance = 1;
-    this.controls.maxDistance = 18;
+    this.controls.maxDistance = 8;
     this.controls.target.copy(this.targetPosition);
     this.controls.update();
 

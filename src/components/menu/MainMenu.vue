@@ -1,103 +1,112 @@
 <template>
-
   <div
-  class="fixed top-4 left-[5vh] w-[40px] h-[40px] mr-4 bg-gray-100 hover:bg-gray-300 transition-colors duration-200 cursor-pointer pointer-events-auto rounded-md shadow-lg flex items-center justify-center"
-  @click="showLines()"
-  title="Показать / скрыть линии"
+    class="fixed top-4 left-[5vh] w-[40px] h-[40px] mr-4 bg-gray-100 hover:bg-gray-300 transition-colors duration-200 cursor-pointer pointer-events-auto rounded-md shadow-lg flex items-center justify-center"
+    @click="showLines()"
+    title="Показать / скрыть линии"
   >
-  <svg
-  xmlns="http://www.w3.org/2000/svg"
-  class="h-5 w-5 text-gray-700"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="currentColor"
-  >
-  <path
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
-  d="M4 8h16M4 16h16"
-  />
-  </svg>
-  </div>
-
-  <div
-  class="fixed top-4 left-[10vh] w-[40px] h-[40px] mr-4 bg-gray-100 hover:bg-gray-300 transition-colors duration-200 cursor-pointer pointer-events-auto rounded-md shadow-lg flex items-center justify-center"
-
-  @click="toggleShadows"
-  title="Вкл / Выкл тени"
-  >
-  <svg
-  xmlns="http://www.w3.org/2000/svg"
-  class="h-5 w-5 text-gray-700"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="currentColor"
-  >
-  <path
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  stroke-width="2"
-  d="M3 3l18 18M4 4h16v16H4V4z"
-  />
-  </svg>
-  </div>
-
- 
-
-  <div v-if="kitchenSizes.step !=5" class="  fixed left-[15%] top-5 w-1/2 h-[50px] bg-white  text-md  ">
-    <div class="flex flex-row">
-         <div 
-      v-for="(item, index) in menuItems" 
-      :key="index"
-      :class="{
-      'bg-blue-200': kitchenSizes.step  === index ,
-      'px-4 py-2 rounded-md': true,
-       'cursor-pointer': index >= maxStep || kitchenSizes.isSink,
-       'opacity-50 pointer-events-none': index > maxStep || kitchenSizes.isSink
-      }"
-      @click="setStep(index)"
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-5 w-5 text-gray-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
     >
-    {{ item }}
-    </div>
-    </div>
- 
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 8h16M4 16h16"
+      />
+    </svg>
   </div>
-  
-  
-      
-  <div class="wrapper" v-if="isPanelVisible">   
-    <div class="content ">
 
+ 
+
+  <div
+    class="fixed top-4 left-[10vh] w-[40px] h-[40px] mr-4 bg-gray-100 hover:bg-gray-300 transition-colors duration-200 cursor-pointer pointer-events-auto rounded-md shadow-lg flex items-center justify-center"
+    @click="toggleShadows"
+    title="Вкл / Выкл тени"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-5 w-5 text-gray-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3 3l18 18M4 4h16v16H4V4z"
+      />
+    </svg>
+  </div>
+
+  <div
+    v-if="kitchenSizes.step != 5"
+    class="fixed left-[15%] top-5 w-1/2 h-[50px] bg-white text-md"
+  >
+    <div class="flex flex-row">
+      <div
+        v-for="(item, index) in menuItems"
+        :key="index"
+        :class="{
+          'bg-blue-200': kitchenSizes.step === index,
+          'px-4 py-2 rounded-md': true,
+          'cursor-pointer': index >= maxStep || kitchenSizes.isSink,
+          'opacity-50 pointer-events-none':
+            index > maxStep || kitchenSizes.isSink,
+        }"
+        @click="setStep(index)"
+      >
+        {{ item }}
+      </div>
+    </div>
+  </div>
+
+  <div class="wrapper" v-if="isPanelVisible">
+    <div class="content">
       <Step1 v-if="kitchenSizes.step === 0" />
-      <StepDirect v-if="kitchenSizes.type === 'direct' && kitchenSizes.step === 0" />
-      <StepLeft v-if="kitchenSizes.type === 'left' && kitchenSizes.step === 0" />
-      <StepU v-if="kitchenSizes.type === 'uShaped' && kitchenSizes.step === 0" />
+      <StepDirect
+        v-if="kitchenSizes.type === 'direct' && kitchenSizes.step === 0"
+      />
+      <StepLeft
+        v-if="kitchenSizes.type === 'left' && kitchenSizes.step === 0"
+      />
+      <StepU
+        v-if="kitchenSizes.type === 'uShaped' && kitchenSizes.step === 0"
+      />
 
       <StepPenal v-if="kitchenSizes.step === 1" />
       <StepSink v-if="kitchenSizes.step === 2" />
-       <StepOven v-if="kitchenSizes.step === 3" />
+      <StepOven v-if="kitchenSizes.step === 3" />
       <StepDishWash v-if="kitchenSizes.step === 4" />
-     
+
       <StepAlgorithm v-if="kitchenSizes.step === 5" />
       <Planner v-if="kitchenSizes.step === 6" />
-      <Select3levelHeight v-if="kitchenSizes.step === 0"/>
-          <div v-if="!kitchenSizes.algorythm.start &&  kitchenSizes.step !==5" class="buttons_wrapper">
-      <!-- <div  class="buttons_wrapper"> -->
-        <button class="" v-if="kitchenSizes.step > 0" @click="prev">Назад</button>
-        <button class="" @click="next">Далее</button>
+      <Select3levelHeight v-if="kitchenSizes.step === 0" />
+      <div
+        v-if="!kitchenSizes.algorythm.start && kitchenSizes.step !== 5"
+        class="flex justify-between mt-6 mb-2.5 px-4"
+      >
+        <button
+          v-if="kitchenSizes.step > 0"
+          @click="prev"
+          class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
+        >
+          Назад
+        </button>
+        <button
+          @click="next"
+          class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+        >
+          Далее
+        </button>
       </div>
-         <button  @click="showConfig">конфиг</button>
+       <button @click="showConfig">конфиг</button>
     </div>
-    
   </div>
-
-  
-
- 
-
-
-  
 </template>
 
 <script setup>
@@ -124,51 +133,39 @@ import { plannerConfig } from "../configurator/planner/planerConfig";
 
 import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
 
-
-
-
-
-
-
 const kitchenSizes = useKitchenSizesStore();
 
 const cabinetBuilder = inject("cabinetBuilder");
 
 function showConfig() {
-  console.log('algorithmConfig', algorithmConfig)
-  console.log('plannerConfig', plannerConfig)
-  console.log('scene', cabinetBuilder.value.scene)
+  console.log("algorithmConfig", algorithmConfig);
+  console.log("plannerConfig", plannerConfig);
+  console.log("scene", cabinetBuilder.value.scene);
 }
-
 
 const step = ref(0);
 const maxStep = ref(0);
 const totalSteps = ref(7);
 const isPanelVisible = ref(true);
 
-
 const setStep = (index) => {
   kitchenSizes.step = index;
 };
 
-
-const menuItems = ref([ 
-  'размеры',
-  'пеналы/холодильник',
-  'мойка',
-  'плита',
-  'посудомойка',
-  'алгоритм',
+const menuItems = ref([
+  "размеры",
+  "пеналы/холодильник",
+  "мойка",
+  "плита",
+  "посудомойка",
+  "алгоритм",
 ]);
-
 
 let showLinesVisible = true;
 
 const progress = computed(() => {
   return (kitchenSizes.step / totalSteps.value) * 100;
 });
-
-
 
 function togglePanel() {
   isPanelVisible.value = !isPanelVisible.value;
@@ -177,8 +174,8 @@ function togglePanel() {
 function next() {
   if (config.type) {
     kitchenSizes.step++;
-    (kitchenSizes.step > maxStep.value) ? maxStep.value++ : maxStep.value
-  //  console.log('maxStep', maxStep.value)
+    kitchenSizes.step > maxStep.value ? maxStep.value++ : maxStep.value;
+    //  console.log('maxStep', maxStep.value)
     config.step = step;
   } else {
     alert("Выберите тип кухни перед продолжением!");
@@ -200,11 +197,9 @@ function showLines() {
   });
 }
 
-
-function toggleShadows(){
-  console.log('123')
+function toggleShadows() {
+  console.log("123");
 }
-
 </script>
 
 <style>

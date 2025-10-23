@@ -110,8 +110,8 @@ export class AlgorithmManager2level {
    
     let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
     let ovenSize = Math.round(this.kitchenSizesStore.oven.size * 20) / 20
-//    const OVEN_HALF = Math.round( (ovenSize/2) *20) /20
-    const OVEN_HALF = 0.2
+    const OVEN_HALF = Math.round( (ovenSize/2) *20) /20
+   // const OVEN_HALF = 0.2
 
     const levels = this.kitchenSizesStore.levels
 

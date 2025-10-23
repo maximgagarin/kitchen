@@ -726,7 +726,7 @@ export class SetTech {
 
         
         algorithmConfig.rowStart.left += ROW_WIDTH
-        algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем су
+        algorithmConfig.resultDirect.push({key:'b1000', value:1}) // вставляем су
            kitchenStore.su.side = 'direct'
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - (z + sinkSize/2)).toFixed(2)) 

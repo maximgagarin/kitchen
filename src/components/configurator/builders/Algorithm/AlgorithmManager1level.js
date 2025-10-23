@@ -118,6 +118,11 @@ export class AlgorithmManager1level {
     this.new()
 
   }
+
+
+  reverse(){
+
+  }
  
  
 
@@ -131,16 +136,16 @@ export class AlgorithmManager1level {
   
     const newRules = []
 
-      variant.forEach(variant=>{
-        if (variant.modules.length === 2) newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width })
-        if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width  })
-        if(variant.modules.length === 1) {
-          const moduleName = variant.modules[0].name 
-          newRules.push({side:variant.name, rule:this.rules[moduleName] , length:variant.width  })
-        }
-      })
+    variant.forEach(variant=>{
+      if (variant.modules.length === 2) newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width })
+      if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width  })
+      if(variant.modules.length === 1) {
+        const moduleName = variant.modules[0].name 
+        newRules.push({side:variant.name, rule:this.rules[moduleName] , length:variant.width  })
+      }
+    })
   
-  console.log('newRules' , newRules)
+    console.log('newRules' , newRules)
 
     const leftRules = newRules.filter(rule => rule.side === "C1" || rule.side === "C2");
     const directRules = newRules.filter(rule => rule.side === "A1" || rule.side === "A2");
@@ -718,12 +723,33 @@ export class AlgorithmManager1level {
 
 
     if(kitchenType === 'direct' ){
+
+      algorithmConfig.resultDirect.reverse()
       if(sinkLocation  === 'end'){
+      
+        algorithmConfig.resultDirect.reverse()
+
+
         algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
+
+
       } else if(!algorithmConfig.direct2parts){
+
+      
         algorithmConfig.resultDirect.unshift({ key: 'm', value: 0.6 });
       }
+
+
+
+
+
     } 
+
+
+    
+
+
+
 
     if(kitchenType === 'left'){
       if(sinkLocation ==='directEnd') algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
@@ -733,6 +759,7 @@ export class AlgorithmManager1level {
 
 
     if(algorithmConfig.direct2parts){
+  
        algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
        if(rule2){
           let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));

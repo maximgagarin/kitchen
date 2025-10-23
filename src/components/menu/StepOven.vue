@@ -1,14 +1,12 @@
 <template>
-  <h3 class="text-xl font-semibold mb-4">Выберите тип плиты</h3>
+  <div class="p-6">
+     <h3 class="text-xl font-semibold">Выберите тип плиты</h3>
 
 
-  
-
-
-  <!-- Вторая группа радиокнопок -->
+ 
   <div
     v-if="!penalStore.isOven && kitchenSizes.oven.type !== 'none'"
-    class="mb-4"
+    class="mb-4 mt-4"
   >
    <select  v-model="kitchenSizes.oven.size" class="border rounded p-2 w-40">
         <option :value="null" disabled>Выбери размер</option>
@@ -18,6 +16,9 @@
     </select>
   </div>
 
+
+  </div>
+ 
 
 
 

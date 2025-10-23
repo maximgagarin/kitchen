@@ -24,10 +24,10 @@ export class Room {
   }
 
   createRoom() {
-    this.floorGeometry = new THREE.PlaneGeometry(5, 5);
-    this.wallGeometry = new THREE.PlaneGeometry(5, 3);
-    this.wallLeftGeometry = new THREE.PlaneGeometry(5, 3);
-    this.wallRightGeometry = new THREE.PlaneGeometry(5, 3);
+    this.floorGeometry = new THREE.PlaneGeometry(this.width, this.depth);
+    this.wallGeometry = new THREE.PlaneGeometry(this.width, this.height);
+    this.wallLeftGeometry = new THREE.PlaneGeometry(this.depth, this.height);
+    this.wallRightGeometry = new THREE.PlaneGeometry(this.depth, this.height);
 
     this.floor = new THREE.Mesh(this.floorGeometry, basicMaterial);
     this.wall = new THREE.Mesh(this.wallGeometry, basicMaterial);
@@ -42,10 +42,14 @@ export class Room {
     this.wallLeft.castShadow =true
 
 
-    this.wall.position.set(2.4, this.height / 2, -0.03);
-    this.wallLeft.position.set(-0.03, this.height / 2, 2.5);
-    this.wallRight.position.set(4.5, this.height / 2, 2.5 );
-    this.floor.position.set(2, 0, 2);
+    this.wall.position.set(0, this.height / 2, 0);
+    this.wallLeft.position.set(-0.001, this.height / 2, this.depth / 2);
+    this.wallRight.position.set(
+      config.kitchen_size.width,
+      this.height / 2,
+      this.depth / 2
+    );
+    this.floor.position.set(0, 0, this.depth / 2);
 
     this.floor.rotation.x = -Math.PI / 2;
     this.wallLeft.rotation.y = Math.PI / 2;
