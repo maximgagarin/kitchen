@@ -602,7 +602,11 @@ export class SetTech {
         posX = 0.5;
         console.log('1')
 
-            algorithmConfig.resultDirect.push({key:'module-sink-1000', value:1})
+        algorithmConfig.resultDirect.push({key:'module-sink-1000', value:1})
+
+        kitchenStore.sink.size = 1
+
+        
 
         algorithmConfig.rowStart.left += ROW_WIDTH
         
@@ -618,7 +622,8 @@ export class SetTech {
         console.log('2')
 
           algorithmConfig.rowStart.direct += ROW_WIDTH
-          algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем мойку
+          algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем су1000
+          kitchenStore.su.side = 'left'
          algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
 
 
@@ -639,6 +644,7 @@ export class SetTech {
         algorithmConfig.rowStart.direct += ROW_WIDTH
         algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем мойку
         algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
+           kitchenStore.su.side = 'left'
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - MSU).toFixed(2)) 
         const size2 = Number((KitchenSizes.side_a - penalOffsets.directRight - ROW_WIDTH - sinkSize).toFixed(2)) 
@@ -656,6 +662,7 @@ export class SetTech {
         algorithmConfig.rowStart.left += ROW_WIDTH
         algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем мойку
         algorithmConfig.resultLeft.push({key:'m', value:sinkSize})
+           kitchenStore.su.side = 'direct'
 
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - ROW_WIDTH - sinkSize).toFixed(2)) 
@@ -674,6 +681,7 @@ export class SetTech {
         
         algorithmConfig.rowStart.left += ROW_WIDTH
         algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем мойку
+        kitchenStore.su.side = 'direct'
 
 
         const size1 = Number((KitchenSizes.side_c - ROW_WIDTH - sinkSize).toFixed(2)) 
@@ -691,6 +699,8 @@ export class SetTech {
 
         module = "module-sink-1000-left";
         posZ = 0.5;
+
+        kitchenStore.sink.size = 1
 
         algorithmConfig.rowStart.direct += ROW_WIDTH
 
@@ -710,7 +720,8 @@ export class SetTech {
 
         
         algorithmConfig.rowStart.left += ROW_WIDTH
-        algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем мойку
+        algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем су
+           kitchenStore.su.side = 'direct'
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - (z + sinkSize/2)).toFixed(2)) 
         const size2 = Number(( (z - sinkSize/2) -  ROW_WIDTH).toFixed(2)) 
@@ -726,7 +737,8 @@ export class SetTech {
         algorithmConfig.direct2parts = true
 
           algorithmConfig.rowStart.direct += ROW_WIDTH
-          algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем мойку
+          algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем су
+            kitchenStore.su.side = 'left'
     
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - MSU).toFixed(2)) 
         const size2 = Number(( (x - sinkSize/2) -  ROW_WIDTH).toFixed(2)) 
@@ -850,19 +862,131 @@ export class SetTech {
     const result =  this.service.analyzeAllCombinations(parts)
     console.log('result', result)
 
+    this.KitchenSizes.rules = result
+
+    
+    this.currect2(result)
+
+
     const available = this.collectAvailableSizes(result);
     console.log("✅ Доступные размеры:", available);
 
-    this.KitchenSizes.rules = result
+    
 
+
+    //если не помещяется духовка то не поместится посудомойа
     this.KitchenSizes.availableOven = available.oven
+    if(this.KitchenSizes.availableOven.length === 1 ) {
+      this.KitchenSizes.dishwasher.size = 0
+      this.KitchenSizes.oven.size = 0
+    }
 
-
-  
-  
-   
-
+   // this.currect()
   }
+
+
+  currect2(result){
+    
+    const sides = this.KitchenSizes.sideSizes
+    const sinkSide = this.KitchenSizes.sink.side
+    const sinkSize = this.KitchenSizes.sink.size
+    const suSide = this.KitchenSizes.su.side
+    const sinkCornerDirect = sinkSide === 'direct' && sinkSize === 1
+    const sinkCornerLeft = sinkSide === 'left' && sinkSize === 1
+
+    if(sinkCornerLeft){
+      
+    // result.forEach(rule => {
+    //   rule.variants = rule.variants.filter(group =>
+    //     !(
+    //       group.some(item =>
+    //         (item.name === 'A1' && rule.ovenSize === 0.45 && item.set === "oven" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) ||
+    //         (item.name === 'A1' && rule.ovenSize === 0.6 && item.set === "oven" && Math.round(item.width * 100) / 100 <= 0.75 && item.modules.length === 1) ||
+    //         (item.name === 'A1' && rule.dishSize === 0.45 && item.set === "dishWasher" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) ||
+    //         (item.name === 'A1' && rule.dishSize === 0.6 &&  item.set === "dishWasher" && Math.round(item.width * 100) / 100 <= 0.75 && item.modules.length === 1) ||
+    //         (item.name === 'A1' && rule.ovenSize === 0.45 && item.set === "oven+dishWasher" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) ||
+    //         (item.name === 'A1' &&(rule.ovenSize === 0.45 && rule.dishSize === 0.65 ) && item.set === "oven+dishWasher" && Math.round(item.width * 100) / 100 <= 0.6 && item.modules.length === 1) 
+    //       )
+    //     )
+    //   )
+    // })
+
+
+const MIN_SPACE = 0.15
+
+
+
+result.forEach(rule => {
+  rule.variants = rule.variants.filter(group => {
+    const shouldRemove = group.some(item => {
+      if (item.name !== 'A1' || !item.modules?.length) return false
+
+      const w = Math.round(item.width * 100) / 100
+
+      // суммируем размеры всех модулей
+      const totalModuleSize = item.modules.reduce((sum, mod) => sum + (mod.size || 0), 0)
+
+      // остаток пространства
+      const remaining = Math.round((w - totalModuleSize) * 100) / 100
+
+      // если остаток меньше минимального — удаляем
+      if (remaining < MIN_SPACE) return true
+
+      return false
+    })
+
+    return !shouldRemove
+  })
+})
+
+
+      console.log('result Filtr', result)
+    }
+
+
+    
+  }
+
+  currect(){
+    const sides = this.KitchenSizes.sideSizes
+    const sinkSide = this.KitchenSizes.sink.side
+    const sinkSize = this.KitchenSizes.sink.size
+    const MIN_MODULE = 0.15
+    const MIN_OVEN_SIZE = 0.45
+    const ROW_OFFSET = 0.6
+
+    const NONE = (sides.side_a  -  ROW_OFFSET) <= 0.60 
+    const ONLY45 = (sides.side_a  -  ROW_OFFSET) > 0.60 && (sides.side_a  -  ROW_OFFSET) <= 0.75
+    const ANY = (sides.side_a  -  ROW_OFFSET) > 0.75 
+
+    const partsType = {
+      left:[],
+      direct:[],
+      right:[]
+    }
+
+    this.KitchenSizes.parts.forEach(part=>{
+      if((part.name === 'C1' && part.width < 0.60) && this.KitchenSizes.parts.some(part => part.name === "A1" && part.width <=0.6 ) ){
+        console.log('есть')
+        partsType.left.push(0.45)
+      }
+    })
+
+
+   
+    // if((sides.side_c - sinkSize) < 0.45 && sinkSide === 'left'){
+    //    if(NONE)  console.log('духовку нельзя ставить рядом с раковиной нужено мин расстояние 15 см')
+    //    if(ONLY45) console.log('только 45cм')
+    //    if(ANY) console.log('любая') 
+    // }
+
+    // if((sides.side_a - sinkSize) < 0.45 && sinkSide === 'direct' &&  (sides.side_c  - ROW_OFFSET) <= 0.60) {
+    //   console.log('духовку нельзя ставить рядом с раковиной нужено мин расстояние 15 см')
+    //  this.KitchenSizes.oven.size = 0
+
+    // }
+  }
+  
 
   filter(result, partsCount) {
     const filtered = result.filter(item => {

@@ -140,7 +140,7 @@ export class AlgorithmManager1level {
         }
       })
   
- // console.log(newRules)
+  console.log('newRules' , newRules)
 
     const leftRules = newRules.filter(rule => rule.side === "C1" || rule.side === "C2");
     const directRules = newRules.filter(rule => rule.side === "A1" || rule.side === "A2");
@@ -161,6 +161,10 @@ export class AlgorithmManager1level {
   }
     
 
+    
+  }
+
+  currect(){
     
   }
 

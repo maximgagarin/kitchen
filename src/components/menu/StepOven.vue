@@ -4,41 +4,6 @@
 
   
 
-  <!-- Первая группа радиокнопок -->
-  <div v-if="!penalStore.isOven" class="mb-4">
-    <label class="flex items-center space-x-2">
-      <input
-        type="radio"
-        class="selectInput"
-        name="TypeOven"
-        value="in"
-        v-model="kitchenSizes.oven.type"
-      />
-      <span>встраиваемая плита с духовкой</span>
-    </label>
-
-    <label class="flex items-center space-x-2 mt-2">
-      <input
-        type="radio"
-        class="selectInput"
-        name="TypeOven"
-        value="out"
-        v-model="kitchenSizes.oven.type"
-      />
-      <span>обычная плита с духовкой</span>
-    </label>
-
-    <label class="flex items-center space-x-2 mt-2">
-      <input
-        type="radio"
-        class="selectInput"
-        name="TypeOven"
-        value=""
-        v-model="kitchenSizes.oven.type"
-      />
-      <span>нет плиты</span>
-    </label>
-  </div>
 
   <!-- Вторая группа радиокнопок -->
   <div
@@ -53,60 +18,9 @@
     </select>
   </div>
 
-  <div class="mb-4">
-    <p>cторона</p>
-    <label class="flex items-center space-x-2">
-      <input
-        type="radio"
-        name="side"
-        value="left"
-        v-model="kitchenSizes.oven.side"
-      />
-      <span>левая</span>
-    </label>
-    <label class="flex items-center space-x-2">
-      <input
-        type="radio"
-        name="side"
-        value="direct"
-        v-model="kitchenSizes.oven.side"
-      />
-      <span>правая</span>
-    </label>
-  </div>
 
-  <!-- варочаня панель -->
 
-  <div v-if="penalStore.isOven" class="mb-4">
-    <p>варочная панель</p>
-    <label class="flex items-center space-x-2">
-      <input
-        type="radio"
-        name="Oven"
-        value="0.3"
-        v-model="kitchenSizes.cookTop"
-      />
-      <span>ширина 300</span>
-    </label>
-    <label class="flex items-center space-x-2">
-      <input
-        type="radio"
-        name="Oven"
-        value="0.45"
-        v-model="kitchenSizes.cookTop"
-      />
-      <span>ширина 450</span>
-    </label>
-    <label class="flex items-center space-x-2">
-      <input
-        type="radio"
-        name="Oven"
-        value="0.6"
-        v-model="kitchenSizes.cookTop"
-      />
-      <span>ширина 600</span>
-    </label>
-  </div>
+
 </template>
 
 <script setup>
@@ -116,54 +30,9 @@ import { useRowSegmentsStore } from "../../pinia/RowSegments";
 import { usePenalStore } from "../../pinia/penals";
 
 const penalStore = usePenalStore();
-
-const oven = ref(penalStore.isOven);
-
-console.log(oven);
-
 const kitchenSizes = useKitchenSizesStore();
-const rowSegmentsStore = useRowSegmentsStore();
 
-const setStove = inject("setStove");
-const cabinetBuilder = inject("cabinetBuilder");
 
-function changeType() {
-  console.log("funk");
-}
-
-//вариант меню
-const selectedVariant = ref(null);
-//варочная панель ширина
-const selectCooktop = ref();
-
-//тип
-const selectTypeOven = ref();
-
-//ширина встравив духовки
-const OvenInWidth = ref();
-
-//ширина не встравив духовки
-const OvenOutWidth = ref();
-
-const ovenType = ref();
-
-watch(ovenType, (newVal) => {
-  kitchenSizes.stoveType = newVal;
-  // setStove.value.setStove()
-});
-
-// watch(
-//   () => kitchenSizes.oven.type,
-//   (newVal) => {
-//     if (newVal === "") {
-//       kitchenSizes.oven.size = 0;
-//       kitchenSizes.oven.side = "";
-//       kitchenSizes.oven.isOven = false;
-//     } else {
-//       kitchenSizes.oven.isOven = true;
-//     }
-//   }
-// );
 
 const rules = kitchenSizes.rules
 
@@ -206,9 +75,8 @@ function collectAvailableSizes(results) {
   const toSortedArray = set => Array.from(set).sort((a, b) => a - b);
 
   available.dishWasher.add(0)
-  kitchenSizes.availableDish = available.dishWasher
-  if(available.dishWasher.size === 1) kitchenSizes.dishwasher.size = 0 // если нет вариатнов для dishwasher
-}
+  if(available.dishWasher.size === 1) kitchenSizes.dishwasher.size = 0  // если нет места для посудомойки
+  kitchenSizes.availableDish = available.dishWasher}
 
 
 function filtredOven(result , size){

@@ -91,6 +91,12 @@ export const useKitchenSizesStore = defineStore('KitchenSizes', {
    availableOven:[],
    availableDish:[],
 
+    needCorrectSizes:{
+      left:false,
+      direct:false,
+      ringt:false,
+    },
+
 
 
     oven:{
@@ -104,6 +110,10 @@ export const useKitchenSizesStore = defineStore('KitchenSizes', {
       isDishwash:false,
       side:'',
       size:0.45
+    },
+
+    su:{
+      side:''
     },
 
     cookTop:{

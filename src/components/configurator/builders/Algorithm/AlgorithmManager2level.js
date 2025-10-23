@@ -283,7 +283,7 @@ export class AlgorithmManager2level {
       const rule = filtered[variantIndex]
       if (!rule) {
         this.plannerStore.showError()
-        return []
+        return {result:[], filtered:[]}
       }
       const result = Object.entries(rule).map(([key, value]) => ({ key, value }))
       return  {rule:result, filtered:filtered}
