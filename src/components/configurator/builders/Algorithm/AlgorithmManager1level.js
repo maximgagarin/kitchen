@@ -53,6 +53,7 @@ export class AlgorithmManager1level {
       clean:"без дх и пм",
       ovenDish:"угл мк и дух слева",
     }
+    this.adjustment = false // была корректировка
 
   }
 
@@ -142,83 +143,115 @@ export class AlgorithmManager1level {
       },
     }
 
-    const rule = rules[side]
+      const rule = rules[side]
 
-    const penals = plannerConfig.penalsArray.filter(
-      penal => penal.root.userData.side === rule.side
-    )
+      const penals = plannerConfig.penalsArray.filter(
+        penal => penal.root.userData.side === rule.side
+      )
 
-    const fridge = plannerConfig.fridge
-    if(fridge) {
-      fridge.position[rule.pos] -= decrease
-    }
 
-    penals.forEach(penal => {
-      penal.root.position[rule.pos] -= decrease
-    })
+      console.log('penals', penals)
 
-    this.kitchenSizesStore.sideSizes[rule.row] -= decrease
+      const fridge = plannerConfig.fridge
 
-     console.log('penals', penals)
+            // 1️⃣ Сохраняем исходные позиции, если их ещё нет
+      if (!this.originalPositions)
+        this.originalPositions = { penals: {}, fridge: null, sizes: {} }
+
+        // fridge
+      if (fridge && !this.originalPositions.fridge) {
+        this.originalPositions.fridge = fridge.position.clone() // 👈 clone() создаёт копию, не ссылку
+      }
+      penals.forEach(penal => {
+        const id = penal.root.uuid
+        if (!this.originalPositions.penals[id]) {
+          this.originalPositions.penals[id] = penal.root.position.clone() // 👈 сохраняем все координаты
+        }
+      })
+
+      if (!this.originalPositions.sizes[rule.row]) {
+        this.originalPositions.sizes[rule.row] = this.kitchenSizesStore.sideSizes[rule.row]
+      }
+
+      // 2️⃣ Двигаем объекты
+      if (fridge) {
+        fridge.position[rule.pos] -= decrease
+      }
+
+      penals.forEach(penal => {
+        penal.root.position[rule.pos] -= decrease
+      })
+
+      this.kitchenSizesStore.sideSizes[rule.row] -= decrease
+
+      console.log('this.orig', this.originalPositions)
 
 
   }
 
 
   // уменьшеие размера части при недопустимых размерах (нет правил excel)
-currectSizes(newRules) {
-  const invalidCombinations = {
-    'духовка': [
-      { size: 0.45, lengths: [0.5, 0.55, 0.7] },
-      { size: 0.6,  lengths: [0.65, 0.7, 0.85] }
-    ],
-    'посудомойка': [
-      { size: 0.45, lengths: [0.5, 0.55, 0.7] },
-      { size: 0.6,  lengths: [0.65, 0.7, 0.85] }
-    ],
-    'угл мк и дух слева': [
-      { size: 0.9,  lengths: [0.95, 1.0, 1.15] },
-      { size: 1.05, lengths: [1.1, 1.15, 1.3] },
-      { size: 1.2,  lengths: [1.25, 1.3, 1.45] }
-    ],
-    'без дх и пм': [
-      { size: null, lengths: [0.25] }
-    ]
-  }
+  currectSizes(newRules) {
 
-  newRules.forEach(rule => {
-    const { rule: name, moduleSize, length, side } = rule
-    const invalidList = invalidCombinations[name]
+    const rulesCopy = newRules.map(rule => ({ ...rule }))
 
-    const isInvalid = invalidList?.some(
-      item =>
-        (item.size === null || moduleSize === item.size) &&
-        item.lengths.includes(length)
-    )
 
-    if (!isInvalid) return
 
-    console.log('размер не подходит')
 
-    const delta = Number((length - moduleSize).toFixed(2))
-
-    // Определяем уменьшение по разнице
-    const decreaseMap = {
-      0.05: 0.05,
-      0.1: 0.1,
-      0.25: 0.05
+    const invalidCombinations = {
+      'духовка': [
+        { size: 0.45, lengths: [0.5, 0.55, 0.7] },
+        { size: 0.6,  lengths: [0.65, 0.7, 0.85] }
+      ],
+      'угл мк лев дух прав': [
+        { size: 0.45, lengths: [0.5, 0.55, 0.7] },
+        { size: 0.6,  lengths: [0.65, 0.7, 0.85] }
+      ],
+      'угл мк и дух слева': [
+        { size: 0.9,  lengths: [0.95, 1.0, 1.15] },
+        { size: 1.05, lengths: [1.1, 1.15, 1.3] },
+        { size: 1.2,  lengths: [1.25, 1.3, 1.45] }
+      ],
+      'без дх и пм': [
+        { size: null, lengths: [0.25] }
+      ]
     }
 
-    const decrease = decreaseMap[delta] ?? 0.05 // безопасное значение по умолчанию
+    rulesCopy.forEach(rule => {
+      const { rule: name, moduleSize, length, side } = rule
+      const invalidList = invalidCombinations[name]
 
-    console.log('delta', delta)
-    console.log('decrease', decrease)
+      const isInvalid = invalidList?.some(
+        item =>
+          (item.size === null || moduleSize === item.size) &&
+          item.lengths.includes(length)
+      )
 
-    rule.length = Number((length - decrease).toFixed(2))
-    this.moviePenal(side, decrease)
-  })
-}
- 
+      if (!isInvalid) return isInvalid
+
+      console.log('размер не подходит')
+
+      const delta = Number((length - moduleSize).toFixed(2))
+
+      // Определяем уменьшение по разнице
+      const decreaseMap = {
+        0.05: 0.05,
+        0.1: 0.1,
+        0.25: 0.05
+      }
+
+      const decrease = decreaseMap[delta] ?? 0.05 // безопасное значение по умолчанию
+
+      console.log('delta', delta)
+      console.log('decrease', decrease)
+
+      rule.length = Number((length - decrease).toFixed(2))
+      this.moviePenal(side, decrease)
+    })
+
+    return rulesCopy
+  }
+  
 
   new(value = 0){
     this.clear()
@@ -248,12 +281,22 @@ currectSizes(newRules) {
       }
     })
 
-    this.currectSizes(newRules)
+     this.restoreOriginalPositions()
+
+    const rulesCopy = this.currectSizes(newRules)
+
+    console.log('rulesCopy' , rulesCopy)
   
     console.log('newRules' , newRules)
 
-    const leftRules = newRules.filter(rule => rule.side === "C1" || rule.side === "C2");
-    const directRules = newRules.filter(rule => rule.side === "A1" || rule.side === "A2");
+
+    // setTimeout(()=>{
+    //   this.restoreOriginalPositions()
+    // }, 2000)
+
+
+    const leftRules = rulesCopy.filter(rule => rule.side === "C1" || rule.side === "C2");
+    const directRules = rulesCopy.filter(rule => rule.side === "A1" || rule.side === "A2");
 
     
     this.algStore.rulesName = newRules
@@ -275,24 +318,30 @@ currectSizes(newRules) {
   }
 
 
- 
+restoreOriginalPositions() {
+  if (!this.originalPositions) return
 
+  const { penals, fridge, sizes } = this.originalPositions
 
-  currectSizes2(){
-
-    // корректировка т. к. нет правил для 0.25
-      const parts = algorithmConfig.parts_sizes2
-      if(parts.directPart1 === 0.25) {
-          parts.directPart1 += 0.05
-          parts.directPart2 -= 0.05
-        }
-
-      if(parts.directPart2 === 0.25) {
-          parts.directPart1 -= 0.05
-          parts.directPart2 += 0.05
-        }
-
+  // восстановление холодильника
+  if (fridge && plannerConfig.fridge) {
+    plannerConfig.fridge.position.copy(fridge)
   }
+
+  // восстановление пеналов
+  plannerConfig.penalsArray.forEach(penal => {
+    const saved = penals[penal.root.uuid]
+    if (saved) penal.root.position.copy(saved)
+  })
+
+  // восстановление размеров рядов
+  for (const row in sizes) {
+    this.kitchenSizesStore.sideSizes[row] = sizes[row]
+  }
+
+  console.log('✅ Позиции и размеры восстановлены')
+}
+
 
  
 
