@@ -121,13 +121,36 @@ export class AlgorithmManager1level {
 
   }
 
+  moviePenal(side){
+    console.log('сторона', side)
+  }
+
 
   currectSizes(newRules){
     newRules.forEach(rule=>{
-      if(rule.rule === 'духовка' && rule.moduleSize === 0.45 && rule.length === 0.7){
-        console.log('размер не верен')
+      if((rule.rule === 'духовка' || rule.rule === 'посудомойка') && 
+      (rule.moduleSize === 0.45 && (rule.length === 0.7 || rule.length === 0.50 , rule.length === 0.55 ))||
+      (rule.moduleSize === 0.60 && (rule.length === 0.85 || rule.length === 0.65 , rule.length === 0.70 ))
+    ){
+        console.log('размер не подходит')
         const newSize = Number((rule.length -= 0.05).toFixed(2))
         rule.length = newSize
+        this.moviePenal(rule.side)
+
+      } else if((rule.rule === 'угл мк и дух слева') &&
+        (rule.moduleSize === 0.90 && (rule.length === 0.95 || rule.length === 1 , rule.length === 1.15 ))||
+        (rule.moduleSize === 1.05 && (rule.length === 1.1 || rule.length === 1.15 , rule.length === 1.3 ))
+        (rule.moduleSize === 1.2 && (rule.length === 1.25 || rule.length === 1.3 , rule.length === 1.45 ))
+     ){
+        console.log('размер не подходит')
+        const newSize = Number((rule.length -= 0.05).toFixed(2))
+        rule.length = newSize
+        this.moviePenal(rule.side)
+
+      } else if(rule.rule === 'без дх и пм' && rule.length === 0.25){
+        const newSize = Number((rule.length -= 0.05).toFixed(2))
+        rule.length = newSize
+        this.moviePenal(rule.side)
 
       }
     })
@@ -148,7 +171,13 @@ export class AlgorithmManager1level {
     const newRules = []
 
     variant.forEach(variant=>{
-      if (variant.modules.length === 2) newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width })
+      if (variant.modules.length === 2){
+        const module1size = variant.modules[0].size 
+        const module2size = variant.modules[1].size 
+        const totalSize = module1size + module2size
+         newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width , moduleSize:totalSize})
+      }
+        
       if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width  })
       if(variant.modules.length === 1) {
         const moduleName = variant.modules[0].name 
