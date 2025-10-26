@@ -715,7 +715,7 @@ export class SetTech {
 
         
         algorithmConfig.rowStart.left += ROW_WIDTH
-        algorithmConfig.resultDirect.push({key:'b1000left', value:1}) // вставляем мойку
+        algorithmConfig.resultDirect.push({key:'b1000', value:1}) // вставляем мойку
         kitchenStore.su.side = 'direct'
 
 
@@ -767,8 +767,8 @@ export class SetTech {
         const size2 = Number(( (z - sinkSize/2) -  ROW_WIDTH).toFixed(2)) 
         const size3 = Number((KitchenSizes.side_a - penalOffsets.directRight - MSU).toFixed(2)) 
 
-        kitchenStore.parts.push({  name: "C1", width: size1})
-        kitchenStore.parts.push({  name: "C2", width: size2})
+        kitchenStore.parts.push({  name: "C1", width: size2})
+        kitchenStore.parts.push({  name: "C2", width: size1})
         kitchenStore.parts.push({  name: "A1", width: size3})
  
       } else if(side === 'direct'){
@@ -933,6 +933,8 @@ export class SetTech {
    // this.currect()
   }
 
+
+  // удаляет варинат если остаток от длины без модулей меньше 0.15
   filterAvaiableRules({result:result, side:side}){
     const MIN_SPACE = 0.15
       result.forEach(rule => {
@@ -960,6 +962,7 @@ export class SetTech {
 
   }
 
+  // применяем filterAvaiableRules в углах где недопустимо примыкание техники к мойке
   currect2(result){
     
     const sides = this.KitchenSizes.sideSizes
@@ -1008,7 +1011,7 @@ export class SetTech {
     }
     if(sinkLeftMiddle){
       console.log('4')
-      const side = 'C2'
+      const side = 'C1'
       this.filterAvaiableRules( {result:result, side:side})
       console.log('result Filtr', result)
     }

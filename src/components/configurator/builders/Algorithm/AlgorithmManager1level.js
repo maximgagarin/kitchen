@@ -67,6 +67,8 @@ export class AlgorithmManager1level {
     })
 
 
+   
+
  
 
     this.deleteNamesFromPlanner()
@@ -121,41 +123,101 @@ export class AlgorithmManager1level {
 
   }
 
-  moviePenal(side){
+
+  // сдвиг пеналов и холод после коректировки currectSizes
+  moviePenal(side, decrease){
     console.log('сторона', side)
-  }
+    const rules = {
+      'A1':{
+        side:"directRight", row:"side_a", pos:"x"
+      },
+      'A2':{
+        side:"directRight", row:"side_a", pos:"x"
+      },
+      'C1':{
+        side:"left", row:"side_c", pos:"z"
+      },
+      'C2':{
+        side:"left", row:"side_c", pos:"z"
+      },
+    }
 
+    const rule = rules[side]
 
-  currectSizes(newRules){
-    newRules.forEach(rule=>{
-      if((rule.rule === 'духовка' || rule.rule === 'посудомойка') && 
-      (rule.moduleSize === 0.45 && (rule.length === 0.7 || rule.length === 0.50 , rule.length === 0.55 ))||
-      (rule.moduleSize === 0.60 && (rule.length === 0.85 || rule.length === 0.65 , rule.length === 0.70 ))
-    ){
-        console.log('размер не подходит')
-        const newSize = Number((rule.length -= 0.05).toFixed(2))
-        rule.length = newSize
-        this.moviePenal(rule.side)
+    const penals = plannerConfig.penalsArray.filter(
+      penal => penal.root.userData.side === rule.side
+    )
 
-      } else if((rule.rule === 'угл мк и дух слева') &&
-        (rule.moduleSize === 0.90 && (rule.length === 0.95 || rule.length === 1 , rule.length === 1.15 ))||
-        (rule.moduleSize === 1.05 && (rule.length === 1.1 || rule.length === 1.15 , rule.length === 1.3 ))
-        (rule.moduleSize === 1.2 && (rule.length === 1.25 || rule.length === 1.3 , rule.length === 1.45 ))
-     ){
-        console.log('размер не подходит')
-        const newSize = Number((rule.length -= 0.05).toFixed(2))
-        rule.length = newSize
-        this.moviePenal(rule.side)
+    const fridge = plannerConfig.fridge
+    if(fridge) {
+      fridge.position[rule.pos] -= decrease
+    }
 
-      } else if(rule.rule === 'без дх и пм' && rule.length === 0.25){
-        const newSize = Number((rule.length -= 0.05).toFixed(2))
-        rule.length = newSize
-        this.moviePenal(rule.side)
-
-      }
+    penals.forEach(penal => {
+      penal.root.position[rule.pos] -= decrease
     })
+
+    this.kitchenSizesStore.sideSizes[rule.row] -= decrease
+
+     console.log('penals', penals)
+
+
   }
- 
+
+
+  // уменьшеие размера части при недопустимых размерах (нет правил excel)
+currectSizes(newRules) {
+  const invalidCombinations = {
+    'духовка': [
+      { size: 0.45, lengths: [0.5, 0.55, 0.7] },
+      { size: 0.6,  lengths: [0.65, 0.7, 0.85] }
+    ],
+    'посудомойка': [
+      { size: 0.45, lengths: [0.5, 0.55, 0.7] },
+      { size: 0.6,  lengths: [0.65, 0.7, 0.85] }
+    ],
+    'угл мк и дух слева': [
+      { size: 0.9,  lengths: [0.95, 1.0, 1.15] },
+      { size: 1.05, lengths: [1.1, 1.15, 1.3] },
+      { size: 1.2,  lengths: [1.25, 1.3, 1.45] }
+    ],
+    'без дх и пм': [
+      { size: null, lengths: [0.25] }
+    ]
+  }
+
+  newRules.forEach(rule => {
+    const { rule: name, moduleSize, length, side } = rule
+    const invalidList = invalidCombinations[name]
+
+    const isInvalid = invalidList?.some(
+      item =>
+        (item.size === null || moduleSize === item.size) &&
+        item.lengths.includes(length)
+    )
+
+    if (!isInvalid) return
+
+    console.log('размер не подходит')
+
+    const delta = Number((length - moduleSize).toFixed(2))
+
+    // Определяем уменьшение по разнице
+    const decreaseMap = {
+      0.05: 0.05,
+      0.1: 0.1,
+      0.25: 0.05
+    }
+
+    const decrease = decreaseMap[delta] ?? 0.05 // безопасное значение по умолчанию
+
+    console.log('delta', delta)
+    console.log('decrease', decrease)
+
+    rule.length = Number((length - decrease).toFixed(2))
+    this.moviePenal(side, decrease)
+  })
+}
  
 
   new(value = 0){
@@ -704,10 +766,11 @@ export class AlgorithmManager1level {
     plannerConfig.modelsDirect.length = 0
     const reverse = this.algStore.reverse   // реверс модулей
     const sinkLocation = this.kitchenSizesStore.sink.location
+    const suSide = this.kitchenSizesStore.su.side
 
 
-    let rule = this.algStore.filtredDirectPart1[variant];
-    let rule2 = this.algStore.filtredDirectPart2[variant2];
+    let rule = this.algStore.filtredDirectPart1[variant] || [];
+    let rule2 = this.algStore.filtredDirectPart2[variant2] || [];
 
      //   algorithmConfig.resultDirect.splice(1, 0, ...result)
 
@@ -715,8 +778,20 @@ export class AlgorithmManager1level {
  
     if(rule){
        let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
-       if(sinkLocation === 'directCorner') algorithmConfig.resultDirect.push(...result);
-       if(sinkLocation !=='directCorner')  algorithmConfig.resultDirect.unshift(...result);
+
+       if(suSide === 'direct'){
+         algorithmConfig.resultDirect.push(...result);
+          
+       } else {
+         if(sinkLocation === 'directCorner' || sinkLocation === 'directStart') {
+            algorithmConfig.resultDirect.push(...result)
+         } else {
+           algorithmConfig.resultDirect.unshift(...result);
+         }
+         
+       }
+
+
     } else {
       this.plannerStore.showError();
       console.log('нет правил')
@@ -728,15 +803,8 @@ export class AlgorithmManager1level {
 
     if(direct2parts){
        if(rule2){
-          let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
-
-          if(reverse.A2) {
-            console.log('reverse2')
-           result2.reverse()
-          } 
+          let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));    
           algorithmConfig.resultDirect.push(...result2);
-
-
        } else {
           this.plannerStore.showError();
           console.log('нет правил')

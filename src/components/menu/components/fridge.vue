@@ -65,6 +65,7 @@ import { inject, ref } from 'vue';
 import { useRowSegmentsStore } from '../../../pinia/RowSegments'
 import { usePenalStore } from '../../../pinia/penals'
 import { useKitchenSizesStore } from '../../../pinia/kitchenSizes'
+import { plannerConfig } from '../../configurator/planner/planerConfig';
 
 const penalStore = usePenalStore();
 const kitchenStore = useKitchenSizesStore();
@@ -110,7 +111,7 @@ function handleRight(){
     }
 }
 
-//чекбокс внутри габарита
+//чекбокс входит/не входит в габариты
 function changeInsideOutside(){
     console.log('inSideFridge', kitchenStore.fridge.inSideFridge)
     console.log('inSideInput', kitchenStore.fridge.inSideInput)
@@ -230,11 +231,13 @@ function addFridge() {
     model.position.set(rule.xPos, 0, rule.zPos)
     model.rotation.y = rule.rotation
     model.name = 'fridge'
+    model.userData.side  = rule.side
+    plannerConfig.fridge = model
 
     console.log(kitchenStore.rowSizesWithPanels)
    
     
-    cabinetBuilder.value.executeConfig("actual", "currect");
+    cabinetBuilder.value.executeConfig("actual", "currectActual");
 }
 
 //сдвиг модулей 
@@ -275,6 +278,8 @@ function move(rule){
     if (kitchenStore.type === 'direct' && side == 'left') kitchenStore.offsetForLeftRow += FRIDGE_WIDTH
 
     kitchenStore.rowSizesWithPanels[rule.row] = Number(kitchenStore.rowSizesWithPanels[rule.row]) + Number(rule.offset)
+
+ //   kitchenStore.rowSizesCurrect[rule.row] =  Number(kitchenStore.rowSizesCurrect[rule.row]) + Number(rule.offset)
   
     penalStore.penalOffsetsState[rule.side] += FRIDGE_WIDTH
 
@@ -332,10 +337,11 @@ function deleteFridge() {
     }
     clearStore()
     removeObjectsByName('fridge')  
-    cabinetBuilder.value.executeConfig("actual", "currect");
+    cabinetBuilder.value.executeConfig("actual", "currectActual");
 }
 
 function removeObjectsByName(name) {
+    plannerConfig.fridge = false
     const objectsToRemove = [];
 
     // 1. Находим все объекты с указанным именем

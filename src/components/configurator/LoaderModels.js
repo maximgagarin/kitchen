@@ -215,6 +215,7 @@ export class LoaderModels {
       { name: "hood-600", path: "/models/hood.glb" },
       { name: "hood2-600", path: "/models/hood-3.glb" },
       { name: "hood2-450", path: "/models/hood-3-450.glb" },
+      { name: "hood-400", path: "/models/hood-400.glb" },
 
 
 

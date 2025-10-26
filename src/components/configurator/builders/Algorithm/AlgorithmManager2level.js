@@ -90,6 +90,27 @@ export class AlgorithmManager2level {
     this.deleteLeft()
     this.deleteRight()
 
+
+    
+     const filtered = this.algStore.resultDirect.filter(
+       item => !["rowNum", "l", "m"].includes(item.key)
+     )
+
+     console.log('filtred', filtered)
+
+     const index = filtered.findIndex(item => item.key === "d")
+
+    let isOvenEnd = false
+
+    if (index !== -1 && index === this.algStore.resultDirect.length - 1) {
+      isOvenEnd = true
+    }
+
+    console.log("isOvenEnd", isOvenEnd)
+
+
+
+
   
 
     algorithmConfig.level2.rowStart.direct = 0
@@ -108,10 +129,14 @@ export class AlgorithmManager2level {
 
     const kitchenType = this.kitchenSizesStore.type
    
+    let OVEN_HALF
     let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
     let ovenSize = Math.round(this.kitchenSizesStore.oven.size * 20) / 20
-    const OVEN_HALF = Math.round( (ovenSize/2) *20) /20
-   // const OVEN_HALF = 0.2
+    ovenSize === 0.6 ? OVEN_HALF = 0.3 : OVEN_HALF =  0.2 
+
+
+    console.log('ovenHalf', OVEN_HALF)
+    
 
     const levels = this.kitchenSizesStore.levels
 
@@ -248,7 +273,7 @@ export class AlgorithmManager2level {
 
 
    
-     this.currectSize()
+  //   this.currectSize()
 
    
 
@@ -284,11 +309,11 @@ export class AlgorithmManager2level {
 
   // --- Вспомогательная функция для получения набора по размеру ---
    const getRule = (size, variantIndex) => {
-      const filtered = this.filter2(size)
-      const rule = filtered[variantIndex]
-      if (!rule) {
+      const filtered = this.filter2(size) || []
+      const rule = filtered[variantIndex] || []
+      if (!rule.length) {
         this.plannerStore.showError()
-        return {result:[], filtered:[]}
+        
       }
       const result = Object.entries(rule).map(([key, value]) => ({ key, value }))
       return  {rule:result, filtered:filtered}
@@ -296,7 +321,7 @@ export class AlgorithmManager2level {
 
    let hoodModule
 
-      this.kitchenSizesStore.oven.size === 0.45 ? hoodModule = { key: 'hood', value: 'hood2-0.45' } : hoodModule = { key: 'hood', value: 'hood2-0.6' }
+      this.kitchenSizesStore.oven.size === 0.45 ? hoodModule = { key: 'hood', value: 'hood-0.4' } : hoodModule = { key: 'hood', value: 'hood2-0.6' }
 
   // --- Основная логика ---
     if ( !is2level && isOvenSide) {
@@ -361,12 +386,12 @@ export class AlgorithmManager2level {
     // --- Вспомогательная функция для получения набора по размеру ---
     const getRule = (size, variantIndex) => {
     
-      const filtered = this.filter2(size)
-      const rule = filtered[variantIndex]
+       const filtered = this.filter2(size) || []
+      const rule = filtered[variantIndex] || []
     
-      if (!rule) {
+      if (!rule.length) {
         this.plannerStore.showError()
-        return []
+        
       }
       const result = Object.entries(rule).map(([key, value]) => ({ key, value }))
       return  {rule:result, filtered:filtered}
@@ -375,7 +400,7 @@ export class AlgorithmManager2level {
 
      let hoodModule
 
-      this.kitchenSizesStore.oven.size === 0.45 ? hoodModule = { key: 'hood', value: 'hood2-0.45' } : hoodModule = { key: 'hood', value: 'hood2-0.6' }
+      this.kitchenSizesStore.oven.size === 0.45 ? hoodModule = { key: 'hood', value: 'hood-0.4' } : hoodModule = { key: 'hood', value: 'hood2-0.6' }
 
     // --- Основная логика ---
     if ( !is2level && isOvenSide) {
@@ -394,6 +419,10 @@ export class AlgorithmManager2level {
 
     if (isOvenSide && is2level) {
       console.log('3')
+
+
+      const part1 = algorithmConfig.level2.partsSize.directPart1
+      const part2 = algorithmConfig.level2.partsSize.directPart2
 
       // духовка на прямой стороне, 2 уровень
       const result1 = getRule(partsSize.directPart1, variant)
@@ -437,11 +466,11 @@ export class AlgorithmManager2level {
 
   // --- Вспомогательная функция для получения набора по размеру ---
   const getRule = (size, variantIndex) => {
-    const filtered = this.filter2(size)
-    const rule = filtered[variantIndex]
-    if (!rule) {
+    const filtered = this.filter2(size) || []
+    const rule = filtered[variantIndex] || []
+    if (!rule.length) {
       this.plannerStore.showError()
-      return []
+      
     }
     return Object.entries(rule).map(([key, value]) => ({ key, value }))
   }
@@ -449,7 +478,7 @@ export class AlgorithmManager2level {
 
   let hoodModule
 
-      this.kitchenSizesStore.oven.size === 0.45 ? hoodModule = { key: 'hood', value: 'hood2-0.45' } : hoodModule = { key: 'hood', value: 'hood2-0.6' }
+      this.kitchenSizesStore.oven.size === 0.45 ? hoodModule = { key: 'hood', value: 'hood-0.4' } : hoodModule = { key: 'hood', value: 'hood2-0.6' }
 
   // --- Основная логика ---
     if ( !is2level && isOvenSide) {

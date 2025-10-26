@@ -1,3 +1,4 @@
+import Fridge from "../../menu/components/fridge.vue";
 import { namesToDelete } from "./utils/namesToDelete";
 
 export const plannerConfig = {
@@ -12,6 +13,7 @@ export const plannerConfig = {
     penalsLeft:[],
     penalsDirect:[],
     penalsRight:[],
+    fridge:false,
 
     namesToDelete:[],
     namesToDeleteDirect:[],
