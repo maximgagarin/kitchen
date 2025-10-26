@@ -104,7 +104,7 @@
           Далее
         </button>
       </div>
-       <!-- <button @click="showConfig">конфиг</button> -->
+       <button @click="showConfig">конфиг</button>
     </div>
   </div>
 </template>

@@ -248,15 +248,19 @@ export class AlgorithmManager2level {
 
 
    
-      //  Object.values(algorithmConfig.level2.partsSize).forEach(value => {
-      //     console.log(value)
-      //     if(value < 0.15) console.log('второй уровень сторона меньше 0.15')
-      //  })
+     this.currectSize()
 
    
 
   }
 
+  currectSize(){
+    // если размер части меньше 0.15 ставим  0.15
+       Object.keys(algorithmConfig.level2.partsSize).forEach(key => {
+        if(algorithmConfig.level2.partsSize[key] < 0.15)  algorithmConfig.level2.partsSize[key] = 0.15
+    })
+
+  }
 
 
 

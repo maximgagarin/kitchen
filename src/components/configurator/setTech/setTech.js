@@ -12,6 +12,7 @@ import { plannerConfig } from "../planner/planerConfig";
 import { algorithmConfig } from "../builders/Algorithm/algorithmConfig";
 
 import { Service } from "../Service/Service";
+import { useAlgorithmStore } from "../../../pinia/Algorithm";
 
 export class SetTech {
   constructor(scene, tableTopBuilder, loaderModels, cabinetBuilder) {
@@ -28,6 +29,7 @@ export class SetTech {
     this.raycasterStore = useRaycasterPanelsStore();
     this.penalStore = usePenalStore();
     this.rowSegmentsStore = useRowSegmentsStore();
+    this.algStore = useAlgorithmStore()
     this.gaps = [];
     this.lowerRows = [];
     this.findLowerRows();
@@ -524,6 +526,11 @@ export class SetTech {
      algorithmConfig.rowStart.left = 0
      algorithmConfig.rowStart.right = 0
 
+     
+    Object.keys(this.algStore.reverse).forEach(key => {
+        this.algStore.reverse[key] =  false
+    })
+
     const setSize = (part, value) => {
         algorithmConfig.parts_sizes2[part] = Number(value.toFixed(2))
       }
@@ -541,6 +548,9 @@ export class SetTech {
         console.log('1')
         posX =  (sinkSize/2 + penalOffsets.directLeft)
 
+        algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
+
+
         const size = Number((KitchenSizes.side_a - penalOffsets.directRight - penalOffsets.directLeft - sinkSize).toFixed(2))
 
         algorithmConfig.direct2parts = false
@@ -549,9 +559,18 @@ export class SetTech {
 
         kitchenStore.parts.push({  name: "A1", width: size})
 
+        kitchenStore.sink.location = 'directCorner'
+
 
       } else if(pointX > (KitchenSizes.side_a - 0.45 - penalOffsets.directRight)  ){
         console.log('2')
+
+
+        algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
+        kitchenStore.sink.location = 'directEnd'
+
+        this.algStore.reverse.A1 = true
+
         posX = KitchenSizes.side_a - sinkSize/2 - penalOffsets.directRight
         algorithmConfig.direct2parts = false
 
@@ -567,6 +586,11 @@ export class SetTech {
       } else {
         console.log('3')
         algorithmConfig.direct2parts = true
+
+        algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
+        kitchenStore.sink.location = 'directMiddle'
+        this.algStore.reverse.A1 = true
+        this.algStore.reverse.A2 = true
 
 
        const size1 = Number(((x - sinkSize/2) - penalOffsets.directLeft).toFixed(2));
@@ -622,10 +646,13 @@ export class SetTech {
         posX = KitchenSizes.side_a - sinkSize/2  - penalOffsets.directRight
         console.log('2')
 
-          algorithmConfig.rowStart.direct += ROW_WIDTH
-          algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем су1000
-          kitchenStore.su.side = 'left'
+         algorithmConfig.rowStart.direct += ROW_WIDTH
+         algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем су1000
+         kitchenStore.su.side = 'left'
+
+
          algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
+           this.algStore.reverse.A1 = true
 
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - MSU).toFixed(2)) 
@@ -644,8 +671,15 @@ export class SetTech {
 
         algorithmConfig.rowStart.direct += ROW_WIDTH
         algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем мойку
+
+
+        
         algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
-           kitchenStore.su.side = 'left'
+    
+
+
+
+        kitchenStore.su.side = 'left'
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - MSU).toFixed(2)) 
         const size2 = Number((KitchenSizes.side_a - penalOffsets.directRight - ROW_WIDTH - sinkSize).toFixed(2)) 
@@ -727,7 +761,7 @@ export class SetTech {
         
         algorithmConfig.rowStart.left += ROW_WIDTH
         algorithmConfig.resultDirect.push({key:'b1000', value:1}) // вставляем су
-           kitchenStore.su.side = 'direct'
+        kitchenStore.su.side = 'direct'
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - (z + sinkSize/2)).toFixed(2)) 
         const size2 = Number(( (z - sinkSize/2) -  ROW_WIDTH).toFixed(2)) 
@@ -746,6 +780,13 @@ export class SetTech {
 
           algorithmConfig.rowStart.direct += ROW_WIDTH
           algorithmConfig.resultLeft.push({key:'b1000left', value:1}) // вставляем су
+
+        algorithmConfig.resultDirect.push({key:'m', value:sinkSize})
+
+        this.algStore.reverse.A1 = false
+        this.algStore.reverse.A2 = true
+
+
             kitchenStore.su.side = 'left'
     
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - MSU).toFixed(2)) 

@@ -18,12 +18,14 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
     right2:0
  })
 
- const reverse = {
+ const reverse = ref({
   A1:false,
   A2:false,
   C1:false,
   C2:false,
- }
+  D1:false,
+  D2:false
+ })
 
   
   const filtredDirectPart1 = ref([])

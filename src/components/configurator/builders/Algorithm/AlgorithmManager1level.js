@@ -56,6 +56,8 @@ export class AlgorithmManager1level {
 
   }
 
+ 
+
 
   clear(){
       ['SinkNormal', 'sinkModel'].forEach((name) => {
@@ -65,7 +67,7 @@ export class AlgorithmManager1level {
     })
 
 
-      this.algorithmConfig = algorithmConfig
+ 
 
     this.deleteNamesFromPlanner()
 
@@ -120,8 +122,15 @@ export class AlgorithmManager1level {
   }
 
 
-  reverse(){
+  currectSizes(newRules){
+    newRules.forEach(rule=>{
+      if(rule.rule === 'духовка' && rule.moduleSize === 0.45 && rule.length === 0.7){
+        console.log('размер не верен')
+        const newSize = Number((rule.length -= 0.05).toFixed(2))
+        rule.length = newSize
 
+      }
+    })
   }
  
  
@@ -133,6 +142,8 @@ export class AlgorithmManager1level {
     console.log(rule)
     this.algStore.variants = rule.variants
     const variant = rule.variants[value]
+
+    console.log('varaint', variant)
   
     const newRules = []
 
@@ -141,9 +152,12 @@ export class AlgorithmManager1level {
       if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width  })
       if(variant.modules.length === 1) {
         const moduleName = variant.modules[0].name 
-        newRules.push({side:variant.name, rule:this.rules[moduleName] , length:variant.width  })
+        const moduleSize = variant.modules[0].size 
+        newRules.push({side:variant.name, rule:this.rules[moduleName] , length:variant.width , moduleSize:moduleSize })
       }
     })
+
+    this.currectSizes(newRules)
   
     console.log('newRules' , newRules)
 
@@ -169,14 +183,11 @@ export class AlgorithmManager1level {
     
   }
 
-  currect(){
-    
-  }
 
  
 
 
-  currectSizes(){
+  currectSizes2(){
 
     // корректировка т. к. нет правил для 0.25
       const parts = algorithmConfig.parts_sizes2
@@ -190,38 +201,6 @@ export class AlgorithmManager1level {
           parts.directPart2 += 0.05
         }
 
-  }
-
-  direct(){
-    const isSinkSide = this.kitchenSizesStore.sink.side === 'direct'
-    const is2parts = algorithmConfig.direct2parts // если ряд разделен на 2 части раковиной
-    const isOvenSide = this.kitchenSizesStore.oven.side === 'direct'
-    const rules = algorithmConfig.rules
-
-    const hasD = this.kitchenSizesStore.oven.isOven
-    const hasP = this.kitchenSizesStore.dishwasher.isDishwash
-
-      if (hasP && hasD) {
-    // оба есть
-    // пробуем поместить их в одну часть
-    const fitsTogether = parts.find(p => canFit(p, [45, 60]));
-    if (fitsTogether) {
-      fitsTogether.type = "p+d";
-    } else {
-      // если не помещаются вместе, ищем где можно по отдельности
-      const fitsP = parts.find(p => canFit(p, [45]));
-      const fitsD = parts.find(p => canFit(p, [60]) && p !== fitsP);
-      if (fitsP) fitsP.type = "p";
-      if (fitsD) fitsD.type = "d";
-    }
-  } else if (hasP) {
-    const fitsP = parts.find(p => canFit(p, [45]));
-    if (fitsP) fitsP.type = "p";
-  } else if (hasD) {
-    const fitsD = parts.find(p => canFit(p, [60]));
-    if (fitsD) fitsD.type = "d";
-  }
-  
   }
 
  
@@ -691,69 +670,44 @@ export class AlgorithmManager1level {
   }
 
   variantDirect(variant = 0, variant2 = 0) {
-    const kitchenType = this.kitchenSizesStore.type 
     const direct2parts = algorithmConfig.direct2parts
-    const sinkLocation = this.kitchenSizesStore.sink.location
-
     this.deleteDirect();
-
-
     plannerConfig.modelsDirect.length = 0
-
-
-    let z =  Math.round(this.rowSegmentsStore.duct.z * 20) / 20;
-    let x =  Math.round(this.rowSegmentsStore.duct.x * 20) / 20;
-
-
-    const m = this.kitchenSizesStore.sink.size; // фиксированная мойка, можно передать из параметров
+    const reverse = this.algStore.reverse   // реверс модулей
+    const sinkLocation = this.kitchenSizesStore.sink.location
 
 
     let rule = this.algStore.filtredDirectPart1[variant];
     let rule2 = this.algStore.filtredDirectPart2[variant2];
 
+     //   algorithmConfig.resultDirect.splice(1, 0, ...result)
+
 
  
     if(rule){
-      let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
-      algorithmConfig.resultDirect.splice(1, 0, ...result)
+       let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
+       if(sinkLocation === 'directCorner') algorithmConfig.resultDirect.push(...result);
+       if(sinkLocation !=='directCorner')  algorithmConfig.resultDirect.unshift(...result);
     } else {
       this.plannerStore.showError();
       console.log('нет правил')
     }
 
 
-    if(kitchenType === 'direct' ){
-
-      algorithmConfig.resultDirect.reverse()
-      if(sinkLocation  === 'end'){
-      
-        algorithmConfig.resultDirect.reverse()
 
 
-        algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
 
-
-      } else if(!algorithmConfig.direct2parts){
-
-        algorithmConfig.resultDirect.unshift({ key: 'm', value: 0.6 });
-      }
-
-    } 
-
-
-    if(kitchenType === 'left'){
-      if(sinkLocation ==='directEnd') algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
-      if(sinkLocation ==='directStart') algorithmConfig.resultDirect.unshift({ key: 'm', value: 0.6 });
-
-    }
-
-
-    if(algorithmConfig.direct2parts){
-  
-       algorithmConfig.resultDirect.push({ key: 'm', value: 0.6 });
+    if(direct2parts){
        if(rule2){
           let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
+
+          if(reverse.A2) {
+            console.log('reverse2')
+           result2.reverse()
+          } 
           algorithmConfig.resultDirect.push(...result2);
+
+
        } else {
           this.plannerStore.showError();
           console.log('нет правил')
@@ -816,14 +770,14 @@ export class AlgorithmManager1level {
 
     rulesPart1.forEach((rule) => {
       let matchLength = rule.l == length1;
-    
-     
- 
-     // let matchDishwasher = P == 0  ? !("p" in rule)  : rule.p == P; 
-       let matchDishwasher  = "p" in rule ? rule.p == P : true;
+
+      let matchDishwasher  = "p" in rule ? rule.p == P : true;
       let matchOven = "d" in rule ? rule.d == D : true;
-      // если правила direct2 то не проверяем посудомойку
-      // if(rulesPart1hasDirect2) matchDishwasher = true
+
+     //let matchDishwasher  =  rule.p == P 
+   //  let matchOven =  rule.d == D 
+
+
       if (matchLength && matchDishwasher && matchOven ) {
          this.algStore.filtredDirectPart1.push(rule);
       }
@@ -832,14 +786,8 @@ export class AlgorithmManager1level {
 
       rulesPart2.forEach((rule) => {
       const matchLength = rule.l == length2;
-      if(this.sinkSide == 'left'  && this.kitchenSizesStore.type == 'left') P  = 0
-
-      //let matchDishwasher = P == 0   ? !("p" in rule)   : rule.p == P; 
       let matchDishwasher  = "p" in rule ? rule.p == P : true;
       let matchOven = "d" in rule ? rule.d == D : true;
-
-      // if(rulesPart2hasDirect2) matchDishwasher = true
-
       if (matchLength && matchDishwasher && matchOven ) {
         this.algStore.filtredDirectPart2.push(rule);
       }
@@ -986,7 +934,7 @@ export class AlgorithmManager1level {
     });
     //this.NamesToDeleteDirect.length = 0;
     plannerConfig.namesToDeleteDirect.length = 0 
-    const filtred1 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000", "module-sink-1000-left", "b1000"].includes(item.key))
+    const filtred1 = algorithmConfig.resultDirect.filter(item=> ["b1000left", "module-sink-1000", "module-sink-1000-left", "b1000", "m"].includes(item.key))
     algorithmConfig.resultDirect = filtred1
   }
 
@@ -1025,9 +973,5 @@ export class AlgorithmManager1level {
     });
   }
 
- canFit(part, sizes) {
-  const total = sizes.reduce((a, b) => a + b, 0);
-  return part.width >= total;
-}
 
 }
