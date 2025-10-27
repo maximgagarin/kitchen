@@ -1,43 +1,36 @@
 <template>
-  <div class="p-6">
-    <h3 class="text-xl font-semibold mb-4">
+  <div class="p-4 bg-white rounded-lg shadow-md max-w-xs mx-auto">
+    <h3 class="text-lg font-semibold text-gray-900 mb-3">
       Будет встроенная посудомоечная машина?
     </h3>
 
-
-
-
-
-      <!-- <select v-if="kitchenStore.availableDish.size !== 1" v-model="kitchenStore.dishwasher.size"
-        class="border rounded p-2 w-40">
-        <option :value="null" disabled>Выбери размер</option>
-        <option v-for="size in kitchenStore.availableDish" :key="size" :value="size">
-          {{ size }}
-        </option>
-      </select> -->
-
-
-      
-    <div  v-if="kitchenStore.availableDish.size !== 1">
-      <label v-for="size in kitchenStore.availableDish" :key="size" class="cursor-pointer relative">
-        <input type="radio" v-model="kitchenStore.dishwasher.size" :value="size"
-          class="card-checkbox absolute opacity-0 w-0 h-0">
-    
-             <p class="text-lg font-bold  text-gray-800">{{  size*100 === 0  ? 'нет ' : size*100 + ' см' }} </p>
+    <div v-if="kitchenStore.availableDish.size !== 1" class="flex flex-col space-y-2">
+      <label
+        v-for="size in kitchenStore.availableDish"
+        :key="size"
+        class="cursor-pointer flex items-center px-3 py-2 border rounded-md transition-colors duration-150"
+        :class="{
+          'border-indigo-500 bg-indigo-50': kitchenStore.dishwasher.size === size,
+          'border-gray-300 hover:bg-gray-100': kitchenStore.dishwasher.size !== size
+        }"
+      >
+        <input
+          type="radio"
+          v-model="kitchenStore.dishwasher.size"
+          :value="size"
+          class="absolute opacity-0 w-0 h-0"
+        />
+        <span class="text-sm font-medium text-gray-900">
+          {{ size * 100 === 0 ? 'нет' : size * 100 + ' см' }}
+        </span>
       </label>
     </div>
 
-
- 
-
-
-    <h3 v-if="kitchenStore.availableDish.size === 1" class="text-md font-semibold mb-4">
-      посудомоечная машина не помещяется
+    <h3 v-else class="text-sm font-semibold text-gray-500 mt-2">
+      Посудомоечная машина не помещается
     </h3>
   </div>
-
 </template>
-
 <script setup>
 import { ref, watch, inject } from "vue";
 import { useKitchenSizesStore } from "../../pinia/kitchenSizes";

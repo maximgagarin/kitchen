@@ -1,48 +1,31 @@
 <template>
-  <div class="p-6">
-    <h3 class="text-xl font-semibold">
-      {{ penalStore.isOven ? 'Будет варочная панель?' : "Будет плита?" }}</h3>
+  <div class="p-4 bg-white rounded-lg shadow-md max-w-xs mx-auto">
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+      {{ penalStore.isOven ? 'Варочная панель?' : 'Плита?' }}
+    </h3>
 
-
-
-    <!-- <div v-if="kitchenSizes.oven.type !== 'none'" class="mb-4 mt-4">
-      <select v-model="kitchenSizes.oven.size" class="border rounded p-2 w-40">
-        <option :value="null" disabled>Выберите размер</option>
-        <option v-for="size in kitchenSizes.availableOven" :key="size" :value="size">
-          {{ size }}
-        </option>
-      </select>
-    </div> -->
-
-
-
-
-
-    <div class="mt-3">
-      <label v-for="size in kitchenSizes.availableOven" :key="size" class="cursor-pointer relative">
-        <input type="radio" v-model="kitchenSizes.oven.size" :value="size"
-          class="card-checkbox absolute bg-gray-100 opacity-0 w-0 h-0">
-    
-            <p class="text-lg font-bold  text-gray-800">{{  size*100 === 0  ? 'нет ' : size*100 + ' см' }} </p>
+    <div class="flex flex-col space-y-2">
+      <label
+        v-for="size in kitchenSizes.availableOven"
+        :key="size"
+        class="cursor-pointer flex items-center px-3 py-2 border rounded-md transition-colors duration-150"
+        :class="{
+          'border-indigo-500 bg-indigo-50': kitchenSizes.oven.size === size,
+          'border-gray-300 hover:bg-gray-100': kitchenSizes.oven.size !== size
+        }"
+      >
+        <input
+          type="radio"
+          v-model="kitchenSizes.oven.size"
+          :value="size"
+          class="absolute opacity-0 w-0 h-0"
+        />
+        <span class="text-sm font-medium text-gray-900">
+          {{ size * 100 === 0 ? 'нет' : size * 100 + ' см' }}
+        </span>
       </label>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
   </div>
-
-
-
-
 </template>
 
 <script setup>
