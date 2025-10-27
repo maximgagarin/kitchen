@@ -1156,7 +1156,7 @@ this.plannerStore.movedBack = false;
 
      
 
-     this.mouse.set(
+    this.mouse.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
     );
@@ -1304,7 +1304,7 @@ this.plannerStore.movedBack = false;
 
     
    //пересчёт пустых
-  // this.emptyManager.calculateEmpties();
+   this.emptyManager.calculateEmpties();
   
 
     if(this.kitchenSizesStore.type == 'left'){

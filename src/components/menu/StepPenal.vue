@@ -61,7 +61,7 @@
   <div v-if="selectedOption != 10" class="mb-3">
    
     <div class="flex space-x-3">
-       <p class="text-xs flex  items-center">Ширина</p>
+       <p class="text-xs flex  font-semibold text-gray-700  items-center">Ширина</p>
       <button
         v-for="width in ['400', '450', '600']"
         :key="width"
@@ -81,7 +81,7 @@
   <!-- Выбор положения -->
   <div class="mb-3">
    
-    <div class="flex space-x-4">
+    <div class="flex space-x-4 max-h-12">
        <p class="text-xs font-semibold text-gray-700  flex items-center">Сторона</p> 
       <button
         
@@ -102,7 +102,9 @@
         @click="selectedPosition = 'right'"
         :class="[
           'px-1 py-1 rounded-lg border text-sm text-xs font-medium transition flex items-center gap-2',
-          selectedPosition === 'right'  ?' text-brand  bg-gray-100': 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+          selectedPosition === 'right'
+            ?' text-brand  bg-gray-100'
+            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
         ]"
         
       >
@@ -147,7 +149,7 @@
           :key="penal.id"
           class="flex justify-between items-center bg-gray-100   pl-2  rounded-lg  shadow-sm"
         >
-          <div class="text-gray-700 font-medium text-xs">
+          <div class="text-gray-700 font-medium text-xs ">
             <span>{{ penal.width * 1000 }} мм</span>
             <span> левый</span>
           </div>

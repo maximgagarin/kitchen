@@ -13,6 +13,7 @@
 import { inject , ref } from 'vue';
 import { useAlgorithmStore } from '../../../pinia/Algorithm';
 import { useKitchenSizesStore } from '../../../pinia/kitchenSizes';
+import { plannerConfig } from '../../configurator/planner/planerConfig';
 
 const algStore = useAlgorithmStore()
 const kitchenStore = useKitchenSizesStore()
@@ -42,6 +43,8 @@ function changeVariant(value){
     if(kitchenStore.type === "left") algorithmManager.value.algorithm2level.buildLeft();
 
     plannerManager.value.tableTop.create() 
+
+    plannerConfig.models.push( ...plannerConfig.modelsDirect2L, ...plannerConfig.modelsLeft2L)
 }
 
 </script>

@@ -3,28 +3,39 @@
     <h3 class="text-xl font-semibold mb-4">
       Будет встроенная посудомоечная машина?
     </h3>
-    <select
-      v-if="kitchenStore.availableDish.size !== 1"
-      v-model="kitchenStore.dishwasher.size"
-      class="border rounded p-2 w-40"
-    >
-      <option :value="null" disabled>Выбери размер</option>
-      <option
-        v-for="size in kitchenStore.availableDish"
-        :key="size"
-        :value="size"
-      >
-        {{ size }}
-      </option>
-    </select>
-     <h3
-    v-if="kitchenStore.availableDish.size === 1"
-    class="text-md font-semibold mb-4"
-  >
-    посудомоечная машина не помещяется
-  </h3>
-  </div>
+
+
+
+
+
+      <!-- <select v-if="kitchenStore.availableDish.size !== 1" v-model="kitchenStore.dishwasher.size"
+        class="border rounded p-2 w-40">
+        <option :value="null" disabled>Выбери размер</option>
+        <option v-for="size in kitchenStore.availableDish" :key="size" :value="size">
+          {{ size }}
+        </option>
+      </select> -->
+
+
+      
+    <div  v-if="kitchenStore.availableDish.size !== 1">
+      <label v-for="size in kitchenStore.availableDish" :key="size" class="cursor-pointer relative">
+        <input type="radio" v-model="kitchenStore.dishwasher.size" :value="size"
+          class="card-checkbox absolute opacity-0 w-0 h-0">
+    
+             <p class="text-lg font-bold  text-gray-800">{{  size*100 === 0  ? 'нет ' : size*100 + ' см' }} </p>
+      </label>
+    </div>
+
+
  
+
+
+    <h3 v-if="kitchenStore.availableDish.size === 1" class="text-md font-semibold mb-4">
+      посудомоечная машина не помещяется
+    </h3>
+  </div>
+
 </template>
 
 <script setup>
@@ -34,8 +45,11 @@ import { useRowSegmentsStore } from "../../pinia/RowSegments";
 
 const kitchenStore = useKitchenSizesStore();
 
+let hasDishwasher = ref(true)
+
 const rules = kitchenStore.filtredRules;
 const rulesCopy = [...rules]
+
 
 //если посудомойка не входит
 if (kitchenStore.availableDish.size === 1) {
@@ -49,8 +63,7 @@ const selected = ref(null);
 function printResults(results) {
   results.forEach((r) => {
     console.log(
-      `\n=== [${r.set}] oven=${r.ovenSize ?? "-"} | dish=${
-        r.dishSize ?? "-"
+      `\n=== [${r.set}] oven=${r.ovenSize ?? "-"} | dish=${r.dishSize ?? "-"
       } ===`
     );
     r.variants.forEach((variant, i) => {
@@ -104,19 +117,19 @@ watch(
 
       //если нет дх и пм то правила пустые
       if (kitchenStore.oven.size === 0) {
-        const totalRules = 
-          {
-            set: "none",
-            ovenSize: 0,
-            dishSize: 0,
-            variants: [],
-          }
-        
-          const variant = []
-          totalRules.variants.push(variant)
+        const totalRules =
+        {
+          set: "none",
+          ovenSize: 0,
+          dishSize: 0,
+          variants: [],
+        }
+
+        const variant = []
+        totalRules.variants.push(variant)
 
 
-        
+
         console.log("0+0");
         kitchenStore.parts.forEach((part) => {
           variant.push({
@@ -154,6 +167,7 @@ watch(
   transition: all 0.3s ease;
   width: 130px;
 }
+
 .buttonWrapper {
   margin-top: 25px;
 }
@@ -173,6 +187,5 @@ watch(
   text-align: center;
 }
 
-.sinkButton:hover {
-}
+.sinkButton:hover {}
 </style>

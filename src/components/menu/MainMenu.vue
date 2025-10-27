@@ -1,6 +1,9 @@
 <template>
 
 
+  <ShowError />
+
+
   <div
     v-if="kitchenSizes.step != 5"
     class="fixed left-[15%] top-5 w-1/2 h-[50px] bg-white text-md"
@@ -58,7 +61,7 @@
         <button
           @click="next"
           class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-          :disabled="kitchenSizes.step == 1"
+          
         >
           Далее
         </button>
@@ -72,6 +75,7 @@
 import { ref, computed, inject } from "vue";
 import Step1 from "./Step1.vue";
 import config from "../config/config";
+import ShowError from "./components/ShowError.vue";
 
 import StepDirect from "./StepDirect.vue";
 import StepLeft from "./StepLeft.vue";
@@ -89,10 +93,11 @@ import Planner from "./StepPlanner.vue";
 import { lines } from "../config/lines";
 import { algorithmConfig } from "../configurator/builders/Algorithm/algorithmConfig";
 import { plannerConfig } from "../configurator/planner/planerConfig";
-
 import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
+import { useUiStore } from "../../pinia/Ui";
 
 const kitchenSizes = useKitchenSizesStore();
+const uiStore  = useUiStore()
 
 const cabinetBuilder = inject("cabinetBuilder");
 
@@ -129,7 +134,13 @@ function togglePanel() {
 }
 
 function next() {
-  if (config.type) {
+console.log('123')
+  if(kitchenSizes.step === 2 && !kitchenSizes.sink.isSet){
+    console.log('123')
+    uiStore.showError('установите раковину')
+  }  else {
+
+      if (config.type) {
     kitchenSizes.step++;
     kitchenSizes.step > maxStep.value ? maxStep.value++ : maxStep.value;
     //  console.log('maxStep', maxStep.value)
@@ -137,6 +148,12 @@ function next() {
   } else {
     alert("Выберите тип кухни перед продолжением!");
   }
+
+  }
+
+ 
+
+
 }
 
 function prev() {

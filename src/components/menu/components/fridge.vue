@@ -1,19 +1,19 @@
 <template>
     <!-- холодильник -->
     <div class=" border-t mt-3" >
-        <h2 class="text-md  mt-3">Холодильник</h2>
+        <h2 class="text-xs font-semibold  mt-3">Холодильник</h2>
 
         <!-- Выбор положения -->
         <div class="mt-3">
             <div class="flex space-x-4 ">
-            <h3 class="text-xs font-semibold text-gray-700 ">Положение</h3>
+            <h3 class="text-xs font-semibold  items-center text-gray-700 ">Положение</h3>
 
                 <button @click="handleLeft"
                  :class="[
-                    'px-1 py-1 rounded-md border text-xs font-medium transition flex items-center gap-2',
+                    ' py-1 px-1  rounded-lg border text-xs font-medium transition flex items-center gap-2',
                     selectedSide === 'left'
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                        ? ' text-brand  bg-gray-100'
+                         : 'bg-white text-gray-700 border-gray-300 hover:'
                 ]"
                >
                     Слева
@@ -21,10 +21,10 @@
 
                 <button @click="handleRight" 
                 :class="[
-                    'px-2 py-1 rounded-md border text-xs transition p-1',
+                     ' py-1 px-1  rounded-lg border text-xs font-medium transition flex items-center gap-2',
                     selectedSide === 'right'
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                   ? ' text-brand  bg-gray-100'
+                         : 'bg-white text-gray-700 border-gray-300 hover:'
                 ]">
                     Справа
                 </button>
@@ -37,7 +37,7 @@
         <!-- Кнопка добавления -->
          <div class="flex space-x-4 mt-3">
                    <button
-            class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-2 px-2 rounded-lg shadow transition-colors duration-200"
+            class="bg-gray-100 text-black text-xs font-medium  py-2 px-2 rounded-lg shadow transition-colors duration-200 hover:text-brand"
              :disabled="(props.isLeftEndPenal && selectedSide == 'left') || (props.isRightEndPenal && selectedSide == 'right') "
             @click="kitchenStore.fridge.isSet ? deleteFridge() : addFridge()">
             {{ kitchenStore.fridge.isSet ? 'Удалить холодильник' : 'Добавить холодильник' }}

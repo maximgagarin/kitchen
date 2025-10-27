@@ -108,9 +108,11 @@ import { inject, ref} from "vue";
 import { useAlgorithmStore } from "../../../pinia/Algorithm";
 import { algorithmConfig } from "../../configurator/builders/Algorithm/algorithmConfig";
 import { useKitchenSizesStore } from "../../../pinia/kitchenSizes";
+import { plannerConfig } from "../../configurator/planner/planerConfig";
 
 
 const algorithmManager = inject("algorithmManager");
+const plannerManager = inject("plannerManager");
 const algStore = useAlgorithmStore()
 const kithenStore = useKitchenSizesStore()
 
@@ -118,25 +120,6 @@ const index = algStore.variantIndex.level1
 const index2level = algStore.variantIndex.level2
 
 const kithcenType = kithenStore.type
-
-
-
-
-
-
-
-const direct1Index = ref(0)
-const direct2Index = ref(0)
-const left1Index = ref(0)
-const left2Index = ref(0)
-
-const direct1Index2 = ref(0)
-const direct2Index2 = ref(0)
-const left1Index2 = ref(0)
-const left2Index2 = ref(0)
-
-
-
 
 
 function changeVariantDirect(delta)  {
@@ -158,6 +141,8 @@ function changeVariantDirect(delta)  {
       index2level.direct2 = 0
 
  }
+  plannerManager.value.tableTop.create() 
+  calcEmpties()
 };
 
 function changeVariantDirect2(delta)  {
@@ -177,7 +162,12 @@ function changeVariantDirect2(delta)  {
     index2level.direct1 = 0
     index2level.direct2 = 0
  }
+
+  plannerManager.value.tableTop.create() 
+  calcEmpties()
 };
+
+
 function changeVariantLeft1(delta)  {
  const oldOvenPos = algorithmConfig.oven.position
  index.left1 +=delta 
@@ -195,7 +185,12 @@ function changeVariantLeft1(delta)  {
     index2level.left1 = 0
     index2level.left2 = 0
  }
+
+  plannerManager.value.tableTop.create()
+  calcEmpties() 
 };
+
+
 function changeVariantLeft2(delta)  {
  const oldOvenPos = algorithmConfig.oven.position
 
@@ -213,36 +208,70 @@ function changeVariantLeft2(delta)  {
     index2level.left1 = 0
     index2level.left2 = 0
  }
+
+ plannerManager.value.tableTop.create() 
+ calcEmpties()
 };
 
 
 
 function changeVariantDirectl2(delta)  {
+  
  index2level.direct1 +=delta 
   algorithmManager.value.algorithm2level.createParts()
  algorithmManager.value.algorithm2level.buildDirect(index2level.direct1,index2level.direct2 );
     if(kithcenType === 'left')  algorithmManager.value.algorithm2level.buildLeft(index2level.left1,index2level.left2);
 
+     filterModelsArray()
+
 };
 function changeVariantDirect2l2(delta)  {
+  
  index2level.direct2 +=delta 
  algorithmManager.value.algorithm2level.createParts()
  algorithmManager.value.algorithm2level.buildDirect(index2level.direct1,index2level.direct2  );
     if(kithcenType === 'left')  algorithmManager.value.algorithm2level.buildLeft(index2level.left1,index2level.left2);
 
+     filterModelsArray()
+
 };
+
+
 function changeVariantLeft1l2(delta)  {
+ 
  index2level.left1 +=delta 
  algorithmManager.value.algorithm2level.createParts()
  algorithmManager.value.algorithm2level.buildLeft(index2level.left1,index2level.left2 );
  algorithmManager.value.algorithm2level.buildDirect(index2level.direct1,index2level.direct2 );
+  filterModelsArray()
 
 };
 function changeVariantLeft2l2(delta)  {
+ 
  index2level.left2 +=delta 
  algorithmManager.value.algorithm2level.createParts()
  algorithmManager.value.algorithm2level.buildLeft(index2level.left1,index2level.left2);
  algorithmManager.value.algorithm2level.buildDirect(index2level.direct1,index2level.direct2 );
+  filterModelsArray()
 
 };
+
+
+function filterModelsArray(){
+  const newArray = []
+  plannerConfig.models.length = 0
+
+     plannerConfig.models = [...plannerConfig.modelsLeft, ...plannerConfig.modelsDirect ,
+       ...plannerConfig.modelsDirect2L, ...plannerConfig.modelsLeft2L, ...plannerConfig.penalsArray];
+
+}
+
+
+function calcEmpties(){
+  plannerManager.value.emptyManager.calculateEmpties();
+   if(kithenStore.type == 'left'){
+      plannerManager.value.emptyManager.calculateEmptiesLeft()
+    }
+    //this.emptyManager2L.calculateEmpties()
+}
 </script>

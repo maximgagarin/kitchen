@@ -34,12 +34,14 @@
 
 
 
+  <!-- <p>установите раковину</p> -->
+
   <div class="buttonWrapper">
     <button class="sinkButton" @click="restart">начать заново</button>
   </div>
   <div>
-    <p>{{ kitchenSizes.parts.direct1 }}</p>
-    <p>{{ kitchenSizes.parts.direct2 }}</p>
+    <p>{{ kitchenStore.parts.direct1 }}</p>
+    <p>{{ kitchenStore.parts.direct2 }}</p>
 
   </div>
 </template>
@@ -50,7 +52,8 @@ import { useKitchenSizesStore } from '../../pinia/kitchenSizes';
 import { useRowSegmentsStore } from '../../pinia/RowSegments';
 
 
-const kitchenSizes = useKitchenSizesStore();
+
+const kitchenStore = useKitchenSizesStore();
 const rowSegmentsStore = useRowSegmentsStore()
 
 const setTech = inject("setTech");
@@ -73,7 +76,8 @@ watch(selectedVariant, (newVal) => {
 });
 
 function restart() {
-  setTech.value.gaps=[]
+  kitchenStore.sink.isSet = false
+  setTech.value.gaps = []
   rowSegmentsStore.removeSegmentTypes(['build_direct_l1', 'build_left_l1', 'build_right_l1']);
   rowSegmentsStore.removeSegmentType('sink')
   setTech.value.setSink();
