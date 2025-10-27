@@ -1,88 +1,125 @@
 <template>
   <!--  панель с характеристиками -->
+  <!-- Панель с характеристиками -->
   <div
-    class="fixed bottom-10 left-[600px] w-[600px] h-[200px] p-3 mr-4 bg-white pointer-events-none rounded-md z-50 pointer-events-auto border-2 border-gray-400"
     v-if="plannerStore.objectMenu"
+    class="fixed bottom-24 left-[20%] w-[580px] p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
   >
-    <span>{{ plannerStore.selectedObject.name }}</span>
-    <!-- <p>Возможные варианты:</p> -->
-    <div class="flex flex-row justify-between gap-3 mb-3 mt-3">
-      <p>выбрать модуль</p>
-      <div>
-        <!-- <button class="border-b" @click="deleteSelected">удалить✕</button> -->
-      </div>
+    <!-- Заголовок -->
+    <div class="flex items-center justify-between mb-2">
+      <span class="font-medium text-gray-700 truncate">
+        {{ plannerStore.selectedObject.name }}
+      </span>
+      <!-- <button class="text-gray-500 hover:text-red-500 text-xs" @click="deleteSelected">✕ удалить</button> -->
     </div>
 
-    <div class="flex flex-row gap-3">
-      <div>
-       
-        <select v-model="selectedType" name="выбрать" id="">
-          <option disabled value="">Выберите тип</option>
-          <option v-if="!plannerStore.onlyPenal" value="cd">с</option>
-          <option v-if="!plannerStore.onlyPenal" value="c1">1 ящ</option>
-          <option v-if="!plannerStore.onlyPenal" value="c2">2 ящ</option>
-          <option v-if="!plannerStore.onlyPenal" value="c3">3 ящ</option>
-          <option v-if="!plannerStore.onlyPenal" value="su">su</option>
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-gray-600">Добавить модуль</p>
+    </div>
 
-          <option
-            v-if="plannerStore.anyModule || plannerStore.onlyPenal"
-            value="penal"
-          >
-            пенал
-          </option>
-        </select>
-      </div>
-      <div>
-        
-        <select
-          v-if="selectedType !== 'penal'"
-          v-model="selectedWidth"
-          @change="changeModule()"
-          class="border px-2 py-1"
+    <!-- Карточки выбора типа -->
+    <div class="flex flex-wrap gap-1.5 mb-2">
+      <label
+        v-for="option in typeOptions"
+        :key="option.value"
+        class="cursor-pointer border rounded-lg px-2 py-1 flex items-center text-xs transition
+               hover:bg-gray-100 hover:shadow-sm border-gray-300"
+        :class="{
+          'bg-blue-100 border-blue-500 text-blue-700': selectedType === option.value
+        }"
+      >
+        <input
+          type="radio"
+          class="hidden"
+          name="moduleType"
+          :value="option.value"
+          v-model="selectedType"
+          @change="onTypeChange"
+        />
+        <span>{{ option.label }}</span>
+      </label>
+    </div>
+
+    <!-- Контейнер для выбора размера/пенала -->
+    <div class="flex flex-col gap-2">
+      <!-- 👉 карточки выбора ширины (обычные модули) -->
+      <div
+        v-if="selectedType !== 'penal'"
+        class="flex flex-wrap gap-1.5"
+      >
+        <label
+          v-for="(type, index) in plannerStore.modelsList[selectedType]"
+          :key="index"
+          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition
+                 hover:bg-gray-100 border-gray-300"
+          :class="{
+            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm': selectedWidth === type
+          }"
         >
-          <option
-            v-for="(type, index) in plannerStore.modelsList[selectedType]"
-            :key="index"
+          <input
+            type="radio"
+            class="hidden"
+            name="module-width"
             :value="type"
-          >
-            {{ type }}
-          </option>
-        </select>
-
-        <select v-if="selectedType === 'penal'" v-model="selectedPenal">
-          <option
-            v-for="(item, index) in plannerStore.modelsList.penal"
-            :key="index"
-            :value="item"
-          >
-            {{ item.description }}
-          </option>
-        </select>
-
-        <select
-          v-if="selectedPenal"
-          v-model="selectedSize"
-          @change="changeModule()"
-        >
-          <option
-            v-for="(size, idx) in selectedPenal.sizes"
-            :key="idx"
-            :value="size"
-          >
-            {{ size }}
-          </option>
-        </select>
+            v-model="selectedWidth"
+            @change="changeModule"
+          />
+          {{ type * 100 + ' см' }}
+        </label>
       </div>
-      <div>
-        <!-- <button class="border-b" @click="rotate(false)">⟲</button>
-      <button class="border-b" @click="rotate(true)">⟳</button> -->
+
+      <!-- 👉 карточки выбора пенала -->
+      <div
+        v-if="selectedType === 'penal'"
+        class="flex flex-wrap gap-1.5"
+      >
+        <label
+          v-for="(item, index) in plannerStore.modelsList.penal"
+          :key="index"
+          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition
+                 hover:bg-gray-100 border-gray-300 flex items-center justify-center text-center"
+          :class="{
+            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm': selectedPenal === item
+          }"
+        >
+          <input
+            type="radio"
+            class="hidden"
+            name="penal-type"
+            :value="item"
+            v-model="selectedPenal"
+            @change="() => { selectedSize = ''; }"
+          />
+          {{ item.description }}
+        </label>
+      </div>
+
+      <!-- 👉 карточки выбора размера пенала -->
+      <div
+        v-if="selectedPenal"
+        class="flex flex-wrap gap-1.5"
+      >
+        <label
+          v-for="(size, idx) in selectedPenal.sizes"
+          :key="idx"
+          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition
+                 hover:bg-gray-100 border-gray-300"
+          :class="{
+            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm': selectedSize === size
+          }"
+        >
+          <input
+            type="radio"
+            class="hidden"
+            name="penal-size"
+            :value="size"
+            v-model="selectedSize"
+            @change="changeModule"
+          />
+          {{ size * 100 + ' см' }}
+        </label>
       </div>
     </div>
-    <!-- <div>
-      <span>мойка</span>
-      <input type="checkbox" id="sink"  value="Bike" @click="setSink()">
-
-    </div> -->
   </div>
 
   <div
@@ -100,10 +137,6 @@
           <option value="ВПГ">ВПГ</option>
           <option value="ВПГС">ВПГС</option>
           <option value="ПЛД">ПЛД</option>
-
-
-
-
           <option value="ОПМ">ОПМ</option>
           <option value="ПГС">ПГС</option>
           <option value="ПЛВ">ПЛВ</option>
@@ -140,6 +173,7 @@
   </div>
 
   <!-- <AccordionMenu @select="handleSelectModule" /> -->
+
   <CollisionAlert />
 
   <div class="mt-5 flex justify-between">
@@ -235,6 +269,15 @@ const selectedSize = ref(null);
 const selectedHandle = ref(null);
 const selectedColor = ref(null);
 const selectedFacade = ref(null);
+
+const typeOptions = computed(() => [
+  { value: "cd", label: "с" },
+  { value: "c1", label: "1 ящ" },
+  { value: "c2", label: "2 ящ" },
+  { value: "c3", label: "3 ящ" },
+  { value: "su", label: "su" },
+  { value: "penal", label: "Пенал" },
+]);
 
 
 

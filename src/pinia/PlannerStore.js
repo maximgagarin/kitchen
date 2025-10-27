@@ -22,25 +22,25 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     penal:[
         {
           name:'1',
-          description:'с духовкой + 1ящик',
+          description:'дух + 1ящик',
           sizes:[0.45,0.6],
         }
      ,       
         {
           name:'2',
-          description:'с духовкой + 2ящ',
+          description:'дух + 2ящ',
           sizes:[0.45,0.6],
         }
      ,     
         {
           name:'3',
-          description:'с духовкой и свч',
+          description:'дух и свч',
           sizes:[0.45,0.6],
         }
       ,   
         {
           name:'4',
-          description:'полки и ящики',
+          description:'полки и ящ.',
           sizes:[0.4,0.45,0.6],
         }
      ,

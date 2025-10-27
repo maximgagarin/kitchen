@@ -6,9 +6,9 @@
 
   <div
     v-if="kitchenSizes.step != 5"
-    class="fixed left-[15%] top-5 w-1/2 h-[50px] bg-white text-md"
+    class="fixed left-[15%] top-5 w-1/2 h-[80px] bg-white text-md rounded-sm justify-center flex items-center"
   >
-    <div class="flex flex-row">
+    <div class="flex flex-row ">
       <div
         v-for="(item, index) in menuItems"
         :key="index"

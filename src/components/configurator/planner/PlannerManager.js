@@ -280,9 +280,9 @@ export class PlannerManager {
      
       this.emptyManager.addToEmpty(type, width, penal)
       this.emptyManager.calculateEmpties()
-  
-      
+      this.tableTop.create() 
       this.sceneSetup.requestRender()
+      
     } else if(plannerConfig.selectedEmpty2L.name){
       console.log('addToEmpty2')
 

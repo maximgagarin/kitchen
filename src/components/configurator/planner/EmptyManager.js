@@ -573,7 +573,7 @@ let closestRight = Infinity;
     plannerConfig.selectedObject = false
     plannerConfig.selectedEmpty = false
 
-    this.calculateSlotPositions();
+   // this.calculateSlotPositions();
     this.sceneSetup.requestRender();
     //   console.log(this.scene)
   }

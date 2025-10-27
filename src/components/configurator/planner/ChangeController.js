@@ -19,7 +19,7 @@ export class ChangeController{
 
      changeSelected(type, width) {
     
-        this.calculateSlotsNew()
+      //  this.calculateSlotsNew()
     
         const side = plannerConfig.selectedObject.side;
     
@@ -257,7 +257,7 @@ export class ChangeController{
     return false;
   }
 
-          deleteSelected() {
+  deleteSelected() {
             const obj = plannerConfig.selectedObject;
             const side = plannerConfig.selectedObject.side;
           //  console.log(side);
