@@ -154,9 +154,12 @@ export class AlgorithmManager2level {
       algorithmConfig.level2.partsSize[part] = Number(value.toFixed(3))
     }
       if(!ovenSide){
+        console.log('1')
         setSize('directPart1', sideSizes.side_a - offsets.directLeft - offsets.directRight)
         algorithmConfig.level2.rowStart.direct += offsets.directLeft
       } else {
+        console.log('2')
+
         setSize('directPart1', (ovenPos-OVEN_HALF) - offsets.directLeft)
         setSize('directPart2', sideSizes.side_a - (ovenPos + OVEN_HALF) - offsets.directRight)
         algorithmConfig.level2.rowStart.direct += offsets.directLeft
@@ -309,7 +312,7 @@ export class AlgorithmManager2level {
 
   // --- Вспомогательная функция для получения набора по размеру ---
    const getRule = (size, variantIndex) => {
-      const filtered = this.filter2(size) || []
+        const filtered = (this.filter2(size) || []).filter(rule => rule.P_1 !== 0);
       const rule = filtered[variantIndex] || []
       if (!rule.length) {
         this.plannerStore.showError()
@@ -386,7 +389,10 @@ export class AlgorithmManager2level {
     // --- Вспомогательная функция для получения набора по размеру ---
     const getRule = (size, variantIndex) => {
     
-       const filtered = this.filter2(size) || []
+        const filtered = (this.filter2(size) || []).filter(rule => rule.P_1 !== 0);
+
+       console.log('filter', filtered)
+
       const rule = filtered[variantIndex] || []
     
       if (!rule.length) {
@@ -466,7 +472,7 @@ export class AlgorithmManager2level {
 
   // --- Вспомогательная функция для получения набора по размеру ---
   const getRule = (size, variantIndex) => {
-    const filtered = this.filter2(size) || []
+    const filtered = (this.filter2(size) || []).filter(rule => rule.P_1 !== 0); // убрать строку excel P_1  0
     const rule = filtered[variantIndex] || []
     if (!rule.length) {
       this.plannerStore.showError()
@@ -611,7 +617,7 @@ export class AlgorithmManager2level {
      
 
       // ставим вытяжку над плитой
-      if(modelName == ('hood2-450') || modelName == ('hood2-600')  ){
+      if(modelName == ('hood2-450') || modelName == ('hood2-600') ||  modelName == ('hood-400') ){
   
         let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
         position.x = ovenPos
@@ -628,7 +634,7 @@ export class AlgorithmManager2level {
       plannerConfig.models2L.push(instance);
       plannerConfig.modelsLeft2L.push(instance);
 
-      if(modelName == ('hood2-450') || modelName == ('hood2-600') ){
+      if(modelName == ('hood2-450') || modelName == ('hood2-600') ||  modelName == ('hood-400') ){
         let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
         position.z = ovenPos
 
@@ -642,7 +648,7 @@ export class AlgorithmManager2level {
       algorithmConfig.level2.rowStart.right += width;
       plannerConfig.models2L.push(instance);
 
-        if(modelName == ('hood2-450') || modelName == ('hood2-600') ){
+        if(modelName == ('hood2-450') || modelName == ('hood2-600') ||  modelName == ('hood-400')  ){
         let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
         position.z = ovenPos
 

@@ -107,19 +107,27 @@ import config from "../config/config";
 import SetSize from "./SetSize.vue";
 import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
 import { useRowSegmentsStore } from "../../pinia/RowSegments";
+import { usePenalStore } from "../../pinia/penals";
 import { DimensionLine } from "../configurator/builders/DimensionLine";
 
 const kitchenSizesStore = useKitchenSizesStore();
 
 const cabinetBuilder = inject("cabinetBuilder");
+const segmentStore  = useRowSegmentsStore()
+const penalStore = usePenalStore()
 
 
 
 
+function deleteModules(){
 
+}
  
 
 function updateConfig() {
+
+  clear()
+
   if (kitchenSizesStore.type === "direct") {
     cabinetBuilder.value.executeConfig("direct");
     const lineLeft = config.lines.find(item => item.name === "lineLeft");
@@ -151,7 +159,79 @@ function updateConfig() {
 
  
   }
+
+
+  
+ function clear(){
+    // удалить раковину
+      ['SinkNormal', 'sinkModel', 'fridge', 'Penal'].forEach((name) => {
+      cabinetBuilder.value.scene.children
+        .filter((element) => element.name === name)
+        .forEach((element) => cabinetBuilder.value.scene.remove(element));
+    })
+
+
+    segmentStore.segments.direct.length = 0
+    segmentStore.segments.left.length = 0
+    segmentStore.segments.right.length = 0
+
+
+
+
+    penalStore.penals.length = 0
+
+    penalStore.countLeft = 0
+    penalStore.countLeftDirect = 0
+    penalStore.countRight = 0
+    penalStore.countRightDirect = 0
+
+    penalStore.penalOffsetsState.directLeft = 0
+    penalStore.penalOffsetsState.left = 0
+    penalStore.penalOffsetsState.right = 0
+    penalStore.penalOffsetsState.directRight = 0
+    // penalStore.penalOffsets.directLeft = 0
+    // penalStore.penalOffsets.directRight = 0
+    // penalStore.penalOffsets.left = 0
+    // penalStore.penalOffsets.right = 0
+    // penalStore.isOven = false
+
+
+    kitchenSizesStore.fridge.isSet = false
+    kitchenSizesStore.fridge.axis = ''
+    kitchenSizesStore.fridge.isSet = false
+    kitchenSizesStore.fridge.side = ''
+    kitchenSizesStore.fridge.row = ''
+    kitchenSizesStore.fridge.inSideFridge = 'false'
+
+    kitchenSizesStore.delete_1level = true,
+    kitchenSizesStore.delete_leftLevel = true,
+    kitchenSizesStore.delete_rightLevel = true,
+
+
+
+
+
+
+    kitchenSizesStore.parts.length = 0
+    kitchenSizesStore.rules.length = 0
+    kitchenSizesStore.filtredRules.length = 0,
+    kitchenSizesStore.filtredRulesTotal.length = 0
+
+    kitchenSizesStore.availableOven.length =  0
+    kitchenSizesStore.availableDish.length = 0
+    kitchenSizesStore.sink.isSet = false
+
+    kitchenSizesStore.offsetForLeftRow = 0
+
+    // this.KitchenSizes.dishwasher.size = 0
+    // this.KitchenSizes.oven.size = 0
+  }
+
 }
+
+
+
+
 </script>
 
 <style scoped>

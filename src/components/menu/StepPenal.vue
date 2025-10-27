@@ -215,6 +215,8 @@ import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
 import { useRowSegmentsStore } from "../../pinia/RowSegments";
 import { ref, inject, computed } from "vue";
 import fridge from "./components/fridge.vue";
+import { algorithmConfig } from "../configurator/builders/Algorithm/algorithmConfig";
+import { useAlgorithmStore } from "../../pinia/Algorithm";
 
 const penalOptions = [
   { value: "1", label: "1" },
@@ -230,6 +232,7 @@ const penalOptions = [
 const penalStore = usePenalStore();
 const kitchenStore = useKitchenSizesStore(); 
 const rowSegmentsStore = useRowSegmentsStore();
+const algStore  = useAlgorithmStore()
 
 const cabinetBuilder = inject("cabinetBuilder");
 const penalBuilder = inject("penalBuilder");
@@ -278,6 +281,8 @@ const maxPanels = 3;
 
 
 function delPenal(id, side) {
+  clear()
+
   kitchenStore.isOvenPenal = ["1", "2", "3"].includes(selectedOption.value); // пенал с духовкой ? 
   rowSegmentsStore.removeSegment(id);
   penalBuilder.value.deletePenal(id, side);
@@ -298,6 +303,7 @@ function delPenal(id, side) {
 
 
 function addPenal() {
+  clear()
 
 
   if (kitchenStore.type === "left") {
@@ -558,6 +564,31 @@ function addDirectLeftPenal() {
   penalBuilder.value.builder();
   cabinetBuilder.value.executeConfig("actual", "currect");
 }
+
+
+ function clear(){
+    // удалить раковину
+      ['SinkNormal', 'sinkModel'].forEach((name) => {
+      cabinetBuilder.value.scene.children
+        .filter((element) => element.name === name)
+        .forEach((element) => cabinetBuilder.value.scene.remove(element));
+    })
+
+    kitchenStore.parts.length = 0
+    kitchenStore.rules.length = 0
+    kitchenStore.filtredRules.length = 0,
+    kitchenStore.filtredRulesTotal.length = 0
+
+    kitchenStore.availableOven.length =  0
+    kitchenStore.availableDish.length = 0
+    kitchenStore.sink.isSet = false
+
+
+    // this.KitchenSizes.dishwasher.size = 0
+    // this.KitchenSizes.oven.size = 0
+  }
+
+
 </script>
 <style scoped>
 .radio-card {

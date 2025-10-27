@@ -1,6 +1,6 @@
 <template>
   <div class="p-6">
-     <h3 class="text-xl font-semibold">Выберите тип плиты</h3>
+     <h3 class="text-xl font-semibold">Выберите размер плиты</h3>
 
 
  
@@ -9,7 +9,7 @@
     class="mb-4 mt-4"
   >
    <select  v-model="kitchenSizes.oven.size" class="border rounded p-2 w-40">
-        <option :value="null" disabled>Выбери размер</option>
+        <option :value="null" disabled>Выберите размер</option>
         <option v-for="size in kitchenSizes.availableOven" :key="size" :value="size">
           {{ size }}
         </option>

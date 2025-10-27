@@ -59,6 +59,10 @@ const cabinetBuilder = inject("cabinetBuilder");
 const selectedOption = ref(null);
 
 function updateConfig() {
+
+  if(kitchenStore.sink.isSet) clear()
+
+
   if (selectedOption.value === "d1") {
     cabinetBuilder.value.executeConfig("direct1");
     
@@ -88,6 +92,31 @@ function updateConfig() {
    config.kitchen_levels = 3
   }
 }
+
+
+
+ function clear(){
+    // удалить раковину
+      ['SinkNormal', 'sinkModel'].forEach((name) => {
+      cabinetBuilder.value.scene.children
+        .filter((element) => element.name === name)
+        .forEach((element) => cabinetBuilder.value.scene.remove(element));
+    })
+
+    kitchenStore.parts.length = 0
+    kitchenStore.rules.length = 0
+    kitchenStore.filtredRules.length = 0,
+    kitchenStore.filtredRulesTotal.length = 0
+
+    kitchenStore.availableOven.length =  0
+    kitchenStore.availableDish.length = 0
+    kitchenStore.sink.isSet = false
+
+
+    // this.KitchenSizes.dishwasher.size = 0
+    // this.KitchenSizes.oven.size = 0
+  }
+
 </script>
 
 <style scoped>

@@ -17,6 +17,7 @@ import { useKitchenSizesStore } from '../../../pinia/kitchenSizes';
 const algStore = useAlgorithmStore()
 const kitchenStore = useKitchenSizesStore()
 const algorithmManager = inject("algorithmManager");
+const plannerManager = inject("plannerManager");
 let index = ref(0)
 
 
@@ -39,6 +40,8 @@ function changeVariant(value){
 
     algorithmManager.value.algorithm2level.buildDirect();
     if(kitchenStore.type === "left") algorithmManager.value.algorithm2level.buildLeft();
+
+    plannerManager.value.tableTop.create() 
 }
 
 </script>

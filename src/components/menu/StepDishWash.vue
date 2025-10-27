@@ -35,6 +35,7 @@ import { useRowSegmentsStore } from "../../pinia/RowSegments";
 const kitchenStore = useKitchenSizesStore();
 
 const rules = kitchenStore.filtredRules;
+const rulesCopy = [...rules]
 
 //если посудомойка не входит
 if (kitchenStore.availableDish.size === 1) {
@@ -98,7 +99,7 @@ watch(
       //    printResults(filtered)
     } else {
       console.log("else");
-      kitchenStore.filtredRulesTotal = rules;
+      kitchenStore.filtredRulesTotal = rulesCopy;
 
 
       //если нет дх и пм то правила пустые

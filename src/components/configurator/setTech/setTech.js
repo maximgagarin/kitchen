@@ -1026,45 +1026,7 @@ export class SetTech {
     
   }
 
-  currect(){
-    const sides = this.KitchenSizes.sideSizes
-    const sinkSide = this.KitchenSizes.sink.side
-    const sinkSize = this.KitchenSizes.sink.size
-    const MIN_MODULE = 0.15
-    const MIN_OVEN_SIZE = 0.45
-    const ROW_OFFSET = 0.6
 
-    const NONE = (sides.side_a  -  ROW_OFFSET) <= 0.60 
-    const ONLY45 = (sides.side_a  -  ROW_OFFSET) > 0.60 && (sides.side_a  -  ROW_OFFSET) <= 0.75
-    const ANY = (sides.side_a  -  ROW_OFFSET) > 0.75 
-
-    const partsType = {
-      left:[],
-      direct:[],
-      right:[]
-    }
-
-    this.KitchenSizes.parts.forEach(part=>{
-      if((part.name === 'C1' && part.width < 0.60) && this.KitchenSizes.parts.some(part => part.name === "A1" && part.width <=0.6 ) ){
-        console.log('есть')
-        partsType.left.push(0.45)
-      }
-    })
-
-
-   
-    // if((sides.side_c - sinkSize) < 0.45 && sinkSide === 'left'){
-    //    if(NONE)  console.log('духовку нельзя ставить рядом с раковиной нужено мин расстояние 15 см')
-    //    if(ONLY45) console.log('только 45cм')
-    //    if(ANY) console.log('любая') 
-    // }
-
-    // if((sides.side_a - sinkSize) < 0.45 && sinkSide === 'direct' &&  (sides.side_c  - ROW_OFFSET) <= 0.60) {
-    //   console.log('духовку нельзя ставить рядом с раковиной нужено мин расстояние 15 см')
-    //  this.KitchenSizes.oven.size = 0
-
-    // }
-  }
   
 
   filter(result, partsCount) {
@@ -1296,6 +1258,7 @@ export class SetTech {
         this.rowSegmentsStore.duct.isSet = true;
 
         this.KitchenSizes.isSink = true
+        this.KitchenSizes.sink.isSet = true
 
       //  this.calcPartsLenght()
 

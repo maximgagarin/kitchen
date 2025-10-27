@@ -27,7 +27,7 @@ export class PanalBuilder {
       0.4:'АНП-400',
       0.45:'АНП-450',
       0.6:'АНП-600',
-      0.18:'АНП-180'
+      0.2:'АНП-180'
     }
       this.anpRotationMap = {
       0: Math.PI / 2,
@@ -110,7 +110,7 @@ export class PanalBuilder {
         console.log('type', type)
         const cabinet = this.loaderModels.get(type)
         console.log('rotate', element.rotate)
-        if(element.width === 0.18) cabinet.rotation.y =  this.anpRotationMap[element.rotate];
+        if(element.width === 0.2) cabinet.rotation.y =  this.anpRotationMap[element.rotate];
         cabinet.visible = true
         cabinet.position.y = 2.118
 

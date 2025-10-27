@@ -59,7 +59,7 @@ function updateHeight3level() {
   const value = parseFloat(event.target.value);
   config.kitchen_size.height = Number((1.418 + Number(config.panels_size.height2level) + Number(config.panels_size.height3level)).toFixed(3));
 
-  cabinetBuilder.value.executeConfig('actual')
+  cabinetBuilder.value.executeConfig("actual", "currectActual")
   penalBuilder.value.builder()
 }
 
@@ -77,7 +77,7 @@ function updateHeight2level() {
 
   lineHeight.update({ x: start.x, y: 0, z: start.z }, { x: end.x, y: y, z: end.z })
 
-  cabinetBuilder.value.executeConfig('actual')
+  cabinetBuilder.value.executeConfig("actual", "currectActual")
   penalBuilder.value.builder()
 } 
 </script>

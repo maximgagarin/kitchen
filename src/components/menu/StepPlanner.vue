@@ -163,7 +163,7 @@
   </div> 
   </div>
 
-  <div class="text-xs">
+  <!-- <div class="text-xs">
     <p >ручка</p>
        <select  
           id="selectedOven" 
@@ -194,7 +194,7 @@
 
          
         </select>
-  </div>
+  </div> -->
 
 
     <!-- <div>

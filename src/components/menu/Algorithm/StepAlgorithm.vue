@@ -1,11 +1,5 @@
 <template>
-  <div
-    v-if="plannerStore.hasCollision"
-    class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-800 border border-red-300 px-4 py-3 rounded-lg shadow-lg z-50 flex items-center gap-3"
-  >
-    <span class="font-medium">Ошибка: нет подходящего алгоритма</span>
-    <!-- <div v-if="errorMessage">{{ errorMessage }}</div> -->
-  </div>
+
 
   <div v-if="showModal">
     <allVaraints
@@ -16,85 +10,26 @@
   </div>
 
 
-  <h2 class="text-xs font-bold text-gray-800">Готовые варианты расстановки</h2>
 
-  <Combinations />
   
 
+  <h2 class="text-xs font-bold text-gray-800">Готовые варианты расстановки</h2>
+  <Combinations />
   <changeVariants  />
 
-
-
-  <!-- Компонент опций -->
+ 
   <!-- <Options @select="changeOvenDish" /> -->
 
-  <div class="mt-5 flex justify-between">
-    <!-- Кнопка запуска -->
-    <!-- <div class="text-center mb-6">
-      <button
-        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        @click="run"
-      >
-        Запустить алгоритм
-      </button>
-    </div> -->
-    <!-- <div v-if="kitchenStore.algorythm.start" class="text-center mb-6">
-      <button
-        class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-        @click="showVariants"
-      >
-        Показать варианты
-      </button>
-    </div> -->
-  </div>
-  <div class="mt-5 flex justify-between">
-    <!-- Кнопка запуска -->
-    <!-- <div class="text-center mb-6">
-      <button
-        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        @click="restart"
-      >
-        начать с начала
-      </button>
-    </div> -->
-
-    <!-- <div v-if="kitchenStore.algorythm.start" class="text-center mb-6">
-      <button
-        class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-        @click="startPlanner"
-      >
-        Запустить планировщик
-      </button>
-    </div> -->
-  </div>
 
   <div class="border-t-2 border-gray-300 my-4 pt-3">
-    <h2 class="text-xs font-bold text-gray-800">
-      Редактирование (планировщик)
-    </h2>
-
     <StepPlanner />
   </div>
 
-  <div class="border-t-2 border-gray-300 my-4 pt-3" >
-    <h2 class="text-xs font-bold text-gray-800">
-     Внешний вид
-    </h2>
 
-  
-  </div>
 
-  <!-- <button
-    class="text-gray-500 hover:text-gray-700 text-2xl"
-    @click="showLowRules = showLowRules ? false : true"
-  >
-    показать нижние правила
-  </button> -->
+ 
 
-  <!-- <div v-if="showLowRules">
-    <p>нижний ряд правила</p>
-    <pre>{{ JSON.stringify(algStore.rulesName, null, 2) }}</pre>
-  </div> -->
+ 
  
 </template>
 

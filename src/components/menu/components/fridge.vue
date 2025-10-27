@@ -93,6 +93,7 @@ if (!model) {
 }
 
 function handleLeft(){
+    clear()
     selectedSide.value = 'left'
     if(kitchenStore.fridge.isSet){
         if(props.isLeftEndPenal && selectedSide.value === 'left') return
@@ -102,6 +103,7 @@ function handleLeft(){
 }
 
 function handleRight(){
+    clear()
     selectedSide.value = 'right'
     if(props.isRightEndPenal && selectedSide.value === 'right') return
 
@@ -113,8 +115,8 @@ function handleRight(){
 
 //чекбокс входит/не входит в габариты
 function changeInsideOutside(){
-    console.log('inSideFridge', kitchenStore.fridge.inSideFridge)
-    console.log('inSideInput', kitchenStore.fridge.inSideInput)
+
+    clear()
 
     if(props.isLeftEndPenal && selectedSide.value === 'left') return
     if(props.isRightEndPenal && selectedSide.value === 'right') return
@@ -128,6 +130,8 @@ function changeInsideOutside(){
 
 
 function addFridge() {
+
+    clear()
 
     const side = selectedSide.value
     const kitchenType = kitchenStore.type
@@ -331,6 +335,9 @@ function clearStore(){
 }
 
 function deleteFridge() {
+
+    clear()
+
     if(kitchenStore.fridge.inSideFridge){
        moveAfterDeleteInside()
        penalBuilder.value.builder();
@@ -371,4 +378,28 @@ function removeObjectsByName(name) {
 
     console.log(`Удалено объектов: ${objectsToRemove.length}`);
 }
+
+
+ function clear(){
+    // удалить раковину
+      ['SinkNormal', 'sinkModel'].forEach((name) => {
+      cabinetBuilder.value.scene.children
+        .filter((element) => element.name === name)
+        .forEach((element) => cabinetBuilder.value.scene.remove(element));
+    })
+
+    kitchenStore.parts.length = 0
+    kitchenStore.rules.length = 0
+    kitchenStore.filtredRules.length = 0,
+    kitchenStore.filtredRulesTotal.length = 0
+
+    kitchenStore.availableOven.length =  0
+    kitchenStore.availableDish.length = 0
+    kitchenStore.sink.isSet = false
+
+
+    // this.KitchenSizes.dishwasher.size = 0
+    // this.KitchenSizes.oven.size = 0
+  }
+
 </script>

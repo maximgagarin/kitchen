@@ -446,13 +446,13 @@ export class CabinetBuilder {
 
     else {
       config4.actual.leftLevel.forEach((item) => {
-        item.params[0] = this.kitchenSizesStore.sideSizes.side_c - 0.55;
+        item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_c;
       });
       config4.actual.rightLevel.forEach((item) => {
-        item.params[0] = this.kitchenSizesStore.sideSizes.side_d - 0.55;
+        item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_d;
       });
       config4.actual.direct.forEach((item) => {
-        item.params[0] = this.kitchenSizesStore.sideSizes.side_a;
+        item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_a;
       });
     }
 
