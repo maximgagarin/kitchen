@@ -304,60 +304,7 @@ export class SwapController {
     this.sceneSetup.requestRender();
   }
 
-  calculateSlotPositions() {
-    let offsetDirect
-    let offsetLeft = 0;
 
-    if(this.kitchenSizesStore.type == 'direct'){
-     offsetDirect = this.penalStore.penalOffsets.directLeft
-    }
-
-    if(this.kitchenSizesStore.type == 'left'){
-     
-      if(plannerConfig.isAngleRow == 'direct'){
-        offsetLeft = 0.6
-        offsetDirect = 0
-      }
-
-      if(plannerConfig.isAngleRow == 'left'){
-        offsetLeft = 0
-        offsetDirect = 0.6
-      }
-      
-    }
-    // console.log('offsetDirect', offsetDirect)
-
-    // offsetDirect =  this.kitchenType == "direct"  ? 0 + this.penalStore.penalOffsets.directLeft  : 0.6;
-
-    plannerConfig.slotsDirect.length = 0;
-    plannerConfig.slotsLeft.length = 0;
-
-    plannerConfig.modelsDirect.sort((a, b) => a.slot - b.slot);
-    plannerConfig.modelsDirect.forEach((el) => {
-      if (el.name == "penal") return;
-      el.center = Number((el.objectSize.x / 2 + offsetDirect).toFixed(3));
-      plannerConfig.slotsDirect.push({
-        index: el.slot,
-        center: el.center,
-        width: el.objectSize.x,
-      });
-      offsetDirect += el.objectSize.x;
-    });
-
-    plannerConfig.modelsLeft.sort((a, b) => a.slot - b.slot);
-    plannerConfig.modelsLeft.forEach((el) => {
-      el.center = Number((el.objectSize.x / 2 + offsetLeft).toFixed(3));
-      plannerConfig.slotsLeft.push({
-        index: el.slot,
-        center: el.center,
-        width: el.objectSize.x,
-      });
-      offsetLeft += el.objectSize.x;
-    });
-
-    //  console.log("slotsDirect", plannerConfig.slotsDirect);
-    //  console.log("slotsLeft", plannerConfig.slotsLeft);
-  }
 
   checkSwapCandidateInSector() {
     const movingBox = new THREE.Box3().setFromObject(
@@ -389,90 +336,13 @@ export class SwapController {
     return null;
   }
 
-  setSlot() {
-    plannerConfig.selectedSector.modules.forEach((el, index) => {
-      el.slot = index;
-    });
-  }
-
-  calculateSlotPosInSector() {
-    plannerConfig.selectedSector.slots.length = 0;
-    let offset = 0;
-
-    plannerConfig.selectedSector.modules.sort((a, b) => a.slot - b.slot);
-    plannerConfig.selectedSector.modules.forEach((el) => {
-      el.center = Number((el.objectSize.y / 2 + offset).toFixed(3));
-      plannerConfig.selectedSector.slots.push({
-        slot: el.slot,
-        center: el.center,
-        width: el.objectSize.x,
-      });
-      offset += el.objectSize.y;
-    });
-  }
-
-  setIndex() {
-    plannerConfig.modelsDirect2L.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-    });
-    plannerConfig.modelsLeft2L.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-    });
-  }
-
-  calculateSlotPositions2L() {
-   
-
-     let offsetDirect =
-      this.kitchenType == "direct"
-        ? 0 + this.penalStore.penalOffsets.directLeft
-        : 0.6;
-
-    
-    let offsetLeft = 0;
-
-    if(this.kitchenSizesStore.type == 'left'){
-      if(plannerConfig.isAngleRow2L == 'direct'){
-        offsetLeft = 0.3
-        offsetDirect = 0
-      }
-      if(plannerConfig.isAngleRow2L == 'left'){
-        offsetLeft = 0
-        offsetDirect = 0.3
-      }
-    }
 
 
-    plannerConfig.slotsDirect2L.length = 0;
-    plannerConfig.slotsLeft2L.length = 0;
 
 
-    plannerConfig.modelsDirect2L.sort((a, b) => a.slot - b.slot);
-    plannerConfig.modelsDirect2L.forEach((el) => {
-      if (el.name == "penal") return;
-      el.center = Number((el.objectSize.x / 2 + offsetDirect).toFixed(3));
-      plannerConfig.slotsDirect2L.push({
-        index: el.slot,
-        center: el.center,
-        width: el.objectSize.x,
-      });
-      offsetDirect += el.objectSize.x;
-    });
 
-     plannerConfig.modelsLeft2L.sort((a, b) => a.slot - b.slot);
-    plannerConfig.modelsLeft2L.forEach((el) => {
-      if (el.name == "penal") return;
-      el.center = Number((el.objectSize.x / 2 + offsetLeft).toFixed(3));
-      plannerConfig.slotsLeft2L.push({
-        index: el.slot,
-        center: el.center,
-        width: el.objectSize.x,
-      });
-      offsetLeft += el.objectSize.x;
-    });
-  }
+
+
 
  checkCollision(testInstance) {
   const modelsArray = plannerConfig.models;
