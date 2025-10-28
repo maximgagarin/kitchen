@@ -5,6 +5,7 @@ import { ModelInstanse } from "./ModelInstanse";
 import { usePlannerStore } from "../../../pinia/PlannerStore";
 import { useKitchenSizesStore } from "../../../pinia/kitchenSizes";
 import { PenalInstanse } from "./PenalInstanse";
+import { SinkInstanse } from "./SinkInstanse";
 
 
 
@@ -307,8 +308,8 @@ export class EmptyManager {
 
     const lineHotizontal = new Line(
       this.sceneSetup,
-      { x: -width / 2, y: -2, z: -0.3 },
-      { x: width / 2, y: -2, z: -0.3 },
+      { x: -width / 2, y: 0.3, z: -0.3 },
+      { x: width / 2, y: 0.3, z: -0.3 },
       0.4,
       1
     );
@@ -319,21 +320,7 @@ export class EmptyManager {
     // console.log(boxesArray)
   }
 
-  setIndex() {
-    plannerConfig.modelsDirect.sort(
-      (a, b) => a.root.position.x - b.root.position.x
-    );
-    for (let i = 0; i < plannerConfig.modelsDirect.length; i++) {
-      plannerConfig.modelsDirect[i].slot = i;
-    }
 
-    plannerConfig.modelsLeft.sort(
-      (a, b) => a.root.position.z - b.root.position.z
-    );
-    for (let i = 0; i < plannerConfig.modelsLeft.length; i++) {
-      plannerConfig.modelsLeft[i].slot = i;
-    }
-  }
 
 
   calcEmtyForPenal(intersect){
@@ -489,7 +476,8 @@ let closestRight = Infinity;
     } else {
       console.log('2')
 
-      cabinetName = `${type}-${width * 1000}`;
+      //если мойка
+      type === 'ms' ? cabinetName = `${type}${width * 1000}` : cabinetName = `${type}-${width * 1000}`;
     }
 
     console.log('cabname', cabinetName)
@@ -532,19 +520,30 @@ let closestRight = Infinity;
     let instance
    
 
-    if(penal){
+    if(type === 'ms'){
+       instance = new SinkInstanse(cabinet, this.sceneSetup);
+       instance.name = 'm'
+    } else if(type !== 'ms' && penal){
       instance = new PenalInstanse(cabinet);
       instance.name = 'penal';
-      plannerConfig.penalsArray.push(instance)
-    } else{
-     instance = new ModelInstanse(cabinet, this.sceneSetup);
-     instance.name = type;
+    } else if(type !== 'ms' && !penal){
+      instance = new ModelInstanse(cabinet, this.sceneSetup);
+      instance.name = type;
     }
+      
+      
+      
+      
+      
+      
+      
+    
 
     
     instance.side = oldside;
     instance.level = 1
     instance.id = id
+    instance.fullname = cabinetName
     instance.raycasterBox.userData.id = id
     cabinet.position.copy(position);
     cabinet.rotation.y = isLeft ? Math.PI / 2 : 0
@@ -560,8 +559,7 @@ let closestRight = Infinity;
       plannerConfig.modelsDirect.push(instance);
     }
 
-    this.setIndex();
-
+  
     
 
 
@@ -682,40 +680,7 @@ let closestRight = Infinity;
     return false;
   }
 
-  calculateSlotPositions() {
-    let offsetDirect = 0;
 
-    let offsetLeft = 0;
-
-    plannerConfig.slotsDirect.length = 0;
-    plannerConfig.slotsLeft.length = 0;
-
-    plannerConfig.modelsDirect.sort((a, b) => a.slot - b.slot);
-    plannerConfig.modelsDirect.forEach((el) => {
-      if (el.name == "penal") return;
-      el.center = Number((el.objectSize.x / 2 + offsetDirect).toFixed(3));
-      plannerConfig.slotsDirect.push({
-        index: el.slot,
-        center: el.center,
-        width: el.objectSize.x,
-      });
-      offsetDirect += el.objectSize.x;
-    });
-
-    plannerConfig.modelsLeft.sort((a, b) => a.slot - b.slot);
-    plannerConfig.modelsLeft.forEach((el) => {
-      el.center = Number((el.objectSize.x / 2 + offsetLeft).toFixed(3));
-      plannerConfig.slotsLeft.push({
-        index: el.slot,
-        center: el.center,
-        width: el.objectSize.x,
-      });
-      offsetLeft += el.objectSize.x;
-    });
-
-    //   console.log("slotsDirect", plannerConfig.slotsDirect);
-    //   console.log("slotsLeft", plannerConfig.slotsLeft);
-  }
 
   checkCollision(testInstance) {
     

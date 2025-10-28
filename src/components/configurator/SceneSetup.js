@@ -47,13 +47,13 @@ export class SceneSetup {
 
     // --- 📊 Инициализация FPS-монитора ---
     this.stats = new Stats();
-  //  this.stats.showPanel(0); // 0: FPS, 1: ms, 2: mb, 3+: custom
+    this.stats.showPanel(0); // 0: FPS, 1: ms, 2: mb, 3+: custom
     this.stats.dom.style.position = "absolute";
     this.stats.dom.style.left = "0px";
     this.stats.dom.style.top = "0px";
     this.stats.dom.style.transform = "scale(1.5)";
     this.stats.dom.style.transformOrigin = "left top"
-  //  document.body.appendChild(this.stats.dom);
+    document.body.appendChild(this.stats.dom);
     // --------------------------------------
 
     this.needsRender = true;
@@ -70,12 +70,12 @@ export class SceneSetup {
 
   startRenderLoop() {
     const loop = () => {
-  //    this.stats.begin(); // 🔹 Начало замера FPS
+      this.stats.begin(); // 🔹 Начало замера FPS
       if (this.needsRender) {
         this.render();
         this.needsRender = false;
       }
-   //   this.stats.end(); // 🔹 Конец замера FPS
+      this.stats.end(); // 🔹 Конец замера FPS
       requestAnimationFrame(loop);
     };
     loop();

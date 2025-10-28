@@ -6,7 +6,7 @@
 
   <div
     v-if="kitchenSizes.step != 5"
-    class="fixed left-[15%] top-5 w-1/2 h-[80px] bg-white text-md rounded-sm justify-center flex items-center"
+    class="fixed left-[15%] top-5 w-1/2 h-[60px] bg-white text-md rounded-sm justify-center flex items-center"
   >
     <div class="flex flex-row ">
       <div

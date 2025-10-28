@@ -122,6 +122,11 @@
     </div>
   </div>
 
+
+ 
+
+
+   <!--  меню 2 уровень -->
   <div
     class="fixed bottom-10 left-[600px] w-[600px] h-[200px] p-3 mr-4 bg-white pointer-events-none rounded-md z-50 pointer-events-auto border-2 border-gray-400"
     v-if="plannerStore.objectMenuL2"
@@ -161,15 +166,10 @@
         </select>
       </div>
       <div>
-        <!-- <button class="border-b" @click="rotate(false)">⟲</button>
-      <button class="border-b" @click="rotate(true)">⟳</button> -->
+
       </div>
     </div>
-    <!-- <div>
-      <span>мойка</span>
-      <input type="checkbox" id="sink"  value="Bike" @click="setSink()">
 
-    </div> -->
   </div>
 
   <!-- <AccordionMenu @select="handleSelectModule" /> -->
@@ -275,6 +275,8 @@ const typeOptions = computed(() => [
   { value: "c1", label: "1 ящ" },
   { value: "c2", label: "2 ящ" },
   { value: "c3", label: "3 ящ" },
+  { value: "ms", label: "мойка" },
+
   { value: "su", label: "su" },
   { value: "penal", label: "Пенал" },
 ]);
@@ -294,7 +296,7 @@ const kitchenStore = useKitchenSizesStore();
 setTimeout(()=>{
   plannerManager.value.start();
   console.log('planner start')
-}, 2000)
+}, 1000)
 
 
 

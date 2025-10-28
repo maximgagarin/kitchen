@@ -11,8 +11,8 @@ export class Line {
     this.group.name = "line";
     lines.push(this.group);
 
-    this.start = new THREE.Vector3(start.x, height, start.z);
-    this.end = new THREE.Vector3(end.x, height, end.z);
+    this.start = new THREE.Vector3(start.x, start.y, start.z);
+    this.end = new THREE.Vector3(end.x, end.y, end.z);
 
     this.createLine();
     this.createArrows();

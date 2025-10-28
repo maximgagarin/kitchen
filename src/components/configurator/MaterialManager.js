@@ -36,6 +36,8 @@ export class MaterialManager {
     this.wood1.wrapS = THREE.RepeatWrapping;
     this.wood1.wrapT = THREE.RepeatWrapping;
 
+
+    //черный мрамор
     this.mramor = this.textureLoader.load("textures/tabletop/mramor-1-cube.jpg");
     this.mramor.colorSpace = THREE.SRGBColorSpace;
     this.mramor.wrapS = THREE.RepeatWrapping;
@@ -63,8 +65,8 @@ export class MaterialManager {
 
   // текстура длиной 3 * 0.6
     setTexture(width , axis) {
-//      const texture = this.mramorLong2.clone();
-      const texture = this.woodLong.clone();
+      const texture = this.mramorLong2.clone();
+   //   const texture = this.woodLong.clone();
 
 
     texture.center.set(0.5, 0.5);
@@ -91,7 +93,8 @@ export class MaterialManager {
 
   // текстура квадрат
   setTexture2(width , axis) {
-    const texture = this.mramor.clone();
+   // const texture = this.mramor.clone();
+    const texture = this.mramor2.clone();
 
      texture.center.set(0.5, 0.5);
 

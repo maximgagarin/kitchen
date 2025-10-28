@@ -17,7 +17,7 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     c3: [0.3, 0.4, 0.5, 0.6, 0.8],
     p: [0.45, 0.6],
     d: [0.45, 0.6],
-    m: [0.5, 0.6, 0.8],
+    ms: [0.5, 0.6, 0.8],
     su:[1,1.05],
     penal:[
         {

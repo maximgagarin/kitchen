@@ -8,6 +8,7 @@ import { algorithmConfig } from "../builders/Algorithm/algorithmConfig";
 import { ModelInstanse2L } from "./ModelInstanse2L";
 import { SectorInstanse } from "./SectorInstanse";
 import { Model_In_Sector } from "./Model_In_Sector";
+import { SinkInstanse } from "./SinkInstanse";
 
 
 
@@ -26,6 +27,24 @@ export class CopyController {
     this.point = null
     this.moving = false
     this.setToRow = false
+    this.rules = {
+      direct: {
+        axis: "x",
+        modulesArray: "modelsDirect",
+        deleteArray: "namesToDeleteDirect"
+      },
+      left: {
+        axis: "z",
+        modulesArray: "modelsLeft",
+        deleteArray: "namesToDeleteLeft"
+
+      },
+      right: {
+        axis: "z",
+        modulesArray: "modelsRight",
+        deleteArray: "namesToDeleteRight"
+      },
+    };
     this.bounds = {
       minX:0,
       maxX: this.kitchenSizesStore.sideSizes.side_a,
@@ -153,6 +172,8 @@ export class CopyController {
     const level = plannerConfig.selectedObject.level;
     const side = plannerConfig.copyObjectSide;
 
+    const rule = this.rules[side]
+
     plannerConfig.copyObject.updateMatrixWorld(true, true);
 
     // Проверка на коллизию
@@ -169,17 +190,34 @@ export class CopyController {
     this.removeObjectsByName('copyObject');
 
     const name = plannerConfig.copyObjectFullName;
+
+    const type = plannerConfig.copyObjectName
+
+    console.log('type', type)
+
     const model = this.loaderModels.get(name);
     if (!model) {
       console.log('Модуль не найден');
       return;
     }
 
+    
+    const deleteArray = plannerConfig[rule.deleteArray]
+   
+    deleteArray.push(name)
+
     model.visible = true;
 
     let instance;
     if (level === 1) {
-      instance = new ModelInstanse(model, this.sceneSetup);
+      if(type === 'm') {
+        instance = new SinkInstanse(model, this.sceneSetup);
+        instance.name = 'm'
+      } else {
+        instance = new ModelInstanse(model, this.sceneSetup);
+        instance.name = plannerConfig.copyObjectName;
+      }
+     
       instance.level  = 1
       if (side === 'direct') plannerConfig.modelsDirect.push(instance);
       if (side === 'left') plannerConfig.modelsLeft.push(instance);
@@ -193,7 +231,7 @@ export class CopyController {
       if (side === 'left') plannerConfig.modelsLeft2L.push(instance);
     }
 
-    instance.name = plannerConfig.copyObjectName;
+
     instance.fullname = plannerConfig.copyObjectFullName;
     instance.side = side;
     instance.id =id
@@ -202,18 +240,32 @@ export class CopyController {
     this.setObjectPosition(model, this.point, level, side);
 
     plannerConfig.models.push(instance);
+    model.name = name
     this.scene.add(model);
 
     this.setToRow = true;
     this.moving = false;
-    this.calculateSlotPositions();
-    this.calculateSlotPositions2L()
-    this.calculateSlotsNew();
+    // this.calculateSlotPositions();
+    // this.calculateSlotPositions2L()
+    // this.calculateSlotsNew();
   }
 
   setSector(){
    // const level = plannerConfig.selectedObject.level;
     const side = plannerConfig.copyObjectSide;
+
+
+      const collision = this.checkCollision(plannerConfig.copyObject);
+    if (collision) {
+      plannerConfig.copyObject = false;
+      this.moving = false;
+      this.plannerStore.showError();
+      this.setToRow = false;
+      this.removeObjectsByName('copyObject');
+      return;
+    }
+
+
 
  //   console.log(level)
     console.log(side)
@@ -334,16 +386,9 @@ export class CopyController {
   });
 
         plannerConfig.copyObject = this.instance.root;
-        this.moving= true
-        plannerConfig.copyObjectSide = side
-
-
-      
-
-
+        this.moving = true
+        plannerConfig.copyObjectSide = side  
   }
-
-
 
 
 
@@ -375,11 +420,6 @@ export class CopyController {
     });
 
 }
-
-
-
-
-
 
 
   checkSimpleCollision(testInstance) {
@@ -425,108 +465,6 @@ export class CopyController {
       return false;
   }
 
-  calculateSlotPositions() {
-    
-          let offsetDirect
-        let offsetLeft = 0;
-    
-        if(this.kitchenSizesStore.type == 'direct'){
-        offsetDirect = this.penalStore.penalOffsets.directLeft
-        }
-    
-        if(this.kitchenSizesStore.type == 'left'){
-        
-          if(algorithmConfig.sideSink == 'direct'){
-        //    console.log(1)
-            offsetDirect = 0.6
-            if(algorithmConfig.sinkSize == 1){
-              offsetDirect = 0
-              offsetLeft = 0.6
-            }
-          }
-          if(algorithmConfig.sideSink == 'left' && algorithmConfig.sinkSize == 0.6){
-          //  console.log(3)
-            offsetDirect = 0
-            offsetLeft = 0.6
-          }
-          if(algorithmConfig.sideSink == 'left' && algorithmConfig.sinkSize == 1){
-          //  console.log(3)
-            offsetDirect = 0.6
-            offsetLeft = 0
-          }
-          
-        }
-      // console.log('offsetDirect', offsetDirect)
-    
-        // offsetDirect =  this.kitchenType == "direct"  ? 0 + this.penalStore.penalOffsets.directLeft  : 0.6;
-        
-    
-        plannerConfig.slotsDirect.length = 0;
-        plannerConfig.slotsLeft.length = 0;
-        plannerConfig.modelsDirect.sort((a, b) => a.root.position.x - b.root.position.x);
-
-        plannerConfig.modelsDirect.forEach((el, index)=>{
-          el.slot = index
-        })
-        
-            plannerConfig.modelsLeft.sort((a, b) => a.root.position.z - b.root.position.z);
-
-        plannerConfig.modelsLeft.forEach((el, index)=>{
-          el.slot = index
-        })
-    
-      
-
-        plannerConfig.modelsDirect.forEach((el) => {
-          if (el.name == "penal") return;
-          el.center = Number((el.objectSize.x / 2 + offsetDirect).toFixed(3));
-          plannerConfig.slotsDirect.push({
-            index: el.slot,
-            center: el.center,
-            width: el.objectSize.x,
-          });
-          offsetDirect += el.objectSize.x;
-        });
-    
-        plannerConfig.modelsLeft.sort((a, b) => a.slot - b.slot);
-        plannerConfig.modelsLeft.forEach((el) => {
-          el.center = Number((el.objectSize.x / 2 + offsetLeft).toFixed(3));
-          plannerConfig.slotsLeft.push({
-            index: el.slot,
-            center: el.center,
-            width: el.objectSize.x,
-          });
-          offsetLeft += el.objectSize.x;
-        });
-    
-      //  console.log("slotsDirect", plannerConfig.slotsDirect);
-      //  console.log("slotsLeft", plannerConfig.slotsLeft);
-  }
-
-
-  calculateSlotsNew(){
-      plannerConfig.newSlotsDirect.length = 0
-      plannerConfig.newSlotsLeft.length = 0
-
-      plannerConfig.modelsDirect.sort((a, b) => a.root.position.x - b.root.position.x);
-      plannerConfig.modelsLeft.sort((a, b) => a.root.position.z - b.root.position.z);
-
-      plannerConfig.modelsDirect.forEach((el, index)=>{
-      el.index = index 
-        plannerConfig.newSlotsDirect.push({index:el.index,
-          center:Number((el.root.position.x).toFixed(3)),
-          width:el.width})
-      })
-        plannerConfig.modelsLeft.forEach((el, index)=>{
-      el.index = index 
-        plannerConfig.newSlotsLeft.push({index:el.index,
-          center:Number((el.root.position.z).toFixed(3)),
-          width:el.width})
-      })
-
-    //  console.log('modelsDirect', plannerConfig.modelsDirect)
-      this.calculateCornerBounds()
-  }
 
   calculateCornerBounds(){
 
@@ -629,58 +567,5 @@ export class CopyController {
   }
 
     
-  calculateSlotPositions2L() {
-      let offsetDirect =
-        this.kitchenType == "direct"
-          ? 0 + this.penalStore.penalOffsets.directLeft
-          : 0.6;
-
-      
-      let offsetLeft = 0;
-
-      if(this.kitchenSizesStore.type == 'left'){
-        if(plannerConfig.isAngleRow2L == 'direct'){
-          offsetLeft = 0.3
-          offsetDirect = 0
-        }
-        if(plannerConfig.isAngleRow2L == 'left'){
-          offsetLeft = 0
-          offsetDirect = 0.3
-        }
-      }
-
-  //   console.log('offsetDirect2', offsetDirect)
-  //   console.log('offsetLeft2', offsetLeft)
-
-
-      plannerConfig.slotsDirect2L.length = 0;
-      plannerConfig.slotsLeft2L.length = 0;
-
-      plannerConfig.modelsDirect2L.sort((a, b) => a.slot - b.slot);
-      plannerConfig.modelsDirect2L.forEach((el) => {
-        if (el.name == "penal") return;
-        el.center = Number((el.objectSize.x / 2 + offsetDirect).toFixed(3));
-        plannerConfig.slotsDirect2L.push({
-          index: el.slot,
-          center: el.center,
-          width: el.objectSize.x,
-        });
-        offsetDirect += el.objectSize.x;
-      });
-
-      plannerConfig.modelsLeft2L.sort((a, b) => a.index - b.index);
-      plannerConfig.modelsLeft2L.forEach((el) => {
-        el.center = Number((el.objectSize.x / 2 + offsetLeft).toFixed(3));
-        plannerConfig.slotsLeft2L.push({
-          index: el.slot,
-          center: el.center,
-          width: el.objectSize.x,
-        });
-        offsetLeft += el.objectSize.x;
-      });
-
-    // console.log("slotsDirect", plannerConfig.slotsDirect);
-    // console.log("slotsLeft", plannerConfig.slotsLeft);
-  }
 
 }

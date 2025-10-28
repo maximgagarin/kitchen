@@ -3,24 +3,22 @@
     <h3>Выберите расположение раковины</h3>
   </div>
   <div class="radio-group">
-    
     <!-- <label class="radio-card" for="variant1">
       <input type="radio"  class="selectInput" name="type" id="variant1" value="variant1" v-model="selectedVariant">
       <p> задать размеры до вывода хвс, гвс и канализации</p>
      </label> -->
 
-
-
-    
     <label class="radio-card" for="variant2">
-      <input type="radio" class="selectInput" name="type" id="variant2" value="variant2" v-model="selectedVariant">
-      <p>разместить раковину </p>
+      <input
+        type="radio"
+        class="selectInput"
+        name="type"
+        id="variant2"
+        value="variant2"
+        v-model="selectedVariant"
+      />
+      <p>разместить раковину</p>
     </label>
-
-
-     
- 
-   
   </div>
 
   <!-- <div v-if="selectedVariant==='variant1'" class="pipeline">
@@ -32,8 +30,6 @@
     <p>{{ rowSegmentsStore.duct.size }} см</p>
   </div> -->
 
-
-
   <!-- <p>установите раковину</p> -->
 
   <div class="buttonWrapper">
@@ -42,19 +38,16 @@
   <div>
     <p>{{ kitchenStore.parts.direct1 }}</p>
     <p>{{ kitchenStore.parts.direct2 }}</p>
-
   </div>
 </template>
 
 <script setup>
-import { ref, watch, inject } from 'vue';
-import { useKitchenSizesStore } from '../../pinia/kitchenSizes';
-import { useRowSegmentsStore } from '../../pinia/RowSegments';
-
-
+import { ref, watch, inject, onUnmounted } from "vue";
+import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
+import { useRowSegmentsStore } from "../../pinia/RowSegments";
 
 const kitchenStore = useKitchenSizesStore();
-const rowSegmentsStore = useRowSegmentsStore()
+const rowSegmentsStore = useRowSegmentsStore();
 
 const setTech = inject("setTech");
 const cabinetBuilder = inject("cabinetBuilder");
@@ -63,51 +56,80 @@ const selectedVariant = ref(null);
 
 // Следим за изменением варианта
 watch(selectedVariant, (newVal) => {
-  if (newVal === 'variant1') {
-  
-    restart()
+  if (newVal === "variant1") {
+    restart();
     setTech.value.setCustom();
-  } else if (newVal === 'variant2') {
-    restart()
+  } else if (newVal === "variant2") {
+    restart();
     setTech.value.setSink();
-  } else if (newVal === 'variant3') {
-    console.log('auto')
+  } else if (newVal === "variant3") {
+    console.log("auto");
   }
 });
 
 function restart() {
-  kitchenStore.sink.isSet = false
-  setTech.value.gaps = []
-  rowSegmentsStore.removeSegmentTypes(['build_direct_l1', 'build_left_l1', 'build_right_l1']);
-  rowSegmentsStore.removeSegmentType('sink')
+  kitchenStore.sink.isSet = false;
+  setTech.value.gaps = [];
+  rowSegmentsStore.removeSegmentTypes([
+    "build_direct_l1",
+    "build_left_l1",
+    "build_right_l1",
+  ]);
+  rowSegmentsStore.removeSegmentType("sink");
   setTech.value.setSink();
-  cabinetBuilder.value.deleteAll()
-  cabinetBuilder.value.executeConfig("actual" , "currectActual")
-
-
+  cabinetBuilder.value.deleteAll();
+  cabinetBuilder.value.executeConfig("actual", "currectActual");
 }
+
+onUnmounted(() => {
+  // удалить слушателей
+  if (setTech.value.abortController) {
+    setTech.value.abortController.abort();
+    setTech.value.abortController = null;
+  }
+
+
+  if(!kitchenStore.sink.isSet){
+      const namesToRemove = [
+      "SinkNormal",
+      "BoxForDelete",
+      "sinkModel",
+      "resultMesh",
+      "duct",
+    ];
+    setTech.value.scene.children
+      .filter((obj) => namesToRemove.includes(obj.name))
+      .forEach((obj) => {
+        setTech.value.scene.remove(obj);
+        obj.geometry?.dispose();
+        obj.material?.dispose();
+      });
+    
+      setTech.value.sceneSetup.requestRender();
+
+  }
+
+
+
+});
 </script>
 
 <style scoped>
-
 .radio-group {
   margin-top: 20px;
   display: flex;
-  flex-direction: column;  
+  flex-direction: column;
   gap: 15px;
- 
 }
 
 .radio-card {
-
-
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 5px;
   cursor: pointer;
 
   transition: all 0.3s ease;
-  width: 100% ;
+  width: 100%;
   height: 80px;
 }
 
@@ -117,11 +139,10 @@ function restart() {
 
 .radio-card .card-content {
   width: 100%;
- 
+
   display: flex;
-  flex-direction: column; 
-  align-items: center; 
-  
+  flex-direction: column;
+  align-items: center;
 }
 
 .radio-card .card-image {
@@ -134,7 +155,6 @@ function restart() {
 .radio-card .card-title {
   margin-top: 5px;
   font-size: 16px;
- 
 }
 
 .radio-card:hover,
@@ -151,29 +171,22 @@ function restart() {
   margin-bottom: 5px;
   background-color: #fd3131;
   border: 0;
- 
+
   color: #ffffff;
   cursor: pointer;
   display: inline-block;
   font-size: 14px;
   font-weight: 600;
-  
+
   padding: 15px 25px;
   text-align: center;
-
 }
 
-.duct_img{
+.duct_img {
   width: 210px;
   height: 160px;
 }
 
 .sinkButton:hover {
- 
-  
-
- 
 }
 </style>
-
-

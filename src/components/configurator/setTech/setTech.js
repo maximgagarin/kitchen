@@ -574,7 +574,7 @@ export class SetTech {
         posX = KitchenSizes.side_a - sinkSize/2 - penalOffsets.directRight
         algorithmConfig.direct2parts = false
 
-        const size = KitchenSizes.side_a - penalOffsets.directRight - penalOffsets.directLeft - sinkSize
+        const size = Number((KitchenSizes.side_a - penalOffsets.directRight - penalOffsets.directLeft - sinkSize).toFixed(2))
         setSize('directPart1', size )
         algorithmConfig.rowStart.direct += penalOffsets.directLeft
 

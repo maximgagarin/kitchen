@@ -34,9 +34,16 @@ function renameKeys(data) {
     const renamed = {};
 
     for (const key in item) {
-      // Переименование ключей, если указано в карте
-      const newKey = renameMap.hasOwnProperty(key) ? renameMap[key] : key;
+      const newKey = renameMap.hasOwnProperty(key.trim()) ? renameMap[key.trim()] : key.trim();
       let value = item[key];
+
+      if (typeof value === "string") {
+        // Убираем пробелы по краям
+        value = value.trim();
+
+        // Если нужно удалить все пробелы внутри строк:
+        // value = value.replace(/\s+/g, '');
+      }
 
       // Округляем числовые значения
       if (typeof value === "number") {
@@ -46,7 +53,7 @@ function renameKeys(data) {
       renamed[newKey] = value;
     }
 
-    // Обязательно добавляем __rowNum__, если есть
+    // Обязательно добавляем rowNum, если есть
     if ('__rowNum__' in item) {
       renamed.rowNum = item.__rowNum__;
     }

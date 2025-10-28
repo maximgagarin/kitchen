@@ -474,7 +474,7 @@ restoreOriginalPositions() {
     if (!model) return;
     //создание объекта модели
     let instance
-    if(type == 'm'){
+    if(type === 'm' || type === 'module-sink-1000'){
       instance = new SinkInstanse(model);
     } else {
       instance = new ModelInstanse(model , this.sceneSetup);
@@ -532,13 +532,16 @@ restoreOriginalPositions() {
     const m = this.sinkSize; // фиксированная мойка, можно передать из параметров
     const id = THREE.MathUtils.generateUUID()
 
+    console.log('type', type)
+    console.log('modelName', modelName)
+
     
     
     const model = this.loaderModels.get(modelName);
     if (!model) return;
 
     let instance
-      if(type == 'm'){
+      if(type === 'm' || type === 'module-sink-1000-left' ){
        instance = new SinkInstanse(model);
     } else {
       instance = new ModelInstanse(model, this.sceneSetup);
@@ -670,7 +673,7 @@ restoreOriginalPositions() {
       let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
       algorithmConfig.resultLeft.splice(1, 0, ...result)
     } else {
-      this.plannerStore.showError();
+    //  this.plannerStore.showError();
       console.log('нет правил')
     }
 
@@ -689,7 +692,7 @@ restoreOriginalPositions() {
           let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
           algorithmConfig.resultLeft.push(...result2);
        } else {
-          this.plannerStore.showError();
+        //  this.plannerStore.showError();
           console.log('нет правил')
        }
     }
@@ -842,7 +845,7 @@ restoreOriginalPositions() {
 
 
     } else {
-      this.plannerStore.showError();
+  //    this.plannerStore.showError();
       console.log('нет правил')
     }
 
@@ -855,7 +858,7 @@ restoreOriginalPositions() {
           let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));    
           algorithmConfig.resultDirect.push(...result2);
        } else {
-          this.plannerStore.showError();
+     //     this.plannerStore.showError();
           console.log('нет правил')
        }
     }

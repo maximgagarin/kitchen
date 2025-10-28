@@ -46,9 +46,9 @@ calcCornerModules() {
   const directEdge = firstDirect.root.position.x - firstDirect.objectSize.x / 2;
   const leftEdge = firstLeft.root.position.z - firstLeft.objectSize.x / 2;
 
-  if (directEdge < 0.3) {
+  if (directEdge < 0.29) {
     plannerConfig.isAngleRow2L = 'direct';
-  } else if (leftEdge < 0.3) {
+  } else if (leftEdge < 0.29) {
     plannerConfig.isAngleRow2L = 'left';
   } else {
     plannerConfig.isAngleRow2L = 'none';

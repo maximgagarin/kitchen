@@ -244,7 +244,7 @@ moveNearWallsOnly() {
     const movingPosZ = plannerConfig.selectedObject.root.position.z
 
     const movingWidth = plannerConfig.selectedObject.width
-    let modelsArray =plannerConfig.penalsArray
+    let modelsArray = plannerConfig.penalsArray
 
     if (side == 'direct') modelsArray = modelsArray.filter(model=> model.side == 'direct')
     if (side == 'left') modelsArray = modelsArray.filter(model=> model.side == 'left')

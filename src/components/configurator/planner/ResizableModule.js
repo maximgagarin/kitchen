@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { ModelInstanse } from "./ModelInstanse";
+import { SinkInstanse } from "./SinkInstanse";
 import { modelsList } from "./utils/modelsList";
 
 import { usePlannerStore } from "../../../pinia/PlannerStore";
@@ -233,8 +234,20 @@ export class ResizableModule {
     // Теперь можно удалять старый
     this.plannerManager.deleteSelected();
 
-    const instance = new ModelInstanse(model);
-    instance.name = type;
+    let instance
+
+    if(type === 'm'){
+      instance = new SinkInstanse(model);
+       instance.name = 'm'
+    } else {
+       instance = new ModelInstanse(model);
+       instance.name = type;
+    }
+
+   
+
+
+   
     instance.slot = oldindex;
     instance.side = oldside;
     instance.fullname = name

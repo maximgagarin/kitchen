@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { Line } from './Line'
 import { LineWithouText } from './LineWithoutText'
+import { useKitchenSizesStore } from '../../../pinia/kitchenSizes'
 import { algorithmConfig } from '../builders/Algorithm/algorithmConfig'
 
 
@@ -24,6 +25,7 @@ export class ModelInstanse2L {
     this.sublevel = null
     this.heightType = 0
     this.isCombo = false
+    this.kitchenStore = useKitchenSizesStore()
 
      this.axis = new THREE.AxesHelper(5)
     
@@ -58,14 +60,17 @@ export class ModelInstanse2L {
   }
 
    createLines(){
-    this.lineHotizontal = new Line(this.sceneSetup,{x:-(this.objectSize.x)/2, y:0.9, z:-0.15}, 
-                                   {x:(this.objectSize.x)/2, y:0.9, z:-0.15})
+
+    const posY = this.kitchenStore.modules_height.height2level === 0.7? 0.85 : 1
+
+    this.lineHotizontal = new Line(this.sceneSetup,{x:-(this.objectSize.x)/2, y:posY, z:-0.15}, 
+                                   {x:(this.objectSize.x)/2, y:posY, z:-0.15})
     
     this.lineLeft = new LineWithouText({x:-(this.objectSize.x)/2, y:this.objectSize.y, z:-0.15}, 
-                                   {x:-(this.objectSize.x)/2, y:1, z:-0.15}, 1, true)
+                                   {x:-(this.objectSize.x)/2, y:posY, z:-0.15}, 1, true)
 
     this.lineRight = new LineWithouText({x:(this.objectSize.x)/2, y:this.objectSize.y, z:-0.15}, 
-                                   {x:(this.objectSize.x)/2, y:1, z:-0.15}, 1, true)                                   
+                                   {x:(this.objectSize.x)/2, y:posY, z:-0.15}, 1, true)                                   
                                        
 
     this.root.add(this.lineHotizontal.group)

@@ -19,7 +19,7 @@ export class TableTop {
  
 
 groupModulesForCountertops() {
-  const tolerance = 0.02; // 2 мм
+  const tolerance = 0.01; // 2 мм
   const filteredModels = plannerConfig.modelsDirect.filter(m => m.name !== 'penal');
 
   // Сортируем по X
@@ -120,7 +120,7 @@ groupModulesForCountertops() {
           const depth = groupBox.max.z - groupBox.min.z;
       //    console.log('width', width)
 
-          const atlas = this.materialManager.setTexture2(width, 'x') 
+          const atlas = this.materialManager.setTexture(width, 'x') 
 
           const geometry = new THREE.BoxGeometry(width, countertopHeight, countertopDepth);
           const tabletop = new THREE.Mesh(geometry, atlas);
@@ -135,6 +135,7 @@ groupModulesForCountertops() {
        //   console.log('boxHole', boxForHole)
 
           if(isSink && boxForHole){
+         //   console.log('makeHole')
             const newTabletop = this.makeHole(tabletop, boxForHole);
             this.scene.remove(tabletop);
             newTabletop.position.copy(tabletop.position);
@@ -179,7 +180,7 @@ groupModulesForCountertops() {
  //   console.log('depth', depth)
 
 
-    const atlas = this.materialManager.setTexture2(depth , 'z');
+    const atlas = this.materialManager.setTexture(depth , 'z');
 
     const geometry = new THREE.BoxGeometry( countertopDepth,  countertopHeight, depth );
     const tabletop = new THREE.Mesh(geometry, atlas);

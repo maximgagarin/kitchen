@@ -184,9 +184,6 @@ export class PlannerManager {
 
     
 
-    this.setIndex()
-    this.calculateSlotPositions()
-    this.calculateSlotPositions2L()
     this.tableTop.create()
     
    
@@ -195,22 +192,7 @@ export class PlannerManager {
     this.sceneSetup.requestRender();
   }
 
-  setIndex() {
-    plannerConfig.modelsDirect.sort((a, b) => a.root.position.x - b.root.position.x);
 
-    plannerConfig.modelsDirect.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-    });
-    plannerConfig.modelsDirect2L.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-    });
-    plannerConfig.modelsLeft2L.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-    });
-  }
 
 
 
@@ -273,6 +255,8 @@ export class PlannerManager {
       console.log('changeSelected')
       this.changeController.changeSelected(type, width)
       this.emptyManager.calculateEmpties()
+      this.tableTop.create() 
+      this.sceneSetup.requestRender()
       
 
     } else if(plannerConfig.selectedEmpty){
@@ -287,14 +271,13 @@ export class PlannerManager {
       console.log('addToEmpty2')
 
       this.emptyManager2L.addToEmpty(type, width)
-      this.swapController.setIndex()
-      this.swapController.calculateSlotPositions2L()
+  
     }
      else if(plannerConfig.selectedEmptyInSector){
       console.log('addToEmptySector')
 
       this.emptyManager2L.addToGroup(type, width)
-      this.swapController.calculateSlotPosInSector()
+   
     }
 
   }
@@ -694,9 +677,7 @@ this.plannerStore.movedBack = false;
   //  this.controls.enabled = false;
 
     
-    if(plannerConfig.selectedObject.level == 1){
-      this.calculateSlotsNew()
-    }
+   
     
      
 
@@ -855,54 +836,61 @@ this.plannerStore.movedBack = false;
   // }
 
   controlsIntersected(intersect, event) {
+    const side = plannerConfig.selectedObject.side
+    const rules = {
+      direct:{
+        array:"modelsDirect"
+      },
+      left:{
+        array:"modelsLeft"
+      },
+      right:{
+        array:"modelsRight"
+      }
+    }
+
+    const rule = rules[side]
+    const modelsArray = plannerConfig[rule.array]
+
  //   console.log(intersect);
     if (intersect.name == "centerControl") {
-
-
    // свиг чтобы не было рывка 
     const planeHit =   this.raycaster.intersectObject(plannerConfig.directPlane1level)[0]
-  
-    console.log('planeHit', planeHit)
-
-    if (planeHit) {
-      // 2. Вычисляем offset: позиция объекта - точка пересечения
-      this.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
-      console.log('rootPos', plannerConfig.selectedObject.root.position)
-      console.log('planehitPoint', planeHit.point)
-      this.moveController.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
-    }
-
+      if (planeHit) {
+        // 2. Вычисляем offset: позиция объекта - точка пересечения
+        this.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
+        console.log('rootPos', plannerConfig.selectedObject.root.position)
+        console.log('planehitPoint', planeHit.point)
+        this.moveController.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
+      }
       this.isMoving = true;
-
-    if(plannerConfig.selectedObject.side == 'direct'){
-      plannerConfig.tabletops.forEach(item=>{item.visible = false})
-      plannerConfig.modelsDirect.forEach(item => {
-         if(item.name =='penal') return
+      if(plannerConfig.selectedObject.side == 'direct'){
+        plannerConfig.tabletops.forEach(item=>{item.visible = false})
+        plannerConfig.modelsDirect.forEach(item => {
+          if(item.name =='penal') return
+          item.tabletop.visible = true})
+      } 
+      else if(plannerConfig.selectedObject.side == 'left'){
+        plannerConfig.tabletopsLeft.forEach(item=>{item.visible = false})
+        plannerConfig.modelsLeft.forEach(item => {
+        if(item.name =='penal') return
         item.tabletop.visible = true})
-    } else if(plannerConfig.selectedObject.side == 'left'){
-      plannerConfig.tabletopsLeft.forEach(item=>{item.visible = false})
-      plannerConfig.modelsLeft.forEach(item => {
-         if(item.name =='penal') return
-        item.tabletop.visible = true})
-    }
-
-   
-
-    
-    
-
-
-     this.sceneSetup.requestRender()
+      }
+      this.sceneSetup.requestRender()
   
-    } else if (intersect.name == "leftControl" || intersect.name == "rightControl" ) {
-    plannerConfig.tabletops.forEach(item=>{item.visible = false})
-     plannerConfig.modelsDirect.forEach(item => {item.tabletop.visible = true})
-
+     }
+   else if (intersect.name == "leftControl" || intersect.name == "rightControl" ) {
+      plannerConfig.tabletops.forEach(item=>{item.visible = false})
+      modelsArray.forEach(item => {
+        if (item.tabletop) item.tabletop.visible = true
+      })
       this.isDragging = true;
       this.resizableModule.setSettings(intersect, event);
-    } else if (intersect.name == "menuControl") {
+    }
+   else if (intersect.name == "menuControl") {
       this.plannerStore.objectMenu = true;
-    }else if (intersect.name == "copyControl") {
+   }
+   else if (intersect.name == "copyControl") {
       console.log(plannerConfig.selectedObject)
       this.copyController.moving = true
       this.copyController.run()
@@ -1272,7 +1260,7 @@ this.plannerStore.movedBack = false;
   }
     
      
-
+    // рассчет ограничений
     this.utils.calcCornerModules()
 
     //движени выбранного после свапа
@@ -1297,6 +1285,7 @@ this.plannerStore.movedBack = false;
     plannerConfig.selectedInSector = false
 
     if(plannerConfig.copyObject){
+      console.log('plannerConfig.copyObject')
       this.copySettings()
     }
 
@@ -1365,29 +1354,6 @@ this.plannerStore.movedBack = false;
 
 
 
-  calculateSlotsNew(){
-  //   plannerConfig.newSlotsDirect.length = 0
-  //   plannerConfig.newSlotsLeft.length = 0
-
-  //    plannerConfig.modelsDirect.sort((a, b) => a.root.position.x - b.root.position.x);
-  //    plannerConfig.modelsLeft.sort((a, b) => a.root.position.z - b.root.position.z);
-
-  //    plannerConfig.modelsDirect.forEach((el, index)=>{
-  //    el.index = index 
-  //     plannerConfig.newSlotsDirect.push({index:el.index,
-  //        center:Number((el.root.position.x).toFixed(3)),
-  //       width:el.width})
-  //    })
-  //      plannerConfig.modelsLeft.forEach((el, index)=>{
-  //    el.index = index 
-  //     plannerConfig.newSlotsLeft.push({index:el.index,
-  //        center:Number((el.root.position.z).toFixed(3)),
-  //       width:el.width})
-  //    })
-
-  //  //  console.log('modelsDirect', plannerConfig.modelsDirect)
-  //    this.calculateCornerBounds()
-  }
 
   calculateCornerBounds(){
 
@@ -1474,116 +1440,8 @@ this.plannerStore.movedBack = false;
       
   }
 
-  calculateSlotPositions2L() {
-    let offsetDirect =
-      this.kitchenType == "direct"
-        ? 0 + this.penalStore.penalOffsets.directLeft
-        : 0.6;
-
-    
-    let offsetLeft = 0;
-
-    if(this.kitchenSizesStore.type == 'left'){
-      if(plannerConfig.isAngleRow2L == 'direct'){
-        offsetLeft = 0.3
-        offsetDirect = 0
-      }
-      if(plannerConfig.isAngleRow2L == 'left'){
-        offsetLeft = 0
-        offsetDirect = 0.3
-      }
-    }
-
- //   console.log('offsetDirect2', offsetDirect)
- //   console.log('offsetLeft2', offsetLeft)
 
 
-    // plannerConfig.slotsDirect2L.length = 0;
-    // plannerConfig.slotsLeft2L.length = 0;
-
-    // plannerConfig.modelsDirect2L.sort((a, b) => a.slot - b.slot);
-    // plannerConfig.modelsDirect2L.forEach((el) => {
-    //   if (el.name == "penal") return;
-    //   el.center = Number((el.objectSize.x / 2 + offsetDirect).toFixed(3));
-    //   plannerConfig.slotsDirect2L.push({
-    //     index: el.slot,
-    //     center: el.center,
-    //     width: el.objectSize.x,
-    //   });
-    //   offsetDirect += el.objectSize.x;
-    // });
-
-    // plannerConfig.modelsLeft2L.sort((a, b) => a.index - b.index);
-    // plannerConfig.modelsLeft2L.forEach((el) => {
-    //   el.center = Number((el.objectSize.x / 2 + offsetLeft).toFixed(3));
-    //   plannerConfig.slotsLeft2L.push({
-    //     index: el.slot,
-    //     center: el.center,
-    //     width: el.objectSize.x,
-    //   });
-    //   offsetLeft += el.objectSize.x;
-    // });
-
-   // console.log("slotsDirect", plannerConfig.slotsDirect);
-   // console.log("slotsLeft", plannerConfig.slotsLeft);
-  }
-
-  calculateSlotPositions() {
-
-    let offsetDirect = 0
-    let offsetLeft = 0;
-
-    // if(this.kitchenSizesStore.type == 'direct'){
-    //  offsetDirect = this.penalStore.penalOffsets.directLeft
-    // }
-
-    // if(this.kitchenSizesStore.type == 'left'){
-     
-    //   if(plannerConfig.isAngleRow == 'direct'){
-    //     offsetLeft = 0.6
-    //     offsetDirect = 0
-    //   }
-
-    //   if(plannerConfig.isAngleRow == 'left'){
-    //     offsetLeft = 0
-    //     offsetDirect = 0.6
-    //   }
-      
-    // }
-   // console.log('offsetDirect', offsetDirect)
-
-    // offsetDirect =  this.kitchenType == "direct"  ? 0 + this.penalStore.penalOffsets.directLeft  : 0.6;
-    
-
-    // plannerConfig.slotsDirect.length = 0;
-    // plannerConfig.slotsLeft.length = 0;
-
-  //  plannerConfig.modelsDirect.sort((a, b) => a.slot - b.slot);
-    // plannerConfig.modelsDirect.forEach((el) => {
-    //   if (el.name == "penal") return;
-    //   el.center = Number((el.root.position.x ).toFixed(3));
-    //   plannerConfig.slotsDirect.push({
-    //     index: el.slot,
-    //     center: el.center,
-    //     width: el.objectSize.x,
-    //   });
-    //   offsetDirect += el.objectSize.x;
-    // });
-
-    // plannerConfig.modelsLeft.sort((a, b) => a.slot - b.slot);
-    // plannerConfig.modelsLeft.forEach((el) => {
-    //   el.center = Number((el.objectSize.x / 2 + offsetLeft).toFixed(3));
-    //   plannerConfig.slotsLeft.push({
-    //     index: el.slot,
-    //     center: el.center,
-    //     width: el.objectSize.x,
-    //   });
-    //   offsetLeft += el.objectSize.x;
-    // });
-
-  //  console.log("slotsDirect", plannerConfig.slotsDirect);
-  //  console.log("slotsLeft", plannerConfig.slotsLeft);
-  }
 
  
 
@@ -1613,53 +1471,21 @@ this.plannerStore.movedBack = false;
     const penalsRight = plannerConfig.penalsArray.filter(penal=> penal.side == 'right')
 
 
-    plannerConfig.modelsDirect.push(...penalsDirect)
-    plannerConfig.modelsLeft.push(...penalsLeft)
 
   
-
-    //создание индекса для модели
-    plannerConfig.modelsDirect.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-
-    });
-
-    plannerConfig.modelsLeft.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-
-    });
-
-     plannerConfig.modelsDirect2L.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-
-    });
-
-    plannerConfig.modelsLeft2L.forEach((el, index) => {
-      el.index = index;
-      el.slot = index;
-
-    });
-
-
-
-
-  this.calculateSlotPositions();
-  this.calculateSlotPositions2L();
-//  this.calculateSlotsNew()
-
 
 
 
   
     plannerConfig.models = [...plannerConfig.modelsLeft, ...plannerConfig.modelsDirect ,
-       ...plannerConfig.modelsDirect2L, ...plannerConfig.modelsLeft2L, ...plannerConfig.penalsArray];
+       ...plannerConfig.modelsDirect2L, ...plannerConfig.modelsLeft2L];
    
 
-  //  console.log('models', plannerConfig.models);
-  //  console.log('modelsDirect', plannerConfig.modelsDirect);
+    console.log('models', plannerConfig.models);
+    console.log('modelsDirect', plannerConfig.modelsDirect);
+    console.log('modelsLeft', plannerConfig.modelsLeft);
+
+    
 
 
 

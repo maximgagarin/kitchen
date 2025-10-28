@@ -67,25 +67,44 @@ export class EmptyManager2L {
       }
     }
 
-    const leftOffset = plannerConfig.isAngleRow2L == 'left' ? 0.3 : 0
+    // есть в углу модуль
+    const leftOffset = plannerConfig.isAngleRow2L === 'left' ? 0.3 : 0
 
-    // Левый край
-    const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
-    if (firstBox.min.x > 0.15 + leftOffset) {
-      this.addGapBox(0 +leftOffset, firstBox.min.x, firstBox, posY, side, leftOffset);
+    if( models.length > 0 ){
+          // Левый край
+      const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
+      if (firstBox.min.x > (0.15 + leftOffset)) {
+        console.log(' plannerConfig.isAngleRow2L',  plannerConfig.isAngleRow2L)
+        console.log('leftOffset', leftOffset)
+        console.log('firstBox.min.x', firstBox.min.x)
+        console.log('0.15 + leftOffset', 0.15 + leftOffset)
+        this.addGapBox(0 +leftOffset, firstBox.min.x, firstBox, posY, side, leftOffset);
+      }
+
+      // Правый край
+      const lastBox = new THREE.Box3().setFromObject(
+        models[models.length - 1].raycasterBox
+      );
+      if ((totalWidth - lastBox.max.x) > 0.15) {
+        this.addGapBox(lastBox.max.x, totalWidth, lastBox, 1.5, side);
+      }
+
+    } else {
+                  console.log('empty')
+       this.addGapBox( leftOffset, totalWidth, 1, 1.5, side);
+     
     }
 
-    // Правый край
-    const lastBox = new THREE.Box3().setFromObject(
-      models[models.length - 1].raycasterBox
-    );
-    if (totalWidth - lastBox.max.x > 0.15) {
-      this.addGapBox(lastBox.max.x, totalWidth, lastBox, 1.5, side);
-    }
+  
+  
 
     plannerConfig.modelsDirect2L = plannerConfig.modelsDirect2L.filter(
       model => model.name !== 'penal'
     );
+
+      console.log('modelsLengh', models)
+
+
   }
 
   createGapBoxesLeft() {
@@ -127,20 +146,25 @@ export class EmptyManager2L {
     const offset = plannerConfig.isAngleRow2L == 'direct' ? 0.3 : 0
 
 
+    if(models.length > 0 ){
+          // Левый край
+      const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
+      if (firstBox.min.z > (0.15 + offset)) {
+        this.addGapBoxLeft(0 +offset, firstBox.min.z, firstBox, posY, side);
+      }
 
-    // Левый край
-    const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
-    if (firstBox.min.z > 0.15 + offset) {
-      this.addGapBoxLeft(0 +offset, firstBox.min.z, firstBox, posY, side);
+      // Правый край
+      const lastBox = new THREE.Box3().setFromObject(
+        models[models.length - 1].raycasterBox
+      );
+      if ((totalWidth - lastBox.max.z) > 0.15) {
+        this.addGapBoxLeft(lastBox.max.z, totalWidth, lastBox, 1.5, side);
     }
-
-    // Правый край
-    const lastBox = new THREE.Box3().setFromObject(
-      models[models.length - 1].raycasterBox
-    );
-    if (totalWidth - lastBox.max.z > 0.15) {
-      this.addGapBoxLeft(lastBox.max.z, totalWidth, lastBox, 1.5, side);
+    } else {
+             console.log('empty')
+       this.addGapBox( offset, totalWidth, 1, 1.5, side);
     }
+  
 
     // удаляем пеналы
      plannerConfig.modelsLeft2L = plannerConfig.modelsLeft2L.filter(
@@ -170,8 +194,8 @@ export class EmptyManager2L {
 
       const lineHotizontal = new Line(
           this.sceneSetup,
-          { x: -gap / 2, y: -2, z: -0.14 },
-          { x: gap / 2, y: -2, z: -0.14 },
+          { x: -gap / 2, y: 0.3, z: -0.14 },
+          { x: gap / 2, y: 0.3, z: -0.14 },
           0.4,
           1
         );
@@ -216,8 +240,8 @@ export class EmptyManager2L {
 
      const lineHotizontal = new Line(
           this.sceneSetup,
-          { x: -gap / 2, y: -2, z: -0.14 },
-          { x: gap / 2, y: -2, z: -0.14 },
+          { x: -gap / 2, y: 0.3, z: -0.14 },
+          { x: gap / 2, y: 0.3, z: -0.14 },
           0.4,
           1
         );
@@ -250,10 +274,10 @@ export class EmptyManager2L {
     plannerConfig.empties2levelDirect.length = 0;
     plannerConfig.empties2levelLeft.length = 0;
 
-    if (plannerConfig.modelsDirect2L.length > 0) {
+    if (plannerConfig.modelsDirect2L.length >= 0) {
       this.createGapBoxes();
     }
-    if (plannerConfig.modelsLeft2L.length > 0) {
+    if (this.kitchenStore.type === 'left' && plannerConfig.modelsLeft2L.length >= 0) {
       this.createGapBoxesLeft();
     }
     

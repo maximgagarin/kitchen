@@ -315,7 +315,7 @@ export class AlgorithmManager2level {
         const filtered = (this.filter2(size) || []).filter(rule => rule.P_1 !== 0);
       const rule = filtered[variantIndex] || []
       if (!rule.length) {
-        this.plannerStore.showError()
+       // this.plannerStore.showError()
         
       }
       const result = Object.entries(rule).map(([key, value]) => ({ key, value }))
@@ -396,7 +396,7 @@ export class AlgorithmManager2level {
       const rule = filtered[variantIndex] || []
     
       if (!rule.length) {
-        this.plannerStore.showError()
+     //   this.plannerStore.showError()
         
       }
       const result = Object.entries(rule).map(([key, value]) => ({ key, value }))

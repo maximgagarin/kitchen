@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { Line } from './Line'
 import { LineWithouText } from './LineWithoutText'
+import { algorithmConfig } from '../builders/Algorithm/algorithmConfig'
 import { LoaderModels2 } from '../LoaderModels2'
 //const loaderModels = new LoaderModels2()
 
@@ -17,9 +18,9 @@ export class SinkInstanse {
 
     this.sinkOn = false
     this.sink = this.root.getObjectByName('Sink_and_ktichen_faucet')
-    this.tabletopFull = this.root.getObjectByName('tabletopfull')
+  //  this.tabletopFull = this.root.getObjectByName('tabletopfull')
     this.tabletopWidthHole = this.root.getObjectByName('tabletop')
-    this.tabletopFull.visible = false
+   // this.tabletopFull.visible = false
     this.tabletop = this.root.getObjectByName('tabletop')
 
     this.controls = []
@@ -50,19 +51,21 @@ export class SinkInstanse {
     this.objectSize = new THREE.Vector3();
     this.createBox()
     this.createControls()
-    // this.lineHotizontal = new Line( {x:-(this.objectSize.x)/2, y:1, z:-(this.objectSize.x)/2}, 
-    //                                {x:-(this.objectSize.x)/2, y:1, z:(this.objectSize.x)/2})
+    this.lineHotizontal = new Line(false,{x:-(this.objectSize.x)/2, y:1, z:-0.29}, 
+                                   {x:(this.objectSize.x)/2, y:1, z:-0.29}, 1)
     
-    //  this.lineLeft = new LineWithouText({x:-(this.objectSize.x)/2, y:this.objectSize.y-0.1, z:-(this.objectSize.x)/2}, 
-    //                                     {x:-(this.objectSize.x)/2, y:1, z:-(this.objectSize.x)/2}, 1, true)
+    this.lineLeft = new LineWithouText({x:-(this.objectSize.x)/2, y:this.objectSize.y - 0.2, z:-0.29}, 
+                                       {x:-(this.objectSize.x)/2, y:1, z:-0.29}, 1, true)
 
-    //  this.lineRight = new LineWithouText({x:-(this.objectSize.x)/2, y:this.objectSize.y-0.1, z:(this.objectSize.x)/2}, 
-    //                                     {x:-(this.objectSize.x)/2, y:1, z:(this.objectSize.x)/2}, 1, true)                                   
-                                        
+    this.lineRight = new LineWithouText({x:(this.objectSize.x)/2, y:this.objectSize.y - 0.2, z:-0.29}, 
+                                        {x:(this.objectSize.x)/2, y:1, z:-0.29}, 1, true)                                    
+                                       
 
-  //  this.root.add(this.lineHotizontal.group)
-  //  this.root.add(this.lineLeft.group)
-  //  this.root.add(this.lineRight.group)
+    this.root.add(this.lineHotizontal.group)
+   // this.root.add(this.lineLeft.group)
+   // this.root.add(this.lineRight.group)
+
+    algorithmConfig.lines.push(this.lineHotizontal, this.lineLeft, this.lineRight)
 
     
 
