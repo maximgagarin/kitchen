@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6 p-1 max-w-3xl mx-auto">
-    <h2 class="text-sm font-medium text-gray-800 mb-4">Варианты</h2>
+    <h2 class="text-xs font-medium text-gray-800 mb-4">Варианты</h2>
     
 <div
   class="flex space-x-4  overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
@@ -30,7 +30,7 @@
       <div class="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
         <span class="text-gray-500 text-xs">Изображение</span>
       </div>
-      <span class="text-sm font-medium text-gray-700 text-center">{{ option.label }}</span>
+      <!-- <span class="text-sm font-medium text-gray-700 text-center">{{ option.label }}</span> -->
     </div>
   </label>
 </div>

@@ -3,31 +3,30 @@
     <h2 class="text-sm font-medium text-gray-800 mb-4">варианты</h2>
 
     <div class="flex space-x-4  overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-      <label
-        v-for="option in options"
-        :key="option.value"
-        class="w-16 flex-shrink-0 relative border-2 rounded-lg p-1 cursor-pointer transition-all duration-200"
-        :class="{
-          'border-gray-300 hover:border-gray-400': selectedOption !== option.value,
-          'border-blue-500 ring-2 ring-blue-200': selectedOption === option.value
-        }"
-      >
-        <input
-          type="radio"
-          class="absolute opacity-0"
-          name="level"
-          :value="option.value"
-          v-model="selectedOption"
-          @change="updateConfig"
-        />
-        <div class="flex flex-col items-center space-y-2">
-          <!-- Можно добавить картинку сюда -->
-          <div class="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
-            <span class="text-gray-500 text-xs">Изображение</span>
-          </div>
-          <span class="text-sm font-medium text-gray-700 text-center">{{ option.label }}</span>
-        </div>
-      </label>
+  <label
+    v-for="option in options"
+    :key="option.value"
+    class="w-16 flex-shrink-0 relative border-2 rounded-lg p-1 cursor-pointer transition-all duration-200"
+    :class="{
+      'border-gray-300 hover:border-gray-400': selectedOption !== option.value,
+      'border-blue-500 ring-2 ring-blue-200': selectedOption === option.value
+    }"
+  >
+    <input
+      type="radio"
+      class="absolute opacity-0"
+      name="angle_blocks"
+      :value="option.value"
+      v-model="selectedOption"
+      @change="updateConfig"
+    />
+    <div class="flex flex-col items-center space-y-2">
+      <div class="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+        <span class="text-gray-500 text-xs">Изображение</span>
+      </div>
+      <!-- <span class="text-sm font-medium text-gray-700 text-center">{{ option.label }}</span> -->
+    </div>
+  </label>
     </div>
 
     <div class="mt-6">
@@ -45,11 +44,11 @@ import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
 const kitchenStore = useKitchenSizesStore()
 
 const options = ref([
-  { value: "d1", label: "1", image: "img/button/direct/1.jpg" },
+  { value: "d1", label: "1" },
   {
     value: "d2",
     label: "2",
-    image: "img/button/direct/2.jpg",
+   
   },
  // { value: "d3", label: "3-й уровень", image: "img/button/direct/3.jpg" },
 ]);
