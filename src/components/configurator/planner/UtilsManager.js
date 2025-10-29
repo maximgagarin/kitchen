@@ -80,7 +80,7 @@ calcCornerModules2L() {
 
   // Если есть оба ряда
   const firstLeft = leftModules.slice().sort((a, b) => a.root.position.z - b.root.position.z)[0];
-  const firstDirect = directModules.slice().sort((a, b) => a.root.position.z - b.root.position.z)[0];
+  const firstDirect = directModules.slice().sort((a, b) => a.root.position.x - b.root.position.x)[0];
 
   const directEdge = firstDirect.root.position.x - firstDirect.objectSize.x / 2;
   const leftEdge = firstLeft.root.position.z - firstLeft.objectSize.x / 2;

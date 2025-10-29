@@ -176,6 +176,8 @@
 
   <CollisionAlert />
 
+  <p>delete - удалить модуль</p>
+
   <div class="mt-5 flex justify-between">
     <!-- Кнопка запуска -->
     <div class="text-center mb-6">
