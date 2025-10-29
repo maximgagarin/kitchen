@@ -301,161 +301,77 @@ export class SetTech {
   }
 
   build_rows() {
-    const {
-      side_a: directSideSize,
-      side_c: leftSideSize,
-      side_d: rightSideSize,
-    } = this.KitchenSizes.sideSizes;
+    const SINK_SIZE = 0.6
+    const sinkPosX = this.rowSegmentsStore.duct.x 
+    const sinkPosZ = this.rowSegmentsStore.duct.z
+
     
-    const sideSizes = {
-      direct: directSideSize,
-      left: leftSideSize,
-      right: rightSideSize,
-    };
-
-    let offset = 0.6;
-    let offsetDirect = 0
-    if(this.KitchenSizes.sink.side == 'left' && this.KitchenSizes.sink.size == 1){
-      offsetDirect = 0.6
-    } 
-    let segments = this.rowSegmentsStore.segments;
-
-    for (const key in segments) {
-      // Сортируем текущий массив
-      segments[key].sort((a, b) => a.start - b.start);
-      // Выводим имя текущего массива (key)
-   //   console.log("Текущий массив:", key); // 'direct', 'left' или 'right'
+    
+    const offsets = {
+      leftCorner:{
+        left:1, direct:0.6, directSize:0 , leftSize:0
+      },
+      leftStart:{
+        left:1.2, direct:0 , directSize:1 , leftSize:0
+      },
+      leftMiddle:{
+        left:0.6, direct:0, left2: sinkPosZ + SINK_SIZE/2,  directSize:1 , leftSize:0
+      },
+      leftEnd:{
+         left:0.6, direct:0, directSize:1 , leftSize:0
+      }, 
+      directCorner:{
+        left:0.6, direct:1, leftSize:0 , directSize:0 
+      },
+      directStart:{
+        left:0, direct:1.2, leftSize:1, directSize:0 
+      },
+      directMiddle:{
+        left:0, direct:0.6, direct2: sinkPosX + SINK_SIZE/2, leftSize:1, directSize:0 
+      },
+      directEnd:{
+         left:0, direct:0.6, leftSize:1, directSize:0 
+      } 
     }
 
- //   console.log("segments", segments);
 
-    //если нет елементов в ряду то строим целый ряд по правилам
-    const gapConfig = {
-      left: [
-        {
-          side: "direct",
-          type: "build_direct_l1",
-          offsetStart: offsetDirect,
-          condition: () => segments.direct.length === 0,
-        },
-        {
-          side: "left",
-          type: "build_left_l1",
-          offsetStart: offset,
-          condition: () => segments.left.length === 0,
-        },
-      ],
-      uShaped: [
-        {
-          side: "left",
-          type: "build_left_l1",
-          offsetStart: offset,
-          condition: () => segments.left.length === 0,
-        },
-        {
-          side: "right",
-          type: "build_right_l1",
-          offsetStart: offset,
-          condition: () => segments.right.length === 0,
-        },
-        {
-          side: "direct",
-          type: "build_direct_l1",
-          offsetStart: 0,
-          condition: () => segments.direct.length === 0,
-        },
-      ],
-    };
+    const offset = offsets[this.KitchenSizes.sink.location]
 
-    //функция добавляентия ряда
-    const addGap = (side, type, offsetStart = 0) => {
-      const size = sideSizes[side];
-      this.gaps.push({
-        start: offsetStart,
-        end: size - offsetStart,
-        width: size - offsetStart,
-        type,
-      });
-    };
+    console.log(offset)
+  
 
-    const type = this.KitchenSizes.type;
-    const rules = gapConfig[type];
+     const parts = this.KitchenSizes.parts.map(p => ({ ...p }))
+     console.log('parts', parts)
+     const leftRules = parts.filter(rule => rule.name === "C1" || rule.name === "C2");
+     const directRules = parts.filter(rule => rule.name === "A1" || rule.name === "A2");   
 
-    //перебор правил
-    if (rules) {
-      rules.forEach(({ side, type, offsetStart, condition }) => {
-        if (condition()) {
-          addGap(side, type, offsetStart);
-        }
-      });
-    }
+     leftRules[0].start = offset.left
+     leftRules[0].width += offset.leftSize
 
-    for (const side in segments) {
-      if (!segments[side] || segments[side].length === 0) continue;
-      // Сортируем сегменты по старту
-      segments[side].sort((a, b) => a.start - b.start);
-      const firstSegment = segments[side][0];
-      const sideSize = sideSizes[side];
+     directRules[0].start = offset.direct
+     directRules[0].width += offset.directSize
 
-      const startOffset = side === "direct" ? offsetDirect : offset;
+     if(leftRules[1]) leftRules[1].start = offset.left2
+     if(directRules[1]) directRules[1].start = offset.direct2
 
-    //  console.log('startOffset', startOffset)
+        const newRules = [...leftRules, ...directRules].map(rule => {
+        const { name, ...rest } = rule
+        return { ...rest, type: name }
+      })
 
-      // Промежуток от начала ряда до первого сегмента
-      if (firstSegment.start - startOffset > 0.02) {
-        this.gaps.push({
-          start: startOffset,
-          end: firstSegment.start,
-          width: firstSegment.start - startOffset,
-          type: `build_${side}_l1`,
-          id: `gap_start_${side}`,
-        });
+          newRules.forEach(rule => {
+      if (["A1", "A2"].includes(rule.type)) {
+        rule.type = "build_direct_l1"
+      } else if (["C1", "C2"].includes(rule.type)) {
+        rule.type = "build_left_l1"
       }
+})
 
-      // Промежутки между сегментами
-      for (let i = 0; i < segments[side].length - 1; i++) {
-        const currentEnd = segments[side][i].end;
-        const nextStart = segments[side][i + 1].start;
 
-        if (nextStart - currentEnd > 0.01) {
-          this.gaps.push({
-            start:currentEnd,
-            end: nextStart,
-            width: nextStart - currentEnd,
-            type: `build_${side}_l1`,
-            id: `gap_${side}_${currentEnd}_${nextStart}`,
-          });
-        }
-      }
-
-      // Промежуток после последнего сегмента до конца ряда
-      const lastSegment = segments[side][segments[side].length - 1];
-      if (sideSize - lastSegment.end > 0.02) {
-        this.gaps.push({
-          start: lastSegment.end,
-          end: sideSize,
-          width: sideSize - lastSegment.end,
-          type: `build_${side}_l1`,
-          id: `gap_end_${side}_${lastSegment.end}`,
-        });
-      }
-    }
-
-    const types = {
-      build_direct_l1: "direct",
-      build_left_l1: "left",
-      build_right_l1: "right",
-    };
-
-    this.gaps.forEach((element) => {
-      const type = types[element.type];
-      this.rowSegmentsStore.segments[type].push(element);
-    });
-
-  //  console.log("Пустые промежутки:", this.gaps);
-
-    //перестраиваем нижние ряды
-    this.cabinetBuilder.buildLowerRows(this.gaps);
+    console.log('leftRules', leftRules)
+     console.log('direct', directRules)
+     console.log('new', newRules)
+    this.cabinetBuilder.buildLowerRows(newRules);
   }
 
   setResultMeshProperties(tabletop, resultMesh) {
@@ -1239,7 +1155,7 @@ export class SetTech {
         const topCenter = sinkModule.getObjectByName("topCenter");
 
         this.addToStore(data, topCenter, posX, posZ); //posX , posZ , позиция раковины, data позиция модуля  и тип
-        this.build_rows();
+  
 
         //   tabletop.visible = false;
         //    BoxForDelete.visible = false;
@@ -1259,6 +1175,7 @@ export class SetTech {
 
         this.KitchenSizes.isSink = true
         this.KitchenSizes.sink.isSet = true
+              this.build_rows();
 
       //  this.calcPartsLenght()
 

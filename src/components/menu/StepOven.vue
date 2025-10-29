@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 bg-white rounded-lg shadow-md max-w-xs mx-auto">
     <h3 class="text-lg font-semibold text-gray-900 mb-2">
-      {{ penalStore.isOven ? 'Варочная панель?' : 'Плита?' }}
+      {{ penalStore.isOven ? '<Будет варочная панель?' : 'Будет плита?' }}
     </h3>
 
     <div class="flex flex-col space-y-2">

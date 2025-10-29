@@ -23,23 +23,13 @@ export class EmptyManager {
 
     this.removeObjectsByName(name);
 
-    // const filtredirectRight = plannerConfig.penalsArray.filter(
-    //   (penal) => penal.side == "directRight"
-    // );
-    // const filtredirectLeft = plannerConfig.penalsArray.filter(
-    //   (penal) => penal.side == "directLeft"
-    // );
 
-    // plannerConfig.modelsDirect.push(...filtredirectRight);
-    // plannerConfig.modelsDirect.push(...filtredirectLeft);
-    //  plannerConfig.modelsLeft.push(...filtredLeft)
 
     plannerConfig.emptiesObjects.length = 0;
     plannerConfig.iconsArray  = plannerConfig.iconsArray.filter(icon => icon.name == 'left')
   
     plannerConfig.modelsDirect.sort((a, b) => a.root.position.x - b.root.position.x);
-  //  console.log('modelsDirectSort', plannerConfig.modelsDirect)
-    //   находим пустоты между модулями прямоого ряда 
+
     for (let i = 0; i < plannerConfig.modelsDirect.length - 1; i++) {
       const current = plannerConfig.modelsDirect[i];
       const next = plannerConfig.modelsDirect[i + 1];
@@ -54,22 +44,11 @@ export class EmptyManager {
       }
     }
 
-    // console.log('послу у',plannerConfig.modelsDirect);
-
-    // 
-    // const objectWithMinX = plannerConfig.modelsDirect.reduce((min, current) =>
-    //   current.root.position.x < min.root.position.x ? current : min
-    // );
-
-    // const objectWithMaxX = plannerConfig.modelsDirect.reduce((min, current) =>
-    //   current.root.position.x > min.root.position.x ? current : min
-    // );
 
     const objectWithMinX = plannerConfig.modelsDirect[0]
     const objectWithMaxX = plannerConfig.modelsDirect[plannerConfig.modelsDirect.length-1]
 
-
-
+  
     //  левая пустота если прямая кухня
     if (this.kitchenStore.type == "direct") {
       if (objectWithMinX.root.position.x - objectWithMinX.width / 2 > 0.15) {
@@ -85,7 +64,6 @@ export class EmptyManager {
     let leftEdge = objectWithMinX.root.position.x - objectWithMinX.width / 2 
     let limit
 
-    
      if(plannerConfig.isAngleRow == 'left' && leftEdge > 0.75){
       limit = 0.75
      }
@@ -97,63 +75,62 @@ export class EmptyManager {
      }
     
 
-    //левая пустота если угловая кухня
-    if (this.kitchenStore.type == "left") {
-      if (leftEdge > limit) {
-        let distance, position
-        if(plannerConfig.isAngleRow == 'left'){
-          console.log(objectWithMinX.root.position.x)
-          console.log(objectWithMinX)
-          distance = Number((objectWithMinX.root.position.x - 0.6 -objectWithMinX.width / 2).toFixed(3));
-          position = Number((objectWithMinX.root.position.x -objectWithMinX.width/2 - distance/2  ).toFixed(3))
-          console.log('position', position)
+
+ 
+          //левая пустота если угловая кухня
+      if (this.kitchenStore.type == "left") {
+        if (leftEdge > limit) {
+          let distance, position
+          if(plannerConfig.isAngleRow == 'left'){
+            console.log(objectWithMinX.root.position.x)
+            console.log(objectWithMinX)
+            distance = Number((objectWithMinX.root.position.x - 0.6 -objectWithMinX.width / 2).toFixed(3));
+            position = Number((objectWithMinX.root.position.x -objectWithMinX.width/2 - distance/2  ).toFixed(3))
+            console.log('position', position)
+          }
+          if(plannerConfig.isAngleRow == 'direct'){
+            distance = Number((objectWithMinX.root.position.x  -objectWithMinX.width / 2).toFixed(3));
+            position = Number((distance/2).toFixed(3))
+          }
+          if(plannerConfig.isAngleRow == 'none'){
+            distance = Number((objectWithMinX.root.position.x  -objectWithMinX.width / 2).toFixed(3));
+            position = Number((distance/2).toFixed(3))
+          }
+        
+          plannerConfig.emptiesObjects.push({
+            width: distance,
+            position:  position,
+          });
         }
-        if(plannerConfig.isAngleRow == 'direct'){
-          distance = Number((objectWithMinX.root.position.x  -objectWithMinX.width / 2).toFixed(3));
-          position = Number((distance/2).toFixed(3))
-        }
-        if(plannerConfig.isAngleRow == 'none'){
-          distance = Number((objectWithMinX.root.position.x  -objectWithMinX.width / 2).toFixed(3));
-          position = Number((distance/2).toFixed(3))
-        }
-      
+      }
+
+      //правая пустота
+      if (this.kitchenStore.sideSizes.side_a - (objectWithMaxX.root.position.x + objectWithMaxX.width / 2) > 0.15 ) {
+        let distance =  this.kitchenStore.sideSizes.side_a - (objectWithMaxX.root.position.x + objectWithMaxX.width / 2);
         plannerConfig.emptiesObjects.push({
-          width: distance,
-          position:  position,
+          width:
+            this.kitchenStore.sideSizes.side_a -
+            (objectWithMaxX.root.position.x + objectWithMaxX.width / 2),
+          position:
+            objectWithMaxX.root.position.x +
+            objectWithMaxX.width / 2 +
+            distance / 2,
         });
       }
-    }
+    
 
-    //правая пустота
-    if (this.kitchenStore.sideSizes.side_a - (objectWithMaxX.root.position.x + objectWithMaxX.width / 2) > 0.15 ) {
-      let distance =  this.kitchenStore.sideSizes.side_a - (objectWithMaxX.root.position.x + objectWithMaxX.width / 2);
-      plannerConfig.emptiesObjects.push({
-        width:
-          this.kitchenStore.sideSizes.side_a -
-          (objectWithMaxX.root.position.x + objectWithMaxX.width / 2),
-        position:
-          objectWithMaxX.root.position.x +
-          objectWithMaxX.width / 2 +
-          distance / 2,
-      });
-    }
 
-    //удаление пеналов из общего массива прямых
-    // for (let i = plannerConfig.modelsDirect.length - 1; i >= 0; i--) {
-    //   if (plannerConfig.modelsDirect[i].name == "penal") {
-    //     plannerConfig.modelsDirect.splice(i, 1);
-    //   }
-    // }
 
    
 
     plannerConfig.boxesArrayDirect.length = 0;
-
     let boxSide = "direct";
-
     plannerConfig.emptiesObjects.forEach((elem) => {
       this.createEmptyBox(elem.width, elem.position, boxSide);
     });
+
+
+
   }
 
   calculateEmptiesLeft() {

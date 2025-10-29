@@ -9,7 +9,7 @@ import { glass , atlasMaterial} from "./materials";
 import config4 from "../config/config4";
 import config from "../config/config";
 import * as THREE from "three";
-import { mod } from "three/tsl";
+import { element, mod } from "three/tsl";
 
 export class CabinetBuilder {
   constructor(sceneSetup, loaderModels, kitchenSizesStore, penalStore) {
@@ -378,14 +378,14 @@ export class CabinetBuilder {
     });
   }
   //строит нижние ряды из хранилища
-  buildLowerRows() {
+  buildLowerRows(rules) {
     ["build_direct_l1", "build_left_l1", "build_right_l1"].forEach((name) => {
       this.scene.children
         .filter((element) => element.name === name)
         .forEach((element) => this.scene.remove(element));
     });
 
-    let segments = this.rowSegmentsStore.segments;
+    // let segments = this.rowSegmentsStore.segments;
 
     //  Object.values(segments).forEach(sideArray => {
     //     sideArray.forEach(element => {
@@ -395,17 +395,21 @@ export class CabinetBuilder {
     //     });
     //   });
 
-    Object.values(segments).forEach((sideArray) => {
-      sideArray.forEach((element) => {
-        if (
-          ["build_direct_l1", "build_left_l1", "build_right_l1"].includes(
-            element.type
-          )
-        ) {
-          this[element.type](element.width, element.start);
-        }
-      });
-    });
+    // Object.values(segments).forEach((sideArray) => {
+    //   sideArray.forEach((element) => {
+    //     if (
+    //       ["build_direct_l1", "build_left_l1", "build_right_l1"].includes(
+    //         element.type
+    //       )
+    //     ) {
+    //       this[element.type](element.width, element.start);
+    //     }
+    //   });
+    // });
+
+    rules.forEach(element=>{
+      this[element.type](element.width, element.start);
+    })
   }
 
   executeConfig(option, stateSizes) {

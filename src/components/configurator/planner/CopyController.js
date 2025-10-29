@@ -255,12 +255,33 @@ export class CopyController {
     const side = plannerConfig.copyObjectSide;
 
 
-      const collision = this.checkCollision(plannerConfig.copyObject);
+    const collision = this.checkCollision(plannerConfig.copyObject);
     if (collision) {
       plannerConfig.copyObject = false;
       this.moving = false;
       this.plannerStore.showError();
       this.setToRow = false;
+
+
+          plannerConfig.copyObject.traverse((child) => {
+      if (child.geometry) {
+        child.geometry.dispose();
+      }
+      // if (child.material) {
+      //   if (Array.isArray(child.material)) {
+      //     child.material.forEach((m) => m.dispose());
+      //   } else {
+      //     child.material.dispose();
+      //   }
+      // }
+      // if (child.texture) {
+      //   child.texture.dispose();
+      // }
+    });
+
+
+
+
       this.removeObjectsByName('copyObject');
       return;
     }

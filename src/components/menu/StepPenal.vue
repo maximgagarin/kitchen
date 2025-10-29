@@ -585,6 +585,10 @@ function addDirectLeftPenal() {
     kitchenStore.availableDish.length = 0
     kitchenStore.sink.isSet = false
 
+    rowSegmentsStore.segments.direct.length = 0
+    rowSegmentsStore.segments.left.length = 0
+    rowSegmentsStore.segments.right.length = 0
+
 
     // this.KitchenSizes.dishwasher.size = 0
     // this.KitchenSizes.oven.size = 0
