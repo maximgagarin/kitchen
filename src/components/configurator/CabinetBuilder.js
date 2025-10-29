@@ -6,6 +6,7 @@ import { DimensionLine } from "./builders/DimensionLine";
 import { glass , atlasMaterial} from "./materials";
 
 
+
 import config4 from "../config/config4";
 import config from "../config/config";
 import * as THREE from "three";
@@ -524,6 +525,8 @@ export class CabinetBuilder {
   build_direct_l1( width,  positionX = Number(this.kitchenSizesStore.offsetForLeftRow)) {
     //если шаг установки раковины отключение удаления
 
+    const adjustments = this.kitchenSizesStore.rowAdjustments ? 0.05 : 0
+
     const kitchenType = this.kitchenSizesStore.type
 
     if (this.kitchenSizesStore.delete_1level) {
@@ -549,9 +552,9 @@ export class CabinetBuilder {
 
       const cabinet = new LowerCabinet(
         isFirst && (kitchenType === "left" || kitchenType === "uShaped")
-          ? cabinetWidth - 0.05
+          ? cabinetWidth 
           : isLast && (kitchenType === "right" || kitchenType === "uShaped")
-            ? cabinetWidth - 0.05
+            ? cabinetWidth 
             : cabinetWidth,
         0.716, //высота
         0.5, //глубина
@@ -562,9 +565,9 @@ export class CabinetBuilder {
 
       cabinet.position.set(
         isFirst && (kitchenType === "left" || kitchenType === "uShaped")
-          ? positionX + cabinetWidth / 2 + 0.025
+          ? positionX + cabinetWidth / 2 
           : isLast && (kitchenType === "right" || kitchenType === "uShaped")
-            ? positionX + cabinetWidth / 2 - 0.025
+            ? positionX + cabinetWidth / 2 
             : positionX + cabinetWidth / 2,
         0.458,
         0.06

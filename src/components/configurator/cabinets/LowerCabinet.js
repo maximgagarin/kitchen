@@ -29,7 +29,7 @@ export class LowerCabinet extends THREE.Group {
         const tableTopGeometry = new THREE.BoxGeometry(
             ((this.isFirst && (this.configType === "left" || this.configType === "uShaped")) ||
             (this.isLast && (this.configType === "right" || this.configType === "uShaped"))) ? 
-            this.x + 0.05 : this.x, 0.038, this.z + 0.1
+            this.x + 0.0 : this.x, 0.038, this.z + 0.1
         );
 
         const door = new THREE.Mesh(doorGeometry, lowerCabinetMaterial)
@@ -95,8 +95,8 @@ export class LowerCabinet extends THREE.Group {
         basepanel.position.set(0, -this.y / 2 - 0.05, this.z - 0.033)
 
         tableTop.position.set(
-            this.isFirst && (this.configType === "left" || this.configType === "uShaped") ? -0.025 :
-            this.isLast && (this.configType === "right" || this.configType === "uShaped") ? 0.025 :
+            this.isFirst && (this.configType === "left" || this.configType === "uShaped") ? -0.0 :
+            this.isLast && (this.configType === "right" || this.configType === "uShaped") ? 0.0 :
             0, this.y / 2 + 0.019, this.z / 2 - 0.01
         );
 

@@ -28,6 +28,8 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
  })
 
   
+
+  
   const filtredDirectPart1 = ref([])
   const filtredDirectPart2 = ref([])
   const filtredLeftPart1 = ref([])

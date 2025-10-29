@@ -150,7 +150,11 @@ export const useKitchenSizesStore = defineStore('KitchenSizes', {
       x:0,
       z:0,
       side:''
-    }
+    },
+
+
+    // обрезка первого ряда
+    rowAdjustments:true,
 
   }),
 
