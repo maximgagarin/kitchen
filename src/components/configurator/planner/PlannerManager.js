@@ -1034,6 +1034,7 @@ this.plannerStore.movedBack = false;
     this.plannerStore.objectMenuL2 = true
 
     plannerConfig.selectedEmpty2L = box
+
   }
 
 
@@ -1155,6 +1156,14 @@ this.plannerStore.movedBack = false;
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
     );
+
+    console.log('mmouse', this.mouse)
+
+
+    this.plannerStore.emptyPosition.x =  event.clientX + 50 
+    this.plannerStore.emptyPosition.y =  event.clientY - 100
+
+
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.moveController.raycaster.setFromCamera(this.mouse, this.camera);
 

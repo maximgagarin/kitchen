@@ -449,6 +449,8 @@ export class SetTech {
      algorithmConfig.rowStart.direct = 0
      algorithmConfig.rowStart.left = 0
      algorithmConfig.rowStart.right = 0
+     algorithmConfig.left2parts = false
+     algorithmConfig.direct2parts = false
 
      
     Object.keys(this.algStore.reverse).forEach(key => {

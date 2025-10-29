@@ -10,6 +10,11 @@ export const usePlannerStore = defineStore("plannerStore", () => {
   //ящик с дверьми
   const c = ref([0.15, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8]);
 
+  const emptyPosition = ref({
+    x:0,
+    y:0
+  })
+
   const modelsList = ref({
     cd: [0.15, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8],
     c1: [0.4, 0.6, 0.8],
@@ -121,5 +126,6 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     sectorReady,
     onlyPenal,
     anyModule,
+    emptyPosition
   };
 });

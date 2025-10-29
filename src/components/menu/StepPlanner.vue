@@ -1,4 +1,4 @@
-<template>
+<template @click="openMenu($event)">
   <!--  панель с характеристиками -->
   <!-- Панель с характеристиками -->
   <div
@@ -22,10 +22,10 @@
       <label
         v-for="option in typeOptions"
         :key="option.value"
-        class="cursor-pointer border rounded-lg px-2 py-1 flex items-center text-xs transition
-               hover:bg-gray-100 hover:shadow-sm border-gray-300"
+        class="cursor-pointer border rounded-lg px-2 py-1 flex items-center text-xs transition hover:bg-gray-100 hover:shadow-sm border-gray-300"
         :class="{
-          'bg-blue-100 border-blue-500 text-blue-700': selectedType === option.value
+          'bg-blue-100 border-blue-500 text-blue-700':
+            selectedType === option.value,
         }"
       >
         <input
@@ -43,17 +43,14 @@
     <!-- Контейнер для выбора размера/пенала -->
     <div class="flex flex-col gap-2">
       <!-- 👉 карточки выбора ширины (обычные модули) -->
-      <div
-        v-if="selectedType !== 'penal'"
-        class="flex flex-wrap gap-1.5"
-      >
+      <div v-if="selectedType !== 'penal'" class="flex flex-wrap gap-1.5">
         <label
           v-for="(type, index) in plannerStore.modelsList[selectedType]"
           :key="index"
-          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition
-                 hover:bg-gray-100 border-gray-300"
+          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition hover:bg-gray-100 border-gray-300"
           :class="{
-            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm': selectedWidth === type
+            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm':
+              selectedWidth === type,
           }"
         >
           <input
@@ -64,22 +61,19 @@
             v-model="selectedWidth"
             @change="changeModule"
           />
-          {{ type * 100 + ' см' }}
+          {{ type * 100 + " см" }}
         </label>
       </div>
 
       <!-- 👉 карточки выбора пенала -->
-      <div
-        v-if="selectedType === 'penal'"
-        class="flex flex-wrap gap-1.5"
-      >
+      <div v-if="selectedType === 'penal'" class="flex flex-wrap gap-1.5">
         <label
           v-for="(item, index) in plannerStore.modelsList.penal"
           :key="index"
-          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition
-                 hover:bg-gray-100 border-gray-300 flex items-center justify-center text-center"
+          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition hover:bg-gray-100 border-gray-300 flex items-center justify-center text-center"
           :class="{
-            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm': selectedPenal === item
+            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm':
+              selectedPenal === item,
           }"
         >
           <input
@@ -88,24 +82,25 @@
             name="penal-type"
             :value="item"
             v-model="selectedPenal"
-            @change="() => { selectedSize = ''; }"
+            @change="
+              () => {
+                selectedSize = '';
+              }
+            "
           />
           {{ item.description }}
         </label>
       </div>
 
       <!-- 👉 карточки выбора размера пенала -->
-      <div
-        v-if="selectedPenal"
-        class="flex flex-wrap gap-1.5"
-      >
+      <div v-if="selectedPenal" class="flex flex-wrap gap-1.5">
         <label
           v-for="(size, idx) in selectedPenal.sizes"
           :key="idx"
-          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition
-                 hover:bg-gray-100 border-gray-300"
+          class="cursor-pointer select-none px-2 py-1 border rounded-md text-xs transition hover:bg-gray-100 border-gray-300"
           :class="{
-            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm': selectedSize === size
+            'bg-blue-100 border-blue-500 text-blue-700 shadow-sm':
+              selectedSize === size,
           }"
         >
           <input
@@ -116,60 +111,69 @@
             v-model="selectedSize"
             @change="changeModule"
           />
-          {{ size * 100 + ' см' }}
+          {{ size * 100 + " см" }}
         </label>
       </div>
     </div>
   </div>
 
-
- 
-
-
-   <!--  меню 2 уровень -->
   <div
-    class="fixed bottom-10 left-[600px] w-[600px] h-[200px] p-3 mr-4 bg-white pointer-events-none rounded-md z-50 pointer-events-auto border-2 border-gray-400"
+    class="fixed w-[180px] p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
     v-if="plannerStore.objectMenuL2"
+    :style="{
+      top: plannerStore.emptyPosition.y + 'px',
+      left: plannerStore.emptyPosition.x + 'px',
+    }"
   >
-     <p class="mb-2">Вставить модуль</p>
+    <p class="mb-2 text-gray-600">Вставить модуль</p>
 
-    <div class="flex flex-row gap-3">
-      <div>
-        <select v-model="selectedType" name="выбрать" id="">
-          <option disabled value="">Выберите тип</option>
-          <option value="ВП">ВП</option>
-          <option value="ВПС">ВПС</option>
-          <option value="ВПГ">ВПГ</option>
-          <option value="ВПГС">ВПГС</option>
-          <option value="ПЛД">ПЛД</option>
-          <option value="ОПМ">ОПМ</option>
-          <option value="ПГС">ПГС</option>
-          <option value="ПЛВ">ПЛВ</option>
-          <option value="ОПМГ">ОПМГ</option>
-         
-        </select>
-      </div>
-      <div>
-        <select
-          v-if="selectedType"
-          v-model="selectedWidth"
-          @change="changeModule()"
-          class="border px-2 py-1"
-        >
-          <option
-            v-for="(type, index) in filteredWidths"
-            :key="index"
-            :value="type"
-          >
-            {{ type }}
-          </option>
-        </select>
-      </div>
-      <div>
 
-      </div>
+
+    <!-- Выбор типа -->
+    <div class="flex flex-wrap gap-2 mb-3">
+      <label
+        v-for="type in moduleTypes"
+        :key="type.value"
+        class="cursor-pointer border rounded-lg px-2 py-1 flex items-center text-xs transition hover:bg-gray-100 hover:shadow-sm border-gray-300"
+        :class="
+          selectedType === type.value
+            ? 'bg-blue-100 border-blue-500 text-blue-700'
+            : 'hover:bg-gray-100'
+        "
+      >
+        <input
+          type="radio"
+          v-model="selectedType"
+          :value="type.value"
+          class="hidden"
+        />
+        {{ type.label }}
+      </label>
     </div>
 
+    <!-- Выбор ширины -->
+    <div v-if="selectedType" class="flex flex-wrap gap-2">
+      <label
+        v-for="(width, index) in filteredWidths"
+        :key="index"
+        class="cursor-pointer border rounded-lg px-2 py-1 flex items-center text-xs transition hover:bg-gray-100 hover:shadow-sm border-gray-300"
+        :class="
+          selectedWidth === width
+            ? 'bg-green-500 text-white border-green-500'
+            : 'hover:bg-gray-100'
+        "
+      >
+        <input
+          type="radio"
+          v-model="selectedWidth"
+          :value="width"
+          class="hidden"
+          @change="changeModule"
+        />
+
+        {{ width * 100 + " см" }}
+      </label>
+    </div>
   </div>
 
   <!-- <AccordionMenu @select="handleSelectModule" /> -->
@@ -187,16 +191,16 @@
       >
         начать с начала
       </button>
-    </div> 
+    </div>
     <!-- Кнопка показа модального окна -->
-    <div class="text-center mb-6"> 
-    <!-- <button
+    <div class="text-center mb-6">
+      <!-- <button
       class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
       @click="startAlgorythm"
     >
       перейти в алгоритм
     </button> -->
-  </div> 
+    </div>
   </div>
 
   <!-- <div class="text-xs">
@@ -232,8 +236,7 @@
         </select>
   </div> -->
 
-
-    <!-- <div>
+  <!-- <div>
     <p>фасад</p>
        <select 
           id="selectedOven" 
@@ -247,10 +250,7 @@
         </select>
   </div> -->
 
-
   <!-- <button class="border-b" @click="showConfig()">конфиг</button> -->
-
- 
 </template>
 
 <script setup>
@@ -283,7 +283,20 @@ const typeOptions = computed(() => [
   { value: "penal", label: "Пенал" },
 ]);
 
+const moduleTypes = [
+  { value: "ВП", label: "ВП" },
+  { value: "ВПС", label: "ВПС" },
+  { value: "ВПГ", label: "ВПГ" },
+  { value: "ВПГС", label: "ВПГС" },
+  { value: "ПЛД", label: "ПЛД" },
+  { value: "ОПМ", label: "ОПМ" },
+  { value: "ПГС", label: "ПГС" },
+  { value: "ПЛВ", label: "ПЛВ" },
+  { value: "ОПМГ", label: "ОПМГ" },
+];
 
+const menuX = ref(0);
+const menuY = ref(0);
 
 // const props = defineProps({
 //   moduleGroups: {
@@ -295,33 +308,26 @@ const plannerStore = usePlannerStore();
 const plannerManager = inject("plannerManager");
 const kitchenStore = useKitchenSizesStore();
 
-setTimeout(()=>{
+setTimeout(() => {
   plannerManager.value.start();
-  console.log('planner start')
-}, 1000)
-
-
+  console.log("planner start");
+}, 1000);
 
 function restart() {
   location.reload(true);
 }
 
-
-function changeHandle(){
-  
-  plannerManager.value.menuController.changeHandle(selectedHandle.value)
+function changeHandle() {
+  plannerManager.value.menuController.changeHandle(selectedHandle.value);
 }
 
-function changeColor(){
-  plannerManager.value.menuController.changeColor(selectedColor.value)
-  
+function changeColor() {
+  plannerManager.value.menuController.changeColor(selectedColor.value);
 }
 
-function changeFacade(){
-  plannerManager.value.menuController.changeFacade(selectedFacade.value)
-  
+function changeFacade() {
+  plannerManager.value.menuController.changeFacade(selectedFacade.value);
 }
-
 
 function startAlgorythm() {
   kitchenStore.step = 5;
@@ -407,6 +413,9 @@ watch(selectedType, (newVal) => {
 </script>
 
 <style scoped>
+
+
+
 /* .fade-enter-active, .fade-leave-active {
   transition: all 0.3s ease;
 }

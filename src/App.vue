@@ -68,7 +68,7 @@ provide("plannerManager", plannerManager);
 onMounted(() => {
     setTimeout(() => {
     showLoading.value = false;
-  }, 100);
+  }, 5000);
   
   const init = new Init()
   init.start()

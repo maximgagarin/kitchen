@@ -17,7 +17,7 @@ export class SceneSetup {
     this.scene.background = new THREE.Color(0xf2f2f2);
 
     this.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight,  0.1,  100);
-    this.camera.position.set(5, 2, 7);
+    this.camera.position.set(5, 4, 7);
     this.targetPosition = new THREE.Vector3(2, 1, 0);
     this.camera.lookAt(this.targetPosition);
 
@@ -40,8 +40,16 @@ export class SceneSetup {
     document.body.appendChild(this.labelRenderer.domElement);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.minDistance = 1;
-    this.controls.maxDistance = 8;
+    this.controls.minDistance = 4;
+    this.controls.maxDistance = 7;
+    this.controls.minPolarAngle = THREE.MathUtils.degToRad(30);
+    this.controls.maxPolarAngle = THREE.MathUtils.degToRad(80);
+
+    // Ограничение горизонтального поворота (в радианах)
+    // Например, от -45° до 45° вокруг целевой точки
+    this.controls.minAzimuthAngle = THREE.MathUtils.degToRad(-10);
+    this.controls.maxAzimuthAngle = THREE.MathUtils.degToRad(55);
+    this.controls.enablePan = false
     this.controls.target.copy(this.targetPosition);
     this.controls.update();
 
@@ -53,7 +61,7 @@ export class SceneSetup {
     this.stats.dom.style.top = "0px";
     this.stats.dom.style.transform = "scale(1.5)";
     this.stats.dom.style.transformOrigin = "left top"
-    document.body.appendChild(this.stats.dom);
+ //   document.body.appendChild(this.stats.dom);
     // --------------------------------------
 
     this.needsRender = true;
@@ -70,12 +78,12 @@ export class SceneSetup {
 
   startRenderLoop() {
     const loop = () => {
-      this.stats.begin(); // 🔹 Начало замера FPS
+   //   this.stats.begin(); // 🔹 Начало замера FPS
       if (this.needsRender) {
         this.render();
         this.needsRender = false;
       }
-      this.stats.end(); // 🔹 Конец замера FPS
+    //  this.stats.end(); // 🔹 Конец замера FPS
       requestAnimationFrame(loop);
     };
     loop();

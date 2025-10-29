@@ -101,7 +101,7 @@
 </template>
 
 <script setup>
-import * as XLSX from "xlsx";
+import * as THREE from "three";
 import { ref, inject, onMounted } from "vue";
 import config from "../config/config";
 import SetSize from "./SetSize.vue";
@@ -129,6 +129,7 @@ function updateConfig() {
   clear()
 
   if (kitchenSizesStore.type === "direct") {
+     moveCamera()
     cabinetBuilder.value.executeConfig("direct");
     const lineLeft = config.lines.find(item => item.name === "lineLeft");
     const lineRight = config.lines.find(item => item.name === "lineRight");
@@ -139,6 +140,9 @@ function updateConfig() {
 
   
   } else if (kitchenSizesStore.type === "left") {
+
+    moveCamera()
+
     cabinetBuilder.value.executeConfig("left");
       const lineLeft = config.lines.find(item => item.name === "lineLeft");
     const lineRight = config.lines.find(item => item.name === "lineRight");
@@ -227,6 +231,45 @@ function updateConfig() {
     // this.KitchenSizes.oven.size = 0
   }
 
+}
+
+
+function moveCamera(){
+    //  this.camera.position.set(4, 5, 6);
+    //  let targetPosition = new THREE.Vector3(2, 0, 0);
+    //  this.camera.lookAt(targetPosition);
+    //  this.controls.target.copy(targetPosition);
+
+    if (kitchenSizesStore.type == "left") {
+      cabinetBuilder.value.sceneSetup.moveCameraTo(
+        new THREE.Vector3(7, 4, 7),
+        new THREE.Vector3(1.5, 1, 0),
+        1.5,
+        () => {
+          // После первой анимации запускаем вторую
+          // cabinetBuilder.value.sceneSetup.moveCameraTo(
+          //   new THREE.Vector3(3, 2, 6),
+          //   new THREE.Vector3(2, 1, 0),
+          //   3
+          // );
+        }
+      );
+    }
+    if (kitchenSizesStore.type == "direct") {
+      cabinetBuilder.value.sceneSetup.moveCameraTo(
+        new THREE.Vector3(5, 4, 7),
+        new THREE.Vector3(2, 1, 0),
+        1.5,
+        () => {
+          // После первой анимации запускаем вторую
+          // cabinetBuilder.value.sceneSetup.moveCameraTo(
+          //   new THREE.Vector3(3, 2, 6),
+          //   new THREE.Vector3(2, 1, 0),
+          //   3
+          // );
+        }
+      );
+    }
 }
 
 

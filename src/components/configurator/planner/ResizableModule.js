@@ -296,7 +296,7 @@ export class ResizableModule {
       plannerConfig.modelsLeft.push(instance);
     }
 
-    this.plannerManager.calculateSlotPositions();
+    // this.plannerManager.calculateSlotPositions();
   }
 
   tryChangeWidth(direction) {
