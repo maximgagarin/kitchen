@@ -42,7 +42,13 @@ export const usePlannerStore = defineStore("plannerStore", () => {
           name:'4',
           description:'полки и ящ.',
           sizes:[0.4,0.45,0.6],
+        },
+                {
+          name:'10',
+          description:'торцевой',
+          sizes:[0.18],
         }
+        
      ,
       
     ]

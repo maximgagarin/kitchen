@@ -178,10 +178,7 @@ export class PlannerManager {
     //создание пустых боксов в пустоте
     this.emptyManager.calculateEmpties()
 
-    if(this.kitchenSizesStore.type == 'left'){
-      this.emptyManager.calculateEmptiesLeft()
-    }
-
+ 
     
 
     this.tableTop.create()
@@ -402,7 +399,7 @@ this.plannerStore.movedBack = false;
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersectsControls = this.raycaster.intersectObjects(
-      plannerConfig.iconsArray,
+      plannerConfig.iconsArray1L,
       true
     );
 
@@ -816,7 +813,7 @@ this.plannerStore.movedBack = false;
     if (intersect && intersect.userData.side) {
       console.log("Нашли userData:", intersect.userData);
     }
-     this.emptyManager.calcEmtyForPenal(intersect)
+  //   this.emptyManager.calcEmtyForPenal(intersect)
     console.log(intersect)
     this.plannerStore.objectMenu = true;
     plannerConfig.selectedEmpty = intersect
@@ -849,8 +846,18 @@ this.plannerStore.movedBack = false;
       }
     }
 
+  
+
+
     const rule = rules[side]
+
+          console.log('rule', rule)
+
     const modelsArray = plannerConfig[rule.array]
+
+        console.log('array', modelsArray)
+
+
 
  //   console.log(intersect);
     if (intersect.name == "centerControl") {
@@ -1196,7 +1203,7 @@ this.plannerStore.movedBack = false;
   
 
     const intersectsModules = this.raycaster.intersectObjects(plannerConfig.models.map((m) => m.raycasterBox), false );
-    const intersectsEmpties = this.raycaster.intersectObjects(plannerConfig.iconsArray, true);
+    const intersectsEmpties = this.raycaster.intersectObjects(plannerConfig.iconsArray1L, true);
     plannerConfig.boxesArray.length = 0
     plannerConfig.boxesArray.push(...plannerConfig.boxesArrayDirect, ...plannerConfig.boxesArrayLeft)
 
@@ -1260,8 +1267,9 @@ this.plannerStore.movedBack = false;
   }
     
      
-    // рассчет ограничений
+    // рассчет какой модуль занмает угол
     this.utils.calcCornerModules()
+    this.utils.calcCornerModules2L()
 
     //движени выбранного после свапа
     if(this.swapController.swapSelected){
@@ -1275,7 +1283,7 @@ this.plannerStore.movedBack = false;
     }
     
    
-    this.moveController.penalBounds()
+    // this.moveController.penalBounds()
     //пересчёт пустых в секторе
     if(plannerConfig.selectedObject.name == 'sector') this.emptyManager2L.calcEmptyInSector()
 
@@ -1292,13 +1300,8 @@ this.plannerStore.movedBack = false;
 
 
     
-   //пересчёт пустых
-   this.emptyManager.calculateEmpties();
-  
-
-    if(this.kitchenSizesStore.type == 'left'){
-      this.emptyManager.calculateEmptiesLeft()
-    }
+    //пересчёт пустых промежутков
+    this.emptyManager.calculateEmpties();
     this.emptyManager2L.calculateEmpties()
 
     

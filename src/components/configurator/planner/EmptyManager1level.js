@@ -20,21 +20,30 @@ export class EmptyManager2L {
     this.penalStore = usePenalStore()
     this.hoveredObject = null
    
-
+    
+    this.addToArrays = {
+      direct: (instance) => {
+        plannerConfig.modelsDirect.push(instance);
+        plannerConfig.models.push(instance);
+      },
+      left: (instance) => {
+        plannerConfig.modelsLeft.push(instance);
+        plannerConfig.models.push(instance);
+      },
+    };
   }
 
   createGapBoxes() {
     const side = "direct";
     const posY = 1.76;
-    let totalWidth = this.kitchenStore.sideSizes.side_a ;
+    let totalWidth = this.kitchenStore.sideSizes.side_a - this.penalStore.penalOffsets.directRight;
 
-    const filtedDirect = plannerConfig.modelsDirect.filter(model=> model.side == 'direct' && model.name === 'penal')
-    plannerConfig.iconsArray2L  = plannerConfig.iconsArray2L.filter(icon => icon.name == 'left')
+    const filtedDirect = plannerConfig.penalsArray.filter(model=> model.side == 'direct')
+    plannerConfig.iconsArray1L  = plannerConfig.iconsArray1L.filter(icon => icon.name == 'left')
 
 
     // времменно добавляем пеналы
-    const models = plannerConfig.modelsDirect2L.map(p => ({ ...p }))
- //   const models = plannerConfig.modelsDirect2L
+    const models = plannerConfig.modelsDirect
     models.push(...filtedDirect)
     models.sort((a, b) => a.root.position.x - b.root.position.x);
 
@@ -59,13 +68,16 @@ export class EmptyManager2L {
     }
 
     // есть в углу модуль
-    const leftOffset = plannerConfig.isAngleRow2L === 'left' ? 0.3 : 0
+    const leftOffset = plannerConfig.isAngleRow === 'left' ? 0.6 : 0
 
     if( models.length > 0 ){
           // Левый край
       const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
       if (firstBox.min.x > (0.15 + leftOffset)) {
-      
+        console.log(' plannerConfig.isAngleRow2L',  plannerConfig.isAngleRow)
+        console.log('leftOffset', leftOffset)
+        console.log('firstBox.min.x', firstBox.min.x)
+        console.log('0.15 + leftOffset', 0.15 + leftOffset)
         this.addGapBox(0 +leftOffset, firstBox.min.x, firstBox, posY, side, leftOffset);
       }
 
@@ -78,7 +90,7 @@ export class EmptyManager2L {
       }
 
     } else {
-        //          console.log('empty')
+                  console.log('empty')
        this.addGapBox( leftOffset, totalWidth, 1, 1.5, side);
      
     }
@@ -86,11 +98,11 @@ export class EmptyManager2L {
   
   
 
-    // plannerConfig.modelsDirect2L = plannerConfig.modelsDirect2L.filter(
-    //   model => model.name !== 'penal'
-    // );
+    plannerConfig.modelsDirect = plannerConfig.modelsDirect.filter(
+      model => model.name !== 'penal'
+    );
 
-   //   console.log('modelsLengh', models)
+      console.log('modelsLengh', models)
 
 
   }
@@ -98,16 +110,14 @@ export class EmptyManager2L {
   createGapBoxesLeft() {
     const side = "left";
     const posY = 1.76;
-    let totalWidth = this.kitchenStore.sideSizes.side_c 
+    let totalWidth = this.kitchenStore.sideSizes.side_c - this.penalStore.penalOffsets.left;
 
-    const filtedLeft = plannerConfig.modelsLeft.filter(model=> model.side == 'left' && model.name === 'penal')
-    plannerConfig.iconsArray2L  = plannerConfig.iconsArray2L.filter(icon => icon.name == 'direct')
+    const filtedLeft = plannerConfig.penalsArray.filter(model=> model.side == 'left')
+    plannerConfig.iconsArray1L  = plannerConfig.iconsArray1L.filter(icon => icon.name == 'direct')
 
     
 
-   // const models = plannerConfig.modelsLeft2L;
-    const models = plannerConfig.modelsLeft2L.map(p => ({ ...p }))
-
+    const models = plannerConfig.modelsLeft;
 
 
     //временно добавляем пеналы для расчёта
@@ -133,7 +143,7 @@ export class EmptyManager2L {
     }
 
 
-    const offset = plannerConfig.isAngleRow2L == 'direct' ? 0.3 : 0
+    const offset = plannerConfig.isAngleRow == 'direct' ? 0.6 : 0
 
 
     if(models.length > 0 ){
@@ -157,9 +167,9 @@ export class EmptyManager2L {
   
 
     // удаляем пеналы
-    //  plannerConfig.modelsLeft2L = plannerConfig.modelsLeft2L.filter(
-    //   model => model.name !== 'penal'
-    // );
+     plannerConfig.modelsLeft = plannerConfig.modelsLeft.filter(
+      model => model.name !== 'penal'
+    );
   }
 
   addGapBox(startX, endX, referenceBox, posY, side, leftOffset) {
@@ -167,7 +177,7 @@ export class EmptyManager2L {
     icon.visible = true;
     icon.name = 'direct'
     
-    plannerConfig.iconsArray2L.push(icon)
+    plannerConfig.iconsArray1L.push(icon)
 
     const gap = endX - startX;
     if (gap <= 0) return;
@@ -204,7 +214,7 @@ export class EmptyManager2L {
     // позиция
     if (side === "direct") gapBox.position.set(startX + gap / 2, 1.76, 0.15);
     if (side === "left")
-      gapBox.position.set(0.15, 1.76, startX + gap / 2);
+      gapBox.position.set(0.15, posY + 0.01, startX + gap / 2);
 
     this.scene.add(gapBox);
   }
@@ -213,7 +223,7 @@ export class EmptyManager2L {
     const icon = this.loaderModels.get("icon");
     icon.visible = true;
     icon.name = 'left'
-    plannerConfig.iconsArray2L.push(icon)
+    plannerConfig.iconsArray1L.push(icon)
 
 
     const gap = endX - startX;
@@ -255,7 +265,8 @@ export class EmptyManager2L {
   }
 
   calculateEmpties() {
-    
+    //
+    //  if()
 
     this.removeObjectsByName("gapBox");
     this.removeObjectsByName("gapBoxLeft");
@@ -263,10 +274,10 @@ export class EmptyManager2L {
     plannerConfig.empties2levelDirect.length = 0;
     plannerConfig.empties2levelLeft.length = 0;
 
-    if (plannerConfig.modelsDirect2L.length >= 0) {
+    if (plannerConfig.modelsDirect.length >= 0) {
       this.createGapBoxes();
     }
-    if (this.kitchenStore.type === 'left' && plannerConfig.modelsLeft2L.length >= 0) {
+    if (this.kitchenStore.type === 'left' && plannerConfig.modelsLeft.length >= 0) {
       this.createGapBoxesLeft();
     }
     
@@ -308,7 +319,7 @@ export class EmptyManager2L {
     const id = THREE.MathUtils.generateUUID()
     
 
-    console.log('type', type)
+   // console.log(type)
    // console.log(width)
     
 
@@ -320,7 +331,7 @@ export class EmptyManager2L {
 
     const cabinetName = `${type}-${width * 1000}`;
 
-    console.log('cabinet name', cabinetName)
+  //  console.log('cabinet name', cabinetName)
 
 
     //console.log(box);
@@ -350,10 +361,20 @@ export class EmptyManager2L {
           return;
         }
 
+   // const model = this.loaderModels.get("p600");
+
+  
+
+
     model.visible = true;
+
+    // this.scene.add(model)
+
+   // console.log(position);
 
     const instance = new SectorInstanse(width, this.sceneSetup);
     
+
     const instanceInSector = new Model_In_Sector(model, this.sceneSetup, false);
 
     instance.modules.push(instanceInSector);

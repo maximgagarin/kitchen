@@ -304,6 +304,8 @@ export class SetTech {
     const SINK_SIZE = 0.6
     const sinkPosX = this.rowSegmentsStore.duct.x 
     const sinkPosZ = this.rowSegmentsStore.duct.z
+    const kitchenType = this.KitchenSizes.type
+    const penalOffsets = this.penalStore.penalOffsetsState
 
     
     
@@ -318,40 +320,48 @@ export class SetTech {
         left:0.6, direct:0, left2: sinkPosZ + SINK_SIZE/2,  directSize:1 , leftSize:0
       },
       leftEnd:{
-         left:0.6, direct:0, directSize:1 , leftSize:0
+         left:0.6, direct:0, directSize:1 , leftSize:0 
       }, 
       directCorner:{
-        left:0.6, direct:1, leftSize:0 , directSize:0 
+        left:0.6, direct: kitchenType === 'direct' ? 0.6 + penalOffsets.directLeft :1, leftSize:0 , directSize:0 
       },
       directStart:{
         left:0, direct:1.2, leftSize:1, directSize:0 
       },
       directMiddle:{
-        left:0, direct:0.6, direct2: sinkPosX + SINK_SIZE/2, leftSize:1, directSize:0 
+        left:0, direct: kitchenType === 'direct' ? 0 + penalOffsets.directLeft : 0.6, direct2: sinkPosX + SINK_SIZE/2, leftSize:1, directSize:0 
       },
       directEnd:{
-         left:0, direct:0.6, leftSize:1, directSize:0 
+         left:0, direct: kitchenType === 'direct' ? 0 + penalOffsets.directLeft : 0.6, leftSize:1, directSize:  0  
       } 
     }
 
 
     const offset = offsets[this.KitchenSizes.sink.location]
 
-    console.log(offset)
+  
   
 
      const parts = this.KitchenSizes.parts.map(p => ({ ...p }))
-     console.log('parts', parts)
+   
      const leftRules = parts.filter(rule => rule.name === "C1" || rule.name === "C2");
      const directRules = parts.filter(rule => rule.name === "A1" || rule.name === "A2");   
 
-     leftRules[0].start = offset.left
-     leftRules[0].width += offset.leftSize
+     
+
+     if(this.KitchenSizes.type === 'left'){
+       leftRules[0].start = offset.left
+       leftRules[0].width += offset.leftSize
+       if(leftRules[1]) leftRules[1].start = offset.left2
+     }
+
+
+
 
      directRules[0].start = offset.direct
      directRules[0].width += offset.directSize
 
-     if(leftRules[1]) leftRules[1].start = offset.left2
+    
      if(directRules[1]) directRules[1].start = offset.direct2
 
         const newRules = [...leftRules, ...directRules].map(rule => {
@@ -368,9 +378,7 @@ export class SetTech {
 })
 
 
-    console.log('leftRules', leftRules)
-     console.log('direct', directRules)
-     console.log('new', newRules)
+ 
     this.cabinetBuilder.buildLowerRows(newRules);
   }
 
@@ -495,7 +503,7 @@ export class SetTech {
         algorithmConfig.rowStart.direct += penalOffsets.directLeft
 
         kitchenStore.parts.push({  name: "A1", width: size})
-        kitchenStore.sink.location = "end"
+      
 
 
 
@@ -572,7 +580,7 @@ export class SetTech {
 
 
         const size1 = Number((KitchenSizes.side_c - penalOffsets.left - MSU).toFixed(2)) 
-        const size2 = Number((KitchenSizes.side_a -  sinkSize - ROW_WIDTH).toFixed(2)) 
+        const size2 = Number((KitchenSizes.side_a -  sinkSize - ROW_WIDTH - penalOffsets.directRight).toFixed(2)) 
 
         kitchenStore.parts.push({  name: "C1", width: size1})
         kitchenStore.parts.push({  name: "A1", width: size2})
@@ -635,7 +643,7 @@ export class SetTech {
         kitchenStore.su.side = 'direct'
 
 
-        const size1 = Number((KitchenSizes.side_c - ROW_WIDTH - sinkSize).toFixed(2)) 
+        const size1 = Number((KitchenSizes.side_c - ROW_WIDTH - sinkSize - penalOffsets.left).toFixed(2)) 
         const size2 = Number((KitchenSizes.side_a -  MSU - penalOffsets.directRight).toFixed(2)) 
 
         kitchenStore.parts.push({  name: "C1", width: size1})
@@ -1046,12 +1054,12 @@ export class SetTech {
       this.currentDimensionLine2 = null;
     }
 
-    this.currentDimensionLine = new DimensionLine(
-      this.sceneSetup,
-      this.scene,
-      { x: 0, z: 0 },
-      { x: 4, z: 0 }
-    );
+    // this.currentDimensionLine = new DimensionLine(
+    //   this.sceneSetup,
+    //   this.scene,
+    //   { x: 0, z: 0 },
+    //   { x: 4, z: 0 }
+    // );
 
     this.deleteAfterSetSink();
     this.cleanupEventListeners(); // Очищаем предыдущие слушатели
@@ -1089,7 +1097,7 @@ export class SetTech {
           //позиция линии
           const startPoint = { x: 0, z: 0 };
           const endPoint = { x: posX, z: 0 };
-          this.currentDimensionLine.update(startPoint, endPoint);
+        //  this.currentDimensionLine.update(startPoint, endPoint);
         } else if (intersects[0].object === leftPlane) {
           this.KitchenSizes.raycaster_for_sink.side = "left";
           sinkNormalRotation = 0;
@@ -1102,7 +1110,7 @@ export class SetTech {
 
           const startPoint = { x: posX, z: 0 };
           const endPoint = { x: posX, z: posZ };
-          this.currentDimensionLine.update(startPoint, endPoint);
+        //  this.currentDimensionLine.update(startPoint, endPoint);
         } else if (intersects[0].object === rightPlane) {
           this.KitchenSizes.raycaster_for_sink.side = "right";
           side = "right";
@@ -1115,7 +1123,7 @@ export class SetTech {
           text = posZ;
           const startPoint = { x: posX, z: 0 };
           const endPoint = { x: posX, z: posZ };
-          this.currentDimensionLine.update(startPoint, endPoint);
+        //  this.currentDimensionLine.update(startPoint, endPoint);
         }
 
         SinkNormal.position.set(posX, 0.68, posZ);

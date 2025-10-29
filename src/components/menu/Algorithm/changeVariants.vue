@@ -1,6 +1,6 @@
 <template>
 
-  <div class="flex flex-col gap-1 ">
+  <div class="flex flex-col gap-1 mt-3">
     <!-- Уровень 2 -->
     <div class="bg-white p-1 rounded-lg shadow-xs">
          <p class="text-xs font-medium text-gray-600">второй уровень</p>
@@ -269,9 +269,6 @@ function filterModelsArray(){
 
 function calcEmpties(){
   plannerManager.value.emptyManager.calculateEmpties();
-   if(kithenStore.type == 'left'){
-      plannerManager.value.emptyManager.calculateEmptiesLeft()
-    }
-    //this.emptyManager2L.calculateEmpties()
+
 }
 </script>

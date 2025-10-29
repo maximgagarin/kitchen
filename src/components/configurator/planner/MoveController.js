@@ -222,34 +222,7 @@ export class MoveController {
 
     const futureBox = new THREE.Box3().setFromCenterAndSize(futureCenter,   futureSize  );
 
-   // let arraysToCheck = [];
-
-    // if(this.kitchenStore.type == 'left'){
-    //   if(side == 'direct'){
-    //     arraysToCheck.push(...plannerConfig.modelsLeft)
-    //   }
-    //   if(side == 'left'){
-    //     arraysToCheck.push(...plannerConfig.modelsDirect)
-    //   }
-    // }
-
-    // const isPenal = plannerConfig.selectedObject.name === "penal";
-
-    // if (isPenal) {
-    //   arraysToCheck.push(...plannerConfig.models);
-    // } else {
-    //   arraysToCheck.push(...plannerConfig.penalsArray);
-    // }
-
    
-    //   arraysToCheck.push(...plannerConfig.penalsArray);
-    
-
-   // Создаём коробку по будущей позиции
-
-
- 
- //  console.log('arraysToCheck' , arraysToCheck)
    const movementDirection = desiredPosition.clone().sub(currentPosition);
 
     for (const module of plannerConfig.arraysToCheck) {
@@ -272,31 +245,7 @@ export class MoveController {
     return false;
   }
 
-  penalBounds() {
-    //гранцы движений для пеналов
-    // const filtedDirect = plannerConfig.modelsDirect.filter(model=> model.name !== 'penal')
-    // filtedDirect.sort((a, b) => a.root.position.x - b.root.position.x);
-    // plannerConfig.modelsDirect2L.sort((a, b) => a.root.position.x - b.root.position.x);
-    // const rightModule = filtedDirect[filtedDirect.length -1]
-    // const rightModule2l = plannerConfig.modelsDirect2L[plannerConfig.modelsDirect2L.length -1]
-    // const directRightBound = rightModule.root.position.x + rightModule.objectSize.x/2
-    // const directRightBound2l = rightModule2l.root.position.x + rightModule2l.objectSize.x/2
-    // const maxDirect = Math.max(directRightBound, directRightBound2l);
-    // plannerConfig.penalBounds.minX = maxDirect
-    // plannerConfig.penalBounds.maxX = this.kitchenStore.sideSizes.side_a
-    // if(this.kitchenStore.type == 'left'){
-    //   const filtedLeft = plannerConfig.modelsLeft.filter(model=> model.name !== 'penal')
-    //   filtedLeft.sort((a, b) => a.root.position.z - b.root.position.z);
-    //   plannerConfig.modelsLeft2L.sort((a, b) => a.root.position.z - b.root.position.z);
-    //   const leftModule = filtedLeft[filtedLeft.length -1]
-    //   const leftModule2l = plannerConfig.modelsLeft2L[plannerConfig.modelsLeft2L.length -1]
-    //   const leftBound = leftModule.root.position.z + leftModule.objectSize.x/2
-    //   const leftBound2l = leftModule2l.root.position.z + leftModule2l.objectSize.x/2
-    //   const maxLeft = Math.max(leftBound, leftBound2l);
-    //   plannerConfig.penalBounds.minZ = maxLeft
-    //   plannerConfig.penalBounds.maxZ = this.kitchenStore.sideSizes.side_c
-    // }
-  }
+
 
   checkCollisionManual() {
     if (plannerConfig.selectedObject.name == "penal") return;

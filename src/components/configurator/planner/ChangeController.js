@@ -326,9 +326,7 @@ export class ChangeController {
     //создание пустых боксов в пустоте
     this.emptyManager.calculateEmpties();
 
-    if (this.kitchenSizesStore.type == "left") {
-      this.emptyManager.calculateEmptiesLeft();
-    }
+
 
     this.sceneSetup.requestRender();
   }

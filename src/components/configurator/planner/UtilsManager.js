@@ -54,6 +54,45 @@ calcCornerModules() {
     plannerConfig.isAngleRow2L = 'none';
   }
 }
+
+calcCornerModules2L() {
+  const leftModules = plannerConfig.modelsLeft;
+  const directModules = plannerConfig.modelsDirect;
+
+  if (!leftModules.length && !directModules.length) {
+    plannerConfig.isAngleRow2L = 'none';
+    return;
+  }
+
+  if (!leftModules.length) {
+    const firstDirect = directModules.slice().sort((a, b) => a.root.position.z - b.root.position.z)[0];
+    const directEdge = firstDirect.root.position.x - firstDirect.objectSize.x / 2;
+    plannerConfig.isAngleRow = directEdge < 0.6 ? 'direct' : 'none';
+    return;
+  }
+
+  if (!directModules.length) {
+    const firstLeft = leftModules.slice().sort((a, b) => a.root.position.z - b.root.position.z)[0];
+    const leftEdge = firstLeft.root.position.z - firstLeft.objectSize.x / 2;
+    plannerConfig.isAngleRow = leftEdge < 0.6 ? 'left' : 'none';
+    return;
+  }
+
+  // Если есть оба ряда
+  const firstLeft = leftModules.slice().sort((a, b) => a.root.position.z - b.root.position.z)[0];
+  const firstDirect = directModules.slice().sort((a, b) => a.root.position.z - b.root.position.z)[0];
+
+  const directEdge = firstDirect.root.position.x - firstDirect.objectSize.x / 2;
+  const leftEdge = firstLeft.root.position.z - firstLeft.objectSize.x / 2;
+
+  if (directEdge < 0.59) {
+    plannerConfig.isAngleRow = 'direct';
+  } else if (leftEdge < 0.59) {
+    plannerConfig.isAngleRow = 'left';
+  } else {
+    plannerConfig.isAngleRow = 'none';
+  }
+}
  
 
 }

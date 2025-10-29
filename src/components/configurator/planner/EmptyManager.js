@@ -6,6 +6,7 @@ import { usePlannerStore } from "../../../pinia/PlannerStore";
 import { useKitchenSizesStore } from "../../../pinia/kitchenSizes";
 import { PenalInstanse } from "./PenalInstanse";
 import { SinkInstanse } from "./SinkInstanse";
+import { usePenalStore } from "../../../pinia/penals";
 
 
 
@@ -16,286 +17,265 @@ export class EmptyManager {
     this.loaderModels = loaderModels;
     this.plannerStore = usePlannerStore();
     this.kitchenStore = useKitchenSizesStore();
+    this.penalStore = usePenalStore()
   }
 
-  calculateEmpties() {
-    let name = "emptyBoxDirect";
 
-    this.removeObjectsByName(name);
-
-
-
-    plannerConfig.emptiesObjects.length = 0;
-    plannerConfig.iconsArray  = plannerConfig.iconsArray.filter(icon => icon.name == 'left')
+    createGapBoxes() {
+      const side = "direct";
+      const posY = 1.76;
+      let totalWidth = this.kitchenStore.sideSizes.side_a ;
   
-    plannerConfig.modelsDirect.sort((a, b) => a.root.position.x - b.root.position.x);
-
-    for (let i = 0; i < plannerConfig.modelsDirect.length - 1; i++) {
-      const current = plannerConfig.modelsDirect[i];
-      const next = plannerConfig.modelsDirect[i + 1];
-      if (next.root.position.x -  next.width / 2 - (current.root.position.x + current.width / 2) >  0.15 ) {
-        //   console.log("yes");
-        let distance = Number( next.root.position.x -  next.width / 2 -(current.root.position.x + current.width / 2)).toFixed(3);
-        let position = Number(current.root.position.x + current.width / 2 + distance / 2).toFixed(3);
-        plannerConfig.emptiesObjects.push({
-          width: distance,
-          position: position,
-        });
-      }
-    }
-
-
-    const objectWithMinX = plannerConfig.modelsDirect[0]
-    const objectWithMaxX = plannerConfig.modelsDirect[plannerConfig.modelsDirect.length-1]
-
+    //  const filtedDirect = plannerConfig.penalsArray.filter(model=> model.side === 'direct')
+      plannerConfig.iconsArray1L  = plannerConfig.iconsArray1L.filter(icon => icon.name === 'left1level')
   
-    //  левая пустота если прямая кухня
-    if (this.kitchenStore.type == "direct") {
-      if (objectWithMinX.root.position.x - objectWithMinX.width / 2 > 0.15) {
-        plannerConfig.emptiesObjects.push({
-          width: Number((objectWithMinX.root.position.x - objectWithMinX.width / 2).toFixed(3)),
-          position: Number((objectWithMinX.root.position.x - objectWithMinX.width / 2).toFixed(3) / 2 ),
-        });
-      }
-      // console.log('objectWithMinX' , objectWithMinX)
-      //console.log('objectWithMaxX' , objectWithMaxX)
-    }
-
-    let leftEdge = objectWithMinX.root.position.x - objectWithMinX.width / 2 
-    let limit
-
-     if(plannerConfig.isAngleRow == 'left' && leftEdge > 0.75){
-      limit = 0.75
-     }
-     if(plannerConfig.isAngleRow == 'direct' && leftEdge > 0.15){
-      limit = 0.15
-     }
-     if(plannerConfig.isAngleRow == 'none' && leftEdge > 0.15){
-      limit = 0.15
-     }
-    
-
-
- 
-          //левая пустота если угловая кухня
-      if (this.kitchenStore.type == "left") {
-        if (leftEdge > limit) {
-          let distance, position
-          if(plannerConfig.isAngleRow == 'left'){
-            console.log(objectWithMinX.root.position.x)
-            console.log(objectWithMinX)
-            distance = Number((objectWithMinX.root.position.x - 0.6 -objectWithMinX.width / 2).toFixed(3));
-            position = Number((objectWithMinX.root.position.x -objectWithMinX.width/2 - distance/2  ).toFixed(3))
-            console.log('position', position)
-          }
-          if(plannerConfig.isAngleRow == 'direct'){
-            distance = Number((objectWithMinX.root.position.x  -objectWithMinX.width / 2).toFixed(3));
-            position = Number((distance/2).toFixed(3))
-          }
-          if(plannerConfig.isAngleRow == 'none'){
-            distance = Number((objectWithMinX.root.position.x  -objectWithMinX.width / 2).toFixed(3));
-            position = Number((distance/2).toFixed(3))
-          }
-        
-          plannerConfig.emptiesObjects.push({
-            width: distance,
-            position:  position,
-          });
+  
+      // времменно добавляем пеналы
+      const models = plannerConfig.modelsDirect
+    //  const models = plannerConfig.modelsDirect.map(p => ({ ...p }))
+    //  models.push(...filtedDirect)
+      models.sort((a, b) => a.root.position.x - b.root.position.x);
+  
+      console.log('models', models)
+  
+      // Добавление промежутков
+      for (let i = 0; i < models.length - 1; i++) {
+        const current = models[i];
+        const next = models[i + 1];
+        const box1 = new THREE.Box3().setFromObject(current.root);
+        const box2 = new THREE.Box3().setFromObject(next.root);
+  
+      //    console.log('box1', box1)
+        //  console.log('box2', box2)
+  
+        const rightEdge = box1.max.x;
+        const leftEdgeNext = box2.min.x;
+  
+        if (leftEdgeNext - rightEdge > 0.15) {
+          this.addGapBox(rightEdge, leftEdgeNext, box1, 1.5, side);
         }
       }
-
-      //правая пустота
-      if (this.kitchenStore.sideSizes.side_a - (objectWithMaxX.root.position.x + objectWithMaxX.width / 2) > 0.15 ) {
-        let distance =  this.kitchenStore.sideSizes.side_a - (objectWithMaxX.root.position.x + objectWithMaxX.width / 2);
-        plannerConfig.emptiesObjects.push({
-          width:
-            this.kitchenStore.sideSizes.side_a -
-            (objectWithMaxX.root.position.x + objectWithMaxX.width / 2),
-          position:
-            objectWithMaxX.root.position.x +
-            objectWithMaxX.width / 2 +
-            distance / 2,
-        });
-      }
-    
-
-
-
-   
-
-    plannerConfig.boxesArrayDirect.length = 0;
-    let boxSide = "direct";
-    plannerConfig.emptiesObjects.forEach((elem) => {
-      this.createEmptyBox(elem.width, elem.position, boxSide);
-    });
-
-
-
-  }
-
-  calculateEmptiesLeft() {
-    let name = "emptyBoxLeft";
-
-    this.removeObjectsByName(name);
-  //  const filtredLeft = plannerConfig.penalsArray.filter((penal) => penal.side == "left");
-
   
-
-  //  plannerConfig.modelsLeft.push(...filtredLeft);
-
-    //поиск промежутка больше 15 между модулями
-    plannerConfig.emptiesObjectsLeft.length = 0;
-    plannerConfig.iconsArray  = plannerConfig.iconsArray.filter(icon => icon.name == 'direct')
-
-    plannerConfig.modelsLeft.sort((a, b) => a.root.position.z - b.root.position.z );
-
-    for (let i = 0; i < plannerConfig.modelsLeft.length - 1; i++) {
-      const current = plannerConfig.modelsLeft[i];
-      const next = plannerConfig.modelsLeft[i + 1];
-      if (next.root.position.z - next.width / 2 - (current.root.position.z + current.width / 2) >  0.15  ) {
+      // есть в углу модуль
+      const leftOffset = plannerConfig.isAngleRow === 'left' ? 0.6 : 0
+  
+      if( models.length > 0 ){
+            // Левый край
+        const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
+        if (firstBox.min.x > (0.15 + leftOffset)) {
+          console.log(' plannerConfig.isAngleRow2L',  plannerConfig.isAngleRow)
+          console.log('leftOffset', leftOffset)
+          console.log('firstBox.min.x', firstBox.min.x)
+          console.log('0.15 + leftOffset', 0.15 + leftOffset)
+          this.addGapBox(0 +leftOffset, firstBox.min.x, firstBox, posY, side, leftOffset);
+        }
+  
+        // Правый край
+        const lastBox = new THREE.Box3().setFromObject(
+          models[models.length - 1].raycasterBox
+        );
+        if ((totalWidth - lastBox.max.x) > 0.15) {
+          this.addGapBox(lastBox.max.x, totalWidth, lastBox, 1.5, side);
+        }
+  
+      } else {
+                    console.log('empty')
+         this.addGapBox( leftOffset, totalWidth, 1, 1.5, side);
+       
+      }
+  
     
-        let distance = Number(next.root.position.z -  next.width / 2 - (current.root.position.z + current.width / 2)).toFixed(3);
-        let position = Number(current.root.position.z + current.width / 2 + distance / 2 ).toFixed(3); plannerConfig.emptiesObjectsLeft.push({
-          width: distance,
-          position: position,
-        });
-      }
+    
+  
+      // plannerConfig.modelsDirect = plannerConfig.modelsDirect.filter(
+      //   model => model.name !== 'penal'
+      // );
+  
+        console.log('modelsLengh', models)
+  
+  
     }
-
-    // const objectWithMaxZ = plannerConfig.modelsLeft.reduce((min, current) =>
-    //   current.root.position.z > min.root.position.z ? current : min
-    // );
-
-    const objectWithMaxZ = plannerConfig.modelsLeft[plannerConfig.modelsLeft.length-1]
-    const objectWithMinZ = plannerConfig.modelsLeft[0]
-
-
-    //    //левая пустота
-    if (this.kitchenStore.sideSizes.side_c -(objectWithMaxZ.root.position.z + objectWithMaxZ.width / 2) >0.15 ) {
-      let distance =  this.kitchenStore.sideSizes.side_c - (objectWithMaxZ.root.position.z + objectWithMaxZ.width / 2);
-      plannerConfig.emptiesObjectsLeft.push({
-        width: distance,
-        position:   objectWithMaxZ.root.position.z +  objectWithMaxZ.width / 2 +   distance / 2,  });
+  
+    createGapBoxesLeft() {
+      const side = "left";
+      const posY = 1.76;
+      let totalWidth = this.kitchenStore.sideSizes.side_c
+  
+   //   const filtedLeft = plannerConfig.penalsArray.filter(model=> model.side == 'left')
+      plannerConfig.iconsArray1L  = plannerConfig.iconsArray1L.filter(icon => icon.name == 'direct1level')
+  
+      
+  
+      const models = plannerConfig.modelsLeft;
+     // const models = plannerConfig.modelsLeft.map(p => ({ ...p }))
+  
+  
+      //временно добавляем пеналы для расчёта
+     // models.push(...filtedLeft)
+      models.sort((a, b) => a.root.position.z - b.root.position.z);
+  
+      // Добавление промежутков
+      for (let i = 0; i < models.length - 1; i++) {
+        const current = models[i];
+        const next = models[i + 1];
+        const box1 = new THREE.Box3().setFromObject(current.root);
+        const box2 = new THREE.Box3().setFromObject(next.root);
+  
+        //  console.log('box1', box1)
+        //  console.log('box2', box2)
+  
+        const rightEdge = box1.max.z;
+        const leftEdgeNext = box2.min.z;
+  
+        if (leftEdgeNext - rightEdge > 0.15) {
+          this.addGapBoxLeft(rightEdge, leftEdgeNext, box1, 1.5, side);
+        }
+      }
+  
+  
+      const offset = plannerConfig.isAngleRow == 'direct' ? 0.6 : 0
+  
+  
+      if(models.length > 0 ){
+            // Левый край
+        const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
+        if (firstBox.min.z > (0.15 + offset)) {
+          this.addGapBoxLeft(0 +offset, firstBox.min.z, firstBox, posY, side);
+        }
+  
+        // Правый край
+        const lastBox = new THREE.Box3().setFromObject(
+          models[models.length - 1].raycasterBox
+        );
+        if ((totalWidth - lastBox.max.z) > 0.15) {
+          this.addGapBoxLeft(lastBox.max.z, totalWidth, lastBox, 1.5, side);
+      }
+      } else {
+               console.log('empty')
+         this.addGapBox( offset, totalWidth, 1, 1.5, side);
+      }
+    
+  
+      // удаляем пеналы
+      //  plannerConfig.modelsLeft = plannerConfig.modelsLeft.filter(
+      //   model => model.name !== 'penal'
+      // );
     }
+  
+    addGapBox(startX, endX, referenceBox, posY, side, leftOffset) {
 
-    //правая пустота
-     let limit
-     const rightEdge = objectWithMinZ.root.position.z -  objectWithMinZ.width / 2 
-     if(plannerConfig.isAngleRow == 'left' && rightEdge > 0.15){
-      limit = 0.15
-     }
-     if(plannerConfig.isAngleRow == 'direct' && rightEdge > 0.75){
-      limit = 0.75
-     }
-     if(plannerConfig.isAngleRow == 'none' && rightEdge > 0.15){
-      limit = 0.15
-     }
+  //    console.log('startX', startX)
+    //  console.log('endX', endX)
 
-     if (rightEdge  >  limit ) {
-      let distance, position
-      if(plannerConfig.isAngleRow == 'left'){
-         distance =   objectWithMinZ.root.position.z - objectWithMinZ.width / 2;
-         position = distance / 2
+      const icon = this.loaderModels.get("icon");
+      icon.visible = true;
+      icon.name = 'direct1level'
+      
+      plannerConfig.iconsArray1L.push(icon)
+  
+      const gap = endX - startX;
+      if (gap <= 0) return;
+  
+      const geometry = new THREE.BoxGeometry(gap , 0.7, 0.3);
+      const material = new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        opacity: 0,
+        transparent: true,
+      });
+      const gapBox = new THREE.Mesh(geometry, material);
+      gapBox.name = "gapBox1level";
+  
+  
+        const lineHotizontal = new Line(
+            this.sceneSetup,
+            { x: -gap / 2, y: 0.3, z: -0.14 },
+            { x: gap / 2, y: 0.3, z: -0.14 },
+            0.4,
+            1
+          );
+          gapBox.add(lineHotizontal.group);
+          gapBox.userData.side = 'direct'
+  
+     // plannerConfig.empties2levelDirect.push(gapBox);
+  
+     // plannerConfig.iconsArray2L.push(icon)
+  
+      gapBox.add(icon);
+     // icon.position.set(0,1,0)
+  
+      if (side === "left") gapBox.rotation.y = Math.PI / 2;
+  
+      // позиция
+      if (side === "direct") gapBox.position.set(startX + gap / 2, 0.3, 0.15);
+      if (side === "left")
+        gapBox.position.set(0.15, 0.45, startX + gap / 2);
+  
+      this.scene.add(gapBox);
+    }
+  
+    addGapBoxLeft(startX, endX, referenceBox, posY, side) {
+      const icon = this.loaderModels.get("icon");
+      icon.visible = true;
+      icon.name = 'left1level'
+      plannerConfig.iconsArray1L.push(icon)
+  
+  
+      const gap = endX - startX;
+      if (gap <= 0) return;
+  
+      const geometry = new THREE.BoxGeometry(gap, 0.7, 0.3);
+      const material = new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        opacity: 0,
+        transparent: true,
+      });
+      const gapBox = new THREE.Mesh(geometry, material);
+      gapBox.name = "gapBoxLeft1level";
+  
+       const lineHotizontal = new Line(
+            this.sceneSetup,
+            { x: -gap / 2, y: 0.3, z: -0.14 },
+            { x: gap / 2, y: 0.3, z: -0.14 },
+            0.4,
+            1
+          );
+          gapBox.add(lineHotizontal.group);
+  
+      plannerConfig.empties2levelLeft.push(gapBox);
+  
+      gapBox.add(icon);
+  
+      gapBox.rotation.y = Math.PI / 2;
+  
+          gapBox.userData.side = 'left'
+  
+  
+      // позиция
+     
+      if (side === "left")
+        gapBox.position.set(0.15, 0.45, startX + gap / 2);
+  
+      this.scene.add(gapBox);
+    }
+  
+    calculateEmpties() {
+      //
+      //  if()
+  
+      this.removeObjectsByName("gapBox1level");
+      this.removeObjectsByName("gapBoxLeft1level");
+  
+      plannerConfig.empties2levelDirect.length = 0;
+      plannerConfig.empties2levelLeft.length = 0;
+  
+      if (plannerConfig.modelsDirect.length >= 0) {
+        this.createGapBoxes();
       }
-      if(plannerConfig.isAngleRow == 'direct'){
-         distance =   objectWithMinZ.root.position.z - objectWithMinZ.width / 2 - 0.6
-         position =  objectWithMinZ.root.position.z - objectWithMinZ.width / 2 - distance/2
-      }
-      if(plannerConfig.isAngleRow == 'none'){
-         distance =   objectWithMinZ.root.position.z - objectWithMinZ.width / 2;
-         position = distance / 2
+      if (this.kitchenStore.type === 'left' && plannerConfig.modelsLeft.length >= 0) {
+        this.createGapBoxesLeft();
       }
       
-      plannerConfig.emptiesObjectsLeft.push({
-        width: distance,
-        position: position  });
     }
-
-    // удаляем пенал
-    // for (let i = plannerConfig.modelsLeft.length - 1; i >= 0; i--) {
-    //   if (plannerConfig.modelsLeft[i].name == "penal") {
-    //     plannerConfig.modelsLeft.splice(i, 1);
-    //   }
-    // }
-
-    plannerConfig.boxesArrayLeft.length = 0;
-
-    let boxSide = "left";
-
-    plannerConfig.emptiesObjectsLeft.forEach((elem) => {
-      this.createEmptyBox(elem.width, elem.position, boxSide);
-    });
-  }
-
-  createEmptyBox(width, position, boxSide) {
-    let isLeft = boxSide == "left";
-    let posX = isLeft ? 0.3 : Number(position);
-    let posZ = isLeft ? Number(position) : 0.3;
-   
-    const icon = this.loaderModels.get('icon')
-    icon.visible = true
-   
-
-    
-  
-
-  
-
-   
-
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(width, 0.854, 0.6),
-      new THREE.MeshBasicMaterial({
-       color: 0x00ff00,
-        opacity: 0,
-        transparent: true
-      })
-    );
-
-      box.userData = {
-      side: isLeft ? "left" : "direct",
-      position,
-      width, 
-      id: THREE.MathUtils.generateUUID()
-    }
-
-  //  box.visible = false
-
-   
-
-    box.position.set(posX, 0.427, posZ);
-    box.name = isLeft ? "emptyBoxLeft" : "emptyBoxDirect";
-    box.userData.side = isLeft ? "left" : "direct";
-    isLeft
-      ? plannerConfig.boxesArrayLeft.push(box)
-      : plannerConfig.boxesArrayDirect.push(box);
-
-    
-  
-    box.add(icon)
-
-   
-
-    icon.visible = true
-    icon.name = isLeft ? "left" : "direct"
-   
-    icon.position.set(0, 0.6, -0.29)
-
-    plannerConfig.iconsArray.push(icon)
-
-    const lineHotizontal = new Line(
-      this.sceneSetup,
-      { x: -width / 2, y: 0.3, z: -0.3 },
-      { x: width / 2, y: 0.3, z: -0.3 },
-      0.4,
-      1
-    );
-    box.add(lineHotizontal.group);
-    box.rotation.y = isLeft ? Math.PI / 2 : 0;
-
-    this.scene.add(box);
-    // console.log(boxesArray)
-  }
 
 
 
@@ -315,7 +295,7 @@ export class EmptyManager {
     let rightModule = null;
 
     let closestLeft = -Infinity;
-let closestRight = Infinity;
+    let closestRight = Infinity;
     
     let leftModuleZ = null;
     let rightModuleZ = null;

@@ -64,6 +64,7 @@ function updateHeight3level() {
 }
 
 function updateHeight2level() {
+   if(kitchenStore.sink.isSet) clear()
   const value = parseFloat(event.target.value);
   config.kitchen_size.height = (1.418 + Number(config.panels_size.height2level) + (config.kitchen_levels == 3 ? Number(config.panels_size.height3level) : 0)).toFixed(3);
 
@@ -80,6 +81,34 @@ function updateHeight2level() {
   cabinetBuilder.value.executeConfig("actual", "currectActual")
   penalBuilder.value.builder()
 } 
+
+
+
+ function clear(){
+    // удалить раковину
+      ['SinkNormal', 'sinkModel'].forEach((name) => {
+      cabinetBuilder.value.scene.children
+        .filter((element) => element.name === name)
+        .forEach((element) => cabinetBuilder.value.scene.remove(element));
+    })
+
+    kitchenStore.parts.length = 0
+    kitchenStore.rules.length = 0
+    kitchenStore.filtredRules.length = 0,
+    kitchenStore.filtredRulesTotal.length = 0
+
+    kitchenStore.availableOven.length =  0
+    kitchenStore.availableDish.length = 0
+    kitchenStore.sink.isSet = false
+
+
+    // this.KitchenSizes.dishwasher.size = 0
+    // this.KitchenSizes.oven.size = 0
+  }
+
+
+
+
 </script>
 
 <style>

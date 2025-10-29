@@ -88,9 +88,8 @@ onUnmounted(() => {
     setTech.value.abortController = null;
   }
 
-
-  if(!kitchenStore.sink.isSet){
-      const namesToRemove = [
+  if (!kitchenStore.sink.isSet) {
+    const namesToRemove = [
       "SinkNormal",
       "BoxForDelete",
       "sinkModel",
@@ -104,13 +103,9 @@ onUnmounted(() => {
         obj.geometry?.dispose();
         obj.material?.dispose();
       });
-    
-      setTech.value.sceneSetup.requestRender();
 
+    setTech.value.sceneSetup.requestRender();
   }
-
-
-
 });
 </script>
 

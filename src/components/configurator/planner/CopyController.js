@@ -262,24 +262,30 @@ export class CopyController {
       this.plannerStore.showError();
       this.setToRow = false;
 
-
-          plannerConfig.copyObject.traverse((child) => {
-      if (child.geometry) {
-        child.geometry.dispose();
-      }
-      // if (child.material) {
-      //   if (Array.isArray(child.material)) {
-      //     child.material.forEach((m) => m.dispose());
-      //   } else {
-      //     child.material.dispose();
-      //   }
-      // }
-      // if (child.texture) {
-      //   child.texture.dispose();
-      // }
-    });
+      this.scene.remove(this.instance.root)
 
 
+    //       plannerConfig.copyObject.root.traverse((child) => {
+    //   if (child.geometry) {
+    //     child.geometry.dispose();
+    //   }
+    //   // if (child.material) {
+    //   //   if (Array.isArray(child.material)) {
+    //   //     child.material.forEach((m) => m.dispose());
+    //   //   } else {
+    //   //     child.material.dispose();
+    //   //   }
+    //   // }
+    //   // if (child.texture) {
+    //   //   child.texture.dispose();
+    //   // }
+
+
+    // });
+
+
+
+    // this.instance.modelsGroup.add(modelClone); // добавляем клон
 
 
       this.removeObjectsByName('copyObject');
@@ -372,10 +378,6 @@ export class CopyController {
     const width = plannerConfig.selectedObject.width
 
 
-
-
-
-
     if (!modelsGroup) {
       console.warn("modelsGroup не найден!");
       return;
@@ -392,6 +394,7 @@ export class CopyController {
     this.instance.level = 2
     this.instance.width = width
     this.instance.ready = true
+    this.instance.root.name = 'SectorTest'
 
     this.scene.add(this.instance.root);
     //   instance.root.position.set(0.15, 1.41, 1.15);
@@ -399,8 +402,14 @@ export class CopyController {
   //  plannerConfig.models.push(instance)
 
 
+    clonedGroup.name = 'clonedGroup'
+    plannerConfig.namesToDeleteDirect2L.push('clonedGroup')
+    plannerConfig.namesToDeleteDirect2L.push('SectorTest')
+
     clonedGroup.children.forEach((model, i) => {
     const modelClone = model.clone(true); // полностью клонируем
+    modelClone.name = 'test'
+    plannerConfig.namesToDeleteDirect2L.push('test')
     const instanseInSector = new Model_In_Sector(modelClone, this.sceneSetup, false);
     this.instance.modules.push(instanseInSector);
     this.instance.modelsGroup.add(modelClone); // добавляем клон

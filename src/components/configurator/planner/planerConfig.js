@@ -49,6 +49,7 @@ export const plannerConfig = {
     
     iconsArray:[],
     iconsArray2L:[],
+    iconsArray1L:[],
 
 
 
