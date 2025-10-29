@@ -206,9 +206,8 @@ export class EmptyManager {
       if (side === "left") gapBox.rotation.y = Math.PI / 2;
   
       // позиция
-      if (side === "direct") gapBox.position.set(startX + gap / 2, 0.3, 0.15);
-      if (side === "left")
-        gapBox.position.set(0.15, 0.45, startX + gap / 2);
+      if (side === "direct") gapBox.position.set(startX + gap / 2, 0.45, 0.15);
+  
   
       this.scene.add(gapBox);
     }
