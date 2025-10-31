@@ -82,37 +82,40 @@
   <div class="mb-3">
    
     <div class="flex space-x-4 max-h-12">
-       <p class="text-xs font-semibold text-gray-700  flex items-center">Сторона</p> 
+     
       <button
         
-        @click="selectedPosition = 'left'"
+        @click="addLeft"
         :class="[
           ' py-1 px-1  rounded-lg border text-xs font-medium transition flex items-center gap-2',
-          selectedPosition === 'left'
-            ? ' text-brand  bg-gray-100'
-            : 'bg-white text-gray-700 border-gray-300 hover:'
+      
         ]"
+
+        :disabled="(isLeftEndPenal && selectedOption == 10 && selectedPosition == 'left') ||
+         ((kitchenStore.fridge.side == 'left' || kitchenStore.fridge.side == 'directLeft') && selectedOption == 10 && selectedPosition == 'left' && kitchenStore.fridge.isSet) 
+        
+        "
        
       >
-        Слева
+        добавить слева
       </button>
 
       <button
        
-        @click="selectedPosition = 'right'"
+        @click="addRight"
         :class="[
           'px-1 py-1 rounded-lg border text-sm text-xs font-medium transition flex items-center gap-2',
-          selectedPosition === 'right'
-            ?' text-brand  bg-gray-100'
-            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+
         ]"
+        :disabled = " (isRightEndPenal && selectedOption == 10 && selectedPosition == 'right') ||
+          ((kitchenStore.fridge.side == 'right' || kitchenStore.fridge.side == 'directRight') && selectedOption == 10 && selectedPosition == 'right' && kitchenStore.fridge.isSet)"
         
       >
-        Справа
+        добавить справа
       </button>
       
   <!-- Кнопка добавления -->
-  <button
+  <!-- <button
     class=" bg-gray-100 text-black text-xs font-medium  py-2 px-2 rounded-lg shadow transition-colors duration-200 hover:text-brand"
     @click="addPenal"
     :disabled="
@@ -124,7 +127,7 @@
 "
   >
     Добавить пенал
-  </button>
+  </button> -->
     </div>
 
 
@@ -280,6 +283,16 @@ const PANEL_WIDTH = computed(() => {
 const PANEL_DEPTH = 0.6;
 const maxPanels = 3;
 
+
+function addLeft(){
+  selectedPosition.value = 'left'
+  addPenal()
+}
+
+function addRight(){
+  selectedPosition.value = 'right'
+  addPenal()
+}
 
 
 function delPenal(id, side) {

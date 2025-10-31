@@ -36,7 +36,7 @@ export class EmptyManager {
     //  models.push(...filtedDirect)
       models.sort((a, b) => a.root.position.x - b.root.position.x);
   
-      console.log('models', models)
+   //   console.log('models', models)
   
       // Добавление промежутков
       for (let i = 0; i < models.length - 1; i++) {
@@ -63,10 +63,8 @@ export class EmptyManager {
             // Левый край
         const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
         if (firstBox.min.x > (0.15 + leftOffset)) {
-          console.log(' plannerConfig.isAngleRow2L',  plannerConfig.isAngleRow)
-          console.log('leftOffset', leftOffset)
-          console.log('firstBox.min.x', firstBox.min.x)
-          console.log('0.15 + leftOffset', 0.15 + leftOffset)
+      //    console.log(' plannerConfig.isAngleRow2L',  plannerConfig.isAngleRow)
+      
           this.addGapBox(0 +leftOffset, firstBox.min.x, firstBox, posY, side, leftOffset);
         }
   
@@ -79,7 +77,7 @@ export class EmptyManager {
         }
   
       } else {
-                    console.log('empty')
+                  
          this.addGapBox( leftOffset, totalWidth, 1, 1.5, side);
        
       }
@@ -91,7 +89,7 @@ export class EmptyManager {
       //   model => model.name !== 'penal'
       // );
   
-        console.log('modelsLengh', models)
+  //      console.log('modelsLengh', models)
   
   
     }

@@ -5,28 +5,26 @@
 
         <!-- Выбор положения -->
         <div class="mt-3">
-            <div class="flex space-x-4 ">
-            <h3 class="text-xs font-semibold  items-center text-gray-700 ">Положение</h3>
-
+            <div class="flex space-x-4">
                 <button @click="handleLeft"
+                
                  :class="[
                     ' py-1 px-1  rounded-lg border text-xs font-medium transition flex items-center gap-2',
-                    selectedSide === 'left'
-                        ? ' text-brand  bg-gray-100'
-                         : 'bg-white text-gray-700 border-gray-300 hover:'
+
                 ]"
+                 :disabled="(props.isLeftEndPenal && selectedSide == 'left')"
                >
-                    Слева
+                    добавить слева
                 </button>
 
                 <button @click="handleRight" 
                 :class="[
                      ' py-1 px-1  rounded-lg border text-xs font-medium transition flex items-center gap-2',
-                    selectedSide === 'right'
-                   ? ' text-brand  bg-gray-100'
-                         : 'bg-white text-gray-700 border-gray-300 hover:'
-                ]">
-                    Справа
+
+                ]"
+                :disabled="(props.isRightEndPenal && selectedSide == 'right')"
+                >
+                    добавить справа
                 </button>
 
              
@@ -35,12 +33,12 @@
         </div>
 
         <!-- Кнопка добавления -->
-         <div class="flex space-x-4 mt-3">
+         <div  v-if="kitchenStore.fridge.isSet"  class="flex space-x-4 mt-3">
                    <button
             class="bg-gray-100 text-black text-xs font-medium  py-2 px-2 rounded-lg shadow transition-colors duration-200 hover:text-brand"
-             :disabled="(props.isLeftEndPenal && selectedSide == 'left') || (props.isRightEndPenal && selectedSide == 'right') "
-            @click="kitchenStore.fridge.isSet ? deleteFridge() : addFridge()">
-            {{ kitchenStore.fridge.isSet ? 'Удалить холодильник' : 'Добавить холодильник' }}
+             
+            @click="deleteFridge()">
+            {{ 'Удалить холодильник'  }}
             
         </button>
         <label class="flex items-center cursor-pointer">
@@ -99,6 +97,9 @@ function handleLeft(){
         if(props.isLeftEndPenal && selectedSide.value === 'left') return
         deleteFridge()
         addFridge()
+    } else{
+        if(props.isLeftEndPenal && selectedSide.value === 'left') return
+        addFridge() 
     }
 }
 
@@ -108,8 +109,11 @@ function handleRight(){
     if(props.isRightEndPenal && selectedSide.value === 'right') return
 
     if(kitchenStore.fridge.isSet){
-        deleteFridge()
-        addFridge()
+      deleteFridge()
+      addFridge()
+    } else {
+      if(props.isLeftEndPenal && selectedSide.value === 'right') return
+      addFridge()   
     }
 }
 
@@ -303,7 +307,7 @@ function moveAfterDeleteInside(){
     const row = kitchenStore.fridge.row
 
     penalStore.penalOffsetsState[side] -= FRIDGE_WIDTH
-    let segment = rowSegmentsStore.segments[seg]
+ 
     const penals = penalStore.penals.filter(penal => penal.side === side)
 
     if (kitchenStore.type === 'direct' && side == 'directLeft') kitchenStore.offsetForLeftRow -= FRIDGE_WIDTH
@@ -315,12 +319,7 @@ function moveAfterDeleteInside(){
         kitchenStore.fridge.side === 'directLeft'?  penal[axis] -= FRIDGE_WIDTH : penal[axis] += FRIDGE_WIDTH
     })
 
-    segment.forEach(segment => {
-        if (segment.type.includes('penal')) {
-            segment.start += FRIDGE_WIDTH
-            segment.end += FRIDGE_WIDTH
-        }
-    })
+
 
     rowSegmentsStore.segments[seg] = rowSegmentsStore.segments[seg].filter(segment=> segment.type !='fridge')
 }

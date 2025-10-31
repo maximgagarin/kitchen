@@ -283,84 +283,7 @@ export class PlannerManager {
 
  
  
-  checkMoveBack(){
-    const side = plannerConfig.selectedObject.side;
-    const level = plannerConfig.selectedObject.level
 
-    const movingBox = new THREE.Box3().setFromObject(
-      plannerConfig.selectedObject.raycasterBox
-    );
-    const movingCenter = new THREE.Vector3();
-    movingBox.getCenter(movingCenter);
-
-    
-    let modelsArray
-    if(level == 1){
-      side == 'direct'? modelsArray = plannerConfig.modelsDirect : modelsArray = plannerConfig.modelsLeft 
-    }
-
-    if(level == 2){
-      side == 'direct'? modelsArray = plannerConfig.modelsDirect2L : modelsArray = plannerConfig.modelsLeft2L 
-    }
-
-    for (let model of modelsArray) {
-      if (model.root.uuid === plannerConfig.selectedObject.root.uuid) continue;
-
-      const staticBox = new THREE.Box3().setFromObject(model.raycasterBox);
-
-      let overlap, movingSize;
-
-      if (side === "direct") {
-        // Сравнение по X
-        overlap =
-          Math.min(movingBox.max.x, staticBox.max.x) -
-          Math.max(movingBox.min.x, staticBox.min.x);
-        movingSize = movingBox.max.x - movingBox.min.x;
-      } else if (side === "left" || side === "right") {
-        // Сравнение по Z
-        overlap =
-          Math.min(movingBox.max.z, staticBox.max.z) -
-          Math.max(movingBox.min.z, staticBox.min.z);
-        movingSize = movingBox.max.z - movingBox.min.z;
-      } else {
-        console.warn("checkSwapCandidate: Unknown kitchenType", side);
-        continue;
-      }
-
-     
-
-      // Если есть перекрытие и оно больше половины размера — вернуть модель
-      if (overlap > 0.05 && overlap < 0.2) {
-        console.log('over')
-        plannerConfig.moveBack.otherBox = model;
-        this.movedBack  = true 
-        this.plannerStore.movedBack = true
-        if(side == 'direct'){
-          if(plannerConfig.selectedObject.root.position.x < model.root.position.x){
-          plannerConfig.moveBack.side = 'right'
-        }
-         if(plannerConfig.selectedObject.root.position.x > model.root.position.x){
-          plannerConfig.moveBack.side = 'left'
-        }
-         return; // сразу выйти
-        }
-          if(side == 'left'){
-          if(plannerConfig.selectedObject.root.position.z > model.root.position.z){
-          plannerConfig.moveBack.side = 'right'
-        }
-         if(plannerConfig.selectedObject.root.position.z < model.root.position.z){
-          plannerConfig.moveBack.side = 'left'
-        }
-         return; // сразу выйти
-        }
-        
-      }
-    }
-
-   this.movedBack = false;
-this.plannerStore.movedBack = false;
-    return null;
-  }
 
 
  
@@ -1318,10 +1241,10 @@ this.plannerStore.movedBack = false;
     this.isMoving = false;
  
     if (plannerConfig.selectedObject ) {
-      //    this.container.removeEventListener("mousemove", this.onMouseMove);
-      if (!this.swapController.swapSelected) {
-        
-       // this.swapController.moveAfterSwapInSectror()
+
+      if (!this.swapController.swapSelected && plannerConfig.isCollision) {
+        console.log('move back')
+      
       }
       if (this.movedBack) {
       // this.moveBack();

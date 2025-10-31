@@ -158,7 +158,9 @@ export const plannerConfig = {
 
 
     //массивы для проверки коллизии во время движения модуля
-    arraysToCheck:[]
+    arraysToCheck:[],
+   
+
 
 
 }

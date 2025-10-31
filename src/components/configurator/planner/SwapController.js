@@ -46,7 +46,7 @@ export class SwapController {
 
        this.swapSelected = true;
      
-      console.log("Обмен модулей");
+   //   console.log("Обмен модулей");
 
       const side = plannerConfig.selectedObject.side;
       const isLeft = side === 'left';
@@ -58,16 +58,16 @@ export class SwapController {
       const widthA = plannerConfig.selectedObject.width
       const widthB = swapCandidate.width
 
-      console.log('widthA', widthA)
-      console.log('widthB', widthB)
+  //    console.log('widthA', widthA)
+   //   console.log('widthB', widthB)
 
 
 
       const centerA = this.firstCollision.selected
       const centerB = isLeft ? swapCandidate.root.position.z: swapCandidate.root.position.x;
 
-      console.log('centerA', centerA)
-      console.log('centerB', centerB)
+//     console.log('centerA', centerA)
+    //  console.log('centerB', centerB)
 
       
 
@@ -86,8 +86,8 @@ export class SwapController {
       }
     
 
-      console.log('newB', this.newPosB)
-      console.log('newA', this.newPosA)
+   //   console.log('newB', this.newPosB)
+   //   console.log('newA', this.newPosA)
 
 
       this.firstCollision = null
@@ -273,7 +273,7 @@ export class SwapController {
             item.tabletop.visible = false}) // отключам столешницу у модулей
 
           this.sceneSetup.requestRender();
-          console.log('end')
+         // console.log('end')
 
      
          
@@ -337,6 +337,58 @@ export class SwapController {
   }
 
 
+  moveBack(){
+    let side = plannerConfig.selectedObject.side
+    let index = plannerConfig.selectedObject.index
+    let oldPos = plannerConfig.slotsDirect.find((obj) => obj.index == index)
+    let posX, posZ
+
+    if(side == 'direct'){
+         if(plannerConfig.moveBack.side == 'right'){
+         posX = plannerConfig.moveBack.otherBox.root.position.x - plannerConfig.moveBack.otherBox.width/2
+     - plannerConfig.selectedObject.width/2
+    }
+
+     if(plannerConfig.moveBack.side == 'left'){
+          posX = plannerConfig.moveBack.otherBox.root.position.x + plannerConfig.moveBack.otherBox.width/2
+     + plannerConfig.selectedObject.width/2
+    }
+    }
+
+    if(side == 'left'){
+         if(plannerConfig.moveBack.side == 'right'){
+         posZ = plannerConfig.moveBack.otherBox.root.position.z + plannerConfig.moveBack.otherBox.width/2
+     + plannerConfig.selectedObject.width/2
+    }
+
+     if(plannerConfig.moveBack.side == 'left'){
+          posZ = plannerConfig.moveBack.otherBox.root.position.z - plannerConfig.moveBack.otherBox.width/2
+     - plannerConfig.selectedObject.width/2
+    }
+    }
+ 
+ 
+ 
+
+
+ //  console.log('posX', posX)
+
+    gsap.to(plannerConfig.selectedObject.root.position, {
+      x: side == 'direct'? posX : 0.3 ,
+      z: side == 'left'? posZ: 0.3 ,
+      duration: 0.3,
+      ease: "power2.out",
+      onUpdate: () => {
+        this.sceneSetup.requestRender();
+      },
+      onComplete: () => {
+     //   console.log('moveBack')
+        this.movedBack = false
+        plannerConfig.moveBack.otherBox = null
+      },
+    });
+  }
+
 
 
 
@@ -364,6 +416,7 @@ export class SwapController {
 
     if (selectedBox.intersectsBox(otherBox)) {
       console.log('collis')
+      plannerConfig.isCollision = true
 
 
       const selectedCenter = new THREE.Vector3();
@@ -418,6 +471,9 @@ export class SwapController {
         isCollision: true,
         target: model,
       };
+    }
+    else {
+      plannerConfig.isCollision = false
     }
   }
 
