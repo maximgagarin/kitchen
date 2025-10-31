@@ -338,44 +338,50 @@ export class SwapController {
 
 
   moveBack(){
-    let side = plannerConfig.selectedObject.side
-    let index = plannerConfig.selectedObject.index
-    let oldPos = plannerConfig.slotsDirect.find((obj) => obj.index == index)
-    let posX, posZ
 
-    if(side == 'direct'){
-         if(plannerConfig.moveBack.side == 'right'){
-         posX = plannerConfig.moveBack.otherBox.root.position.x - plannerConfig.moveBack.otherBox.width/2
-     - plannerConfig.selectedObject.width/2
-    }
+    console.log('first', this.firstCollision)
+    const selected = plannerConfig.selectedObject
 
-     if(plannerConfig.moveBack.side == 'left'){
-          posX = plannerConfig.moveBack.otherBox.root.position.x + plannerConfig.moveBack.otherBox.width/2
-     + plannerConfig.selectedObject.width/2
-    }
-    }
 
-    if(side == 'left'){
-         if(plannerConfig.moveBack.side == 'right'){
-         posZ = plannerConfig.moveBack.otherBox.root.position.z + plannerConfig.moveBack.otherBox.width/2
-     + plannerConfig.selectedObject.width/2
-    }
+    const side = plannerConfig.selectedObject.side;
+    const isLeft = side === 'left';
 
-     if(plannerConfig.moveBack.side == 'left'){
-          posZ = plannerConfig.moveBack.otherBox.root.position.z - plannerConfig.moveBack.otherBox.width/2
-     - plannerConfig.selectedObject.width/2
-    }
-    }
+    let posX, posZ, targetPositionX, newPos
+
+
+
+    if(this.firstCollision) {
+
+      const widthA = plannerConfig.selectedObject.width
+      const widthB = this.firstCollision.target.width
+
+      const centerA = this.firstCollision.selected
+      const centerB = isLeft ?this.firstCollision.target.root.position.z: this.firstCollision.target.root.position.x
+
+
+
+
+
+
+// 
+
+      
+
+      const movingRight = centerB > centerA;
+
+      if(movingRight){
+        newPos = centerB - widthA/2 - widthB/2
+      } else {
+        newPos = centerB + widthA/2 + widthB/2
+      }
+
  
- 
- 
 
 
- //  console.log('posX', posX)
-
-    gsap.to(plannerConfig.selectedObject.root.position, {
-      x: side == 'direct'? posX : 0.3 ,
-      z: side == 'left'? posZ: 0.3 ,
+      
+      gsap.to(plannerConfig.selectedObject.root.position, {
+      x: side == 'direct'? newPos : 0.3 ,
+      z: side == 'left'? newPos: 0.3 ,
       duration: 0.3,
       ease: "power2.out",
       onUpdate: () => {
@@ -385,8 +391,21 @@ export class SwapController {
      //   console.log('moveBack')
         this.movedBack = false
         plannerConfig.moveBack.otherBox = null
+        plannerConfig.isCollision = false
       },
     });
+
+    }
+
+    
+  
+   
+ 
+
+
+ //  console.log('posX', posX)
+
+   
   }
 
 

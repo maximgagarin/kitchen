@@ -1244,6 +1244,7 @@ export class PlannerManager {
 
       if (!this.swapController.swapSelected && plannerConfig.isCollision) {
         console.log('move back')
+        this.swapController.moveBack()
       
       }
       if (this.movedBack) {
