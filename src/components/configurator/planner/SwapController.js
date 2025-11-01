@@ -27,9 +27,9 @@ export class SwapController {
     this.firstCollisionInSector = null;
 
     this.movingDirection = null;
+    
 
 
-    this.firstCollision2 = null
   }
 
 doSwap() {
