@@ -1204,10 +1204,7 @@ export class PlannerManager {
     this.utils.calcCornerModules2L()
 
     //движени выбранного после свапа
-    if(this.swapController.swapSelected){
-       this.swapController.moveSelectedAfterSwap()
-    
-    }
+//    this.swapController.layoutBoxes(true, true )
 
      //движени выбранного внутри секции после свапа
     if(plannerConfig.selectedObject.name == 'sector' && this.swapController.swapSelectedInSector){
