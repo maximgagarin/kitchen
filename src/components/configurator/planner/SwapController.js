@@ -32,50 +32,66 @@ export class SwapController {
     this.firstCollision2 = null
   }
 
-  doSwap() {
-    const selectedBox = plannerConfig.selectedObject
-    const models = plannerConfig.modelsDirect;
-    const index = models.findIndex(
-      (m) => m.root.uuid === plannerConfig.selectedObject.root.uuid
-    );
+doSwap() {
+  const selectedBox = plannerConfig.selectedObject;
+  const models = plannerConfig.modelsDirect;
+  const index = models.findIndex(m => m.root.uuid === selectedBox.root.uuid);
+  if (index === -1) return;
 
-    if (index > 0) {
-      const leftBox = models[index - 1];
-         const leftSide = selectedBox.root.position.x - selectedBox.width/2
-      if (leftSide < leftBox.root.position.x  ) {
-        this.swap(index, index - 1);
-        
-      }
-      return
+  // --- Левый сосед ---
+  if (index > 0) {
+    const leftBox = models[index - 1];
+    const leftSide = selectedBox.root.position.x - selectedBox.width / 2;
+
+    if (leftSide < leftBox.root.position.x) {
+      // если уже свапались с этим кубом — пропускаем
+      if (this.lastCollision === leftBox.root.uuid) return;
+
+      this.swapRight(index, index - 1);
+      this.lastCollision = leftBox.root.uuid; // запоминаем, с кем свапнулись
+      return;
     }
-
-    if (index < models.length - 1) {
-      const rightBox = models[index + 1];
-      const rightSide = selectedBox.root.position.x + selectedBox.width/2
-      
-      if (rightSide >rightBox.root.position.x ) {
-        console.log('bg')
-        this.swap(index, index + 1);
-      }
-      return
-    }
-
-    this.sceneSetup.requestRender();
   }
 
-  swap(i, j) {
-    const models = plannerConfig.modelsDirect;
+  // --- Правый сосед ---
+  if (index < models.length - 1) {
+    const rightBox = models[index + 1];
+    const rightSide = selectedBox.root.position.x + selectedBox.width / 2;
+
+    if (rightSide > rightBox.root.position.x) {
+      // если уже свапались с этим кубом — пропускаем
+      if (this.lastCollision === rightBox.root.uuid) return;
+
+      this.swapLeft(index, index + 1);
+      this.lastCollision = rightBox.root.uuid; // запоминаем
+      return;
+    }
+  }
+
+  // если ни с кем не пересекаемся — сбрасываем "последнего столкнувшегося"
+  this.lastCollision = null;
+
+  this.sceneSetup.requestRender();
+}
+
+  swapLeft(i, j) {
+     const models = plannerConfig.modelsDirect;   
     const centerB = models[j].root.position.x
     const widthB = models[j].width
     const centerA = models[i].root.position.x
     const widthA = models[i].width
+
+    
+    
+    const moveRight = centerB > centerA
 
     const point = centerB - widthB/2 - widthA
     const newPos = point+widthB/2
 
     console.log('newPOs', newPos)
  
-  //  this.layoutBoxes(true, false); // плавно перерисовываем
+
+ 
 
       gsap.to(models[j].root.position, {
           x: newPos,
@@ -88,6 +104,49 @@ export class SwapController {
             this.sceneSetup.requestRender();
           },
         });
+
+   
+
+    const temp = models[i]
+    models[i] = models[j]
+    models[j] = temp;
+   
+
+
+  }
+
+    swapRight(i, j) {
+     const models = plannerConfig.modelsDirect;   
+    const centerB = models[j].root.position.x
+    const widthB = models[j].width
+    const centerA = models[i].root.position.x
+    const widthA = models[i].width
+
+    
+    
+    const moveRight = centerB > centerA
+
+    const point = centerB + widthB/2 + widthA
+    const newPos = point-widthB/2
+
+    console.log('newPOs', newPos)
+ 
+
+ 
+
+      gsap.to(models[j].root.position, {
+          x: newPos,
+          duration: 0.3,
+          ease: "power2.out",
+          onUpdate: () => {
+            this.sceneSetup.requestRender();
+          },
+          onComplete: () => {
+            this.sceneSetup.requestRender();
+          },
+        });
+
+   
 
     const temp = models[i]
     models[i] = models[j]
