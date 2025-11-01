@@ -27,6 +27,9 @@ export class SwapController {
     this.firstCollisionInSector = null;
 
     this.movingDirection = null;
+
+
+    this.firstCollision2 = null
   }
 
   doSwap() {
@@ -38,20 +41,23 @@ export class SwapController {
 
     if (index > 0) {
       const leftBox = models[index - 1];
-         const rightSide = selectedBox.root.position.x - selectedBox.width/2
-      if (rightSide < (leftBox.root.position.x  - leftBox.width/2)) {
+         const leftSide = selectedBox.root.position.x - selectedBox.width/2
+      if (leftSide < leftBox.root.position.x  ) {
         this.swap(index, index - 1);
         
       }
+      return
     }
 
     if (index < models.length - 1) {
       const rightBox = models[index + 1];
-      const leftSide = selectedBox.root.position.x + selectedBox.width/2
+      const rightSide = selectedBox.root.position.x + selectedBox.width/2
       
-      if (leftSide >(rightBox.root.position.x + rightBox.width/2)) {
+      if (rightSide >rightBox.root.position.x ) {
+        console.log('bg')
         this.swap(index, index + 1);
       }
+      return
     }
 
     this.sceneSetup.requestRender();
@@ -59,24 +65,49 @@ export class SwapController {
 
   swap(i, j) {
     const models = plannerConfig.modelsDirect;
-    const temp = models[i];
-    models[i] = models[j];
+    const centerB = models[j].root.position.x
+    const widthB = models[j].width
+    const centerA = models[i].root.position.x
+    const widthA = models[i].width
+
+    const point = centerB - widthB/2 - widthA
+    const newPos = point+widthB/2
+
+    console.log('newPOs', newPos)
+ 
+  //  this.layoutBoxes(true, false); // плавно перерисовываем
+
+      gsap.to(models[j].root.position, {
+          x: newPos,
+          duration: 0.3,
+          ease: "power2.out",
+          onUpdate: () => {
+            this.sceneSetup.requestRender();
+          },
+          onComplete: () => {
+            this.sceneSetup.requestRender();
+          },
+        });
+
+    const temp = models[i]
+    models[i] = models[j]
     models[j] = temp;
-    this.layoutBoxes(true, false); // плавно перерисовываем
+   
+
+
   }
 
   layoutBoxes(animated = false, moveSelected = false) {
-    let x = 0;
+ 
     for (const box of plannerConfig.modelsDirect) {
-      const targetX = x + box.width / 2;
-
-      if (!moveSelected) {
+    
+        const targetX = box.root.position.x
         // Пропускаем выбранный куб — его положение управляется мышкой
         if (box.root.uuid === plannerConfig.selectedObject.root.uuid) {
-          x += box.width;
+        
           continue;
         }
-      }
+    
 
       if (animated) {
         gsap.to(box.root.position, {
@@ -94,7 +125,7 @@ export class SwapController {
         box.root.position.x = targetX;
       }
 
-      x += box.width;
+      
     }
   }
 
