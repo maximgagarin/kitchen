@@ -33,6 +33,9 @@ export class SwapController {
   }
 
 doSwap() {
+
+
+
   const selectedBox = plannerConfig.selectedObject;
   const models = plannerConfig.modelsDirect;
   const index = models.findIndex(m => m.root.uuid === selectedBox.root.uuid);
@@ -82,8 +85,6 @@ doSwap() {
     const widthA = models[i].width
 
     
-    
-    const moveRight = centerB > centerA
 
     const point = centerB - widthB/2 - widthA
     const newPos = point+widthB/2
@@ -95,7 +96,7 @@ doSwap() {
 
       gsap.to(models[j].root.position, {
           x: newPos,
-          duration: 0.3,
+          duration: 0.1,
           ease: "power2.out",
           onUpdate: () => {
             this.sceneSetup.requestRender();
@@ -115,8 +116,8 @@ doSwap() {
 
   }
 
-    swapRight(i, j) {
-     const models = plannerConfig.modelsDirect;   
+  swapRight(i, j) {
+    const models = plannerConfig.modelsDirect;   
     const centerB = models[j].root.position.x
     const widthB = models[j].width
     const centerA = models[i].root.position.x
@@ -136,7 +137,7 @@ doSwap() {
 
       gsap.to(models[j].root.position, {
           x: newPos,
-          duration: 0.3,
+          duration: 0.1,
           ease: "power2.out",
           onUpdate: () => {
             this.sceneSetup.requestRender();

@@ -1050,6 +1050,7 @@ export class PlannerManager {
       if(plannerConfig.selectedObject.level == 1){
      //   this.checkMoveBack()
   //   this.moveController.freeMove()
+  
         this.moveController.moveNearWallsOnly();
         this.swapController.doSwap()
       }
@@ -1166,6 +1167,10 @@ export class PlannerManager {
       const module = plannerConfig.models.find(m => m.id === id);
       
       if(module.level == 1){
+
+
+        this.utils.createSlots()
+
         plannerConfig.selectedObject = module;
         this.setSelectObjectSettings(module); 
       }

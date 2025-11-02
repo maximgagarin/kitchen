@@ -93,6 +93,16 @@ calcCornerModules2L() {
     plannerConfig.isAngleRow = 'none';
   }
 }
+
+createSlots(){
+  plannerConfig.modelsDirect.sort((a,b) => a.root.position.x - b.root.position.x)
+
+  plannerConfig.modelsDirect.forEach((model, index)=>{
+    model.slot = index
+  })
+
+  
+}
  
 
 }
