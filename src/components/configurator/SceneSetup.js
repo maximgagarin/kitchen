@@ -14,6 +14,7 @@ export class SceneSetup {
   constructor(container) {
     this.container = container;
     this.scene = new THREE.Scene();
+    this.updateMouseEvent = false
     this.scene.background = new THREE.Color(0xf2f2f2);
 
     this.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight,  0.1,  100);
@@ -65,6 +66,7 @@ export class SceneSetup {
     // --------------------------------------
 
     this.needsRender = true;
+    this.needMouseEvent = false
 
     this.controls.addEventListener("change", () => {
       this.needsRender = true;
@@ -83,6 +85,8 @@ export class SceneSetup {
         this.render();
         this.needsRender = false;
       }
+      this.needMouseEvent = true
+
     //  this.stats.end(); // 🔹 Конец замера FPS
       requestAnimationFrame(loop);
     };

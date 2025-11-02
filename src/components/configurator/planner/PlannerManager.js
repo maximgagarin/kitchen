@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { usePlannerStore } from "../../../pinia/PlannerStore";
+import { useMouseStore } from "../../../pinia/mouseStore";
 
 import { usePenalStore } from "../../../pinia/penals";
 import { useKitchenSizesStore } from "../../../pinia/kitchenSizes";
@@ -38,6 +39,7 @@ export class PlannerManager {
     this.kitchenSizesStore = useKitchenSizesStore();
     this.penalStore = usePenalStore();
     this.plannerStore = usePlannerStore();
+    this.mouseStore = useMouseStore()
     this.container = scene.container;
     this.scene = scene.scene;
     this.loaderModels = loaderModels;
@@ -45,6 +47,8 @@ export class PlannerManager {
     this.controls = scene.controls;
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
+    
+    this.count = 0
 
     this.hoveredObject = null;
     this.hoveredObject1level = null;
@@ -961,55 +965,18 @@ export class PlannerManager {
   }
 
 
+  mouseSync(event){
+      if(this.sceneSetup.needMouseEvent){
+      this.mouseStore.updateMousePosition(event.clientX, event.clientY)
+      this.onMouseMove()
+    }
+      this.sceneSetup.needMouseEvent = false
+  }
+
+
   onMouseMove = (event) => {
 
 
-    
-
-  const currentX = event.clientX;
-
-  if (plannerConfig.lastMouseX !== null) {
-    if (currentX > plannerConfig.lastMouseX) {
-      plannerConfig.movingRight = true;
-      plannerConfig.movingDirection = 1
-    } else if (currentX < plannerConfig.lastMouseX) {
-      plannerConfig.movingRight = false;
-      plannerConfig.movingDirection = -1
-    }
-  }
-
-  plannerConfig.lastMouseX = currentX;
-
-
-
-    this.mouse.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
-    );
-    this.moveController.mouse.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
-    );
-    this.copyController.mouse.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
-    );
-    this.moveController2L.mouse.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
-    );
-    this.moveInSector.mouse.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
-    );
-
-  //  this.showControls()
-
-
-    // if(plannerConfig.modelToGroup){
-    //   this.moveInSector.moveAround()
-    // }
-   
 
     //пустые боксы
     if(!this.isMoving && !this.copyController.moving) {
@@ -1442,7 +1409,7 @@ export class PlannerManager {
 
    // console.log("models", plannerConfig.models);
     this.sceneSetup.requestRender();
-    this.container.addEventListener("mousemove", this.onMouseMove);
+    this.container.addEventListener("mousemove", this.mouseSync);
     this.container.addEventListener("mousedown", this.onMouseDown);
     this.container.addEventListener("mouseup", this.onMouseUp);
     window.addEventListener("keydown", this.handleKeyDown.bind(this));

@@ -33,9 +33,6 @@ export class SwapController {
   }
 
 doSwap() {
-
-
-
   const selectedBox = plannerConfig.selectedObject;
   const models = plannerConfig.modelsDirect;
   const index = models.findIndex(m => m.root.uuid === selectedBox.root.uuid);
