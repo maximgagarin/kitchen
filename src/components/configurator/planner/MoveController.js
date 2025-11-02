@@ -20,6 +20,7 @@ export class MoveController {
   }
 
   moveNearWallsOnly() {
+    this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
     
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -54,17 +55,18 @@ export class MoveController {
      const steps = Math.round(distance / stepSize);
       const stepVec = direction.clone().normalize().multiplyScalar(stepSize);
 
-      let finalPos = currentPos.clone();
+    //  let finalPos = currentPos.clone();
+    let finalPos = point
 
-      for (let i = 0; i < steps; i++) {
-        const testPos = finalPos.clone().add(stepVec);
+      // for (let i = 0; i < steps; i++) {
+      //   const testPos = finalPos.clone().add(stepVec);
 
-        if (this.checkFutureCollision(testPos)) {
-          break;
-        }
+      //   if (this.checkFutureCollision(testPos)) {
+      //     break;
+      //   }
 
-        finalPos.copy(testPos);
-      }
+      //   finalPos.copy(testPos);
+      // }
 
    
 
@@ -89,7 +91,7 @@ export class MoveController {
       }
 
       //   highlightIfCollision(plannerConfig.selectedObject, this.scene, plannerConfig.models);
-     snapToNearby(plannerConfig.selectedObject, plannerConfig.models);
+     snapToNearby(plannerConfig.selectedObject);
       this.sceneSetup.requestRender();
     }
   }

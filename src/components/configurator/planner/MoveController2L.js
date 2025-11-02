@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { plannerConfig } from "./planerConfig";
 import { useKitchenSizesStore } from "../../../pinia/kitchenSizes";
 import { snapToNearby } from "./utils/snapToNearby";
+import { useMouseStore } from "../../../pinia/mouseStore";
 
 export class MoveController2L {
   constructor(sceneSetup) {
@@ -13,6 +14,9 @@ export class MoveController2L {
     this.mouse = new THREE.Vector2();
     this.camera = this.sceneSetup.camera;
     this.kitchenStore = useKitchenSizesStore();
+    this.mouseStore = useMouseStore()
+
+    
     
    
   }
@@ -20,6 +24,7 @@ export class MoveController2L {
 
 
 moveNearWallsOnly() {
+      this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
   this.raycaster.setFromCamera(this.mouse, this.camera);
 
   let intersects;

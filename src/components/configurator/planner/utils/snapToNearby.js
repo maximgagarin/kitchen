@@ -1,9 +1,14 @@
 import * as THREE from "three";
+import { plannerConfig } from "../planerConfig";
 //import { models } from "../../utils.js/models";
 
 
 
-export function snapToNearby(selectedObject, models) {
+export function snapToNearby(selectedObject) {
+
+  //массив модулей для проверки
+  const models = plannerConfig.arraySwap
+
   const snapThreshold = 0.06;
   const unsnapDistance = 0.06;
 

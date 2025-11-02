@@ -204,47 +204,7 @@ export class PlannerManager {
 
 
   
-  checkSimpleCollision(testInstance) {
-    const isLeft = plannerConfig.sideOfSelected === "left";
-    const gap = 0.005;
-
-    const pos = isLeft
-      ? testInstance.root.position.z
-      : testInstance.root.position.x;
-
-    const size = isLeft
-      ? testInstance.objectSize.x // ширина вдоль Z → размер по X
-      : testInstance.objectSize.x; // ширина вдоль X → размер по Z
-
-    const testMin = pos - size / 2 + gap;
-    const testMax = pos + size / 2 - gap;
-
-    let modelsArray = isLeft? plannerConfig.modelsLeft : plannerConfig.modelsDirect
-
-  //  console.log('isLeft', isLeft)
-  //  console.log('modelsArray', modelsArray)
-
-    for (let model of modelsArray) { // почему когда ставлю modelsArray неправильно работает 
-      if (model.root.uuid === testInstance.root.uuid) continue;
-
-      const modelPos = isLeft ? model.root.position.z : model.root.position.x;
-
-      let modelSize = isLeft ? model.objectSize.x : model.objectSize.x;
-
-      if (model.name == "m" && !isLeft) modelSize = 0.6;
-
-      const min = modelPos - modelSize / 2 + gap;
-      const max = modelPos + modelSize / 2 - gap;
-
-      const intersects = !(testMax <= min || testMin >= max);
-      if (intersects) {
-        console.log("Упрощённая коллизия!");
-        return true;
-      }
-    }
-
-    return false;
-  }
+  
 
 
 
@@ -282,11 +242,6 @@ export class PlannerManager {
     }
 
   }
-
-
-
- 
- 
 
 
 
@@ -510,11 +465,19 @@ export class PlannerManager {
 
 
 
+    
+
 
     //создание массива для проверки коллизии
     plannerConfig.arraysToCheck.length = 0
     const side = plannerConfig.selectedObject.side
     const level = plannerConfig.selectedObject.level
+
+
+        //создание массивов для проверки
+    if(side === 'direct') plannerConfig.arraySwap = plannerConfig.modelsDirect
+    if(side === 'left') plannerConfig.arraySwap = plannerConfig.modelsLeft
+    if(side === 'right') plannerConfig.arraySwap = plannerConfig.modelsRight
 
    
 
@@ -617,6 +580,13 @@ export class PlannerManager {
     plannerConfig.arraysToCheck.length = 0
     const side = plannerConfig.selectedObject.side
     const level = plannerConfig.selectedObject.level
+
+
+    //содание массивов для проверки
+
+    if(side === 'direct') plannerConfig.arraySwap = plannerConfig.modelsDirect2L
+    if(side === 'left') plannerConfig.arraySwap = plannerConfig.modelsLeft2L
+    if(side === 'right') plannerConfig.arraySwap = plannerConfig.modelsRight2L
 
     if(this.kitchenSizesStore.type == 'left'){
         if(level === 2){
@@ -965,7 +935,9 @@ export class PlannerManager {
   }
 
 
-  mouseSync(event){
+
+  //синхронизация с частотой requestAnimationFrame
+  mouseSync = (event) => {
       if(this.sceneSetup.needMouseEvent){
       this.mouseStore.updateMousePosition(event.clientX, event.clientY)
       this.onMouseMove()
@@ -974,25 +946,13 @@ export class PlannerManager {
   }
 
 
-  onMouseMove = (event) => {
-
-
-
+  onMouseMove(){
     //пустые боксы
-    if(!this.isMoving && !this.copyController.moving) {
-  //    console.log('moving' ,this.isMoving)
-   //   console.log('copymoving' ,this.copyController.moving)
-
-      
+    if(!this.isMoving && !this.copyController.moving) { 
       this.epmtyBoxesMouseOver2();
       this.epmtyBoxesMouseOver();
     }
 
-
-    //подсветка пустых в секторе
-    // if(plannerConfig.selectedObject.name == 'sector'){
-    //   this.epmtySectorOver()
-    // }
 
     if(plannerConfig.isSector && !this.isMoving){
       this.moveInSector.move()
@@ -1136,7 +1096,7 @@ export class PlannerManager {
       if(module.level == 1){
 
 
-        this.utils.createSlots()
+
 
         plannerConfig.selectedObject = module;
         this.setSelectObjectSettings(module); 

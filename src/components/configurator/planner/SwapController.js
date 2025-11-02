@@ -5,6 +5,7 @@ import { usePenalStore } from "../../../pinia/penals";
 import { gsap } from "gsap";
 import { algorithmConfig } from "../builders/Algorithm/algorithmConfig";
 import { TableTop } from "../builders/Algorithm/TableTop";
+import { array } from "three/tsl";
 
 export class SwapController {
   constructor(sceneSetup) {
@@ -27,144 +28,150 @@ export class SwapController {
     this.firstCollisionInSector = null;
 
     this.movingDirection = null;
-    
-
-
+    this.rules = {
+      direct: {
+        array: "modelsDirect",
+        axis: "x",
+      },
+      left: {
+        array: "modelsLeft",
+        axis: "z",
+      },
+    };
   }
 
-doSwap() {
-  const selectedBox = plannerConfig.selectedObject;
-  const models = plannerConfig.modelsDirect;
-  const index = models.findIndex(m => m.root.uuid === selectedBox.root.uuid);
-  if (index === -1) return;
+  doSwap() {
+    const selectedBox = plannerConfig.selectedObject;
 
-  // --- Левый сосед ---
-  if (index > 0) {
-    const leftBox = models[index - 1];
-    const leftSide = selectedBox.root.position.x - selectedBox.width / 2;
-
-    if (leftSide < leftBox.root.position.x) {
-      // если уже свапались с этим кубом — пропускаем
-      if (this.lastCollision === leftBox.root.uuid) return;
-
-      this.swapRight(index, index - 1);
-      this.lastCollision = leftBox.root.uuid; // запоминаем, с кем свапнулись
-      return;
+    const collis = this.checkSimpleCollision(selectedBox);
+    console.log("collis", collis);
+    if (collis) {
+      plannerConfig.isCollision = true;
+    } else {
+      plannerConfig.isCollision = false;
     }
-  }
 
-  // --- Правый сосед ---
-  if (index < models.length - 1) {
-    const rightBox = models[index + 1];
-    const rightSide = selectedBox.root.position.x + selectedBox.width / 2;
+    console.log(plannerConfig.isCollision);
 
-    if (rightSide > rightBox.root.position.x) {
-      // если уже свапались с этим кубом — пропускаем
-      if (this.lastCollision === rightBox.root.uuid) return;
+    const level = selectedBox.level;
+    const side = selectedBox.side;
+    const models = plannerConfig.arraySwap;
+    const index = models.findIndex(
+      (m) => m.root.uuid === selectedBox.root.uuid
+    );
+    const axis = side === "direct" ? "x" : "z";
+    if (index === -1) return;
 
-      this.swapLeft(index, index + 1);
-      this.lastCollision = rightBox.root.uuid; // запоминаем
-      return;
+    // --- Левый сосед ---
+    if (index > 0) {
+      const leftBox = models[index - 1];
+      const leftSide = selectedBox.root.position[axis] - selectedBox.width / 2;
+
+      if (leftSide < leftBox.root.position[axis]) {
+        // если уже свапались с этим кубом — пропускаем
+        if (this.lastCollision === leftBox.root.uuid) return;
+        this.swapRight(index, index - 1, models, axis, side, level);
+        this.swapSelected = true;
+        this.lastCollision = leftBox.root.uuid; // запоминаем, с кем свапнулись
+        return;
+      }
     }
+
+    // --- Правый сосед ---
+    if (index < models.length - 1) {
+      const rightBox = models[index + 1];
+      const rightSide = selectedBox.root.position[axis] + selectedBox.width / 2;
+
+      if (rightSide > rightBox.root.position[axis]) {
+        // если уже свапались с этим кубом — пропускаем
+        if (this.lastCollision === rightBox.root.uuid) return;
+
+        this.swapLeft(index, index + 1, models, axis, side, level);
+        this.swapSelected = true;
+        this.lastCollision = rightBox.root.uuid; // запоминаем
+        return;
+      }
+    }
+
+    // если ни с кем не пересекаемся — сбрасываем "последнего столкнувшегося"
+    this.lastCollision = null;
+
+    console.log("collis", plannerConfig.isCollision);
+
+    this.sceneSetup.requestRender();
   }
 
-  // если ни с кем не пересекаемся — сбрасываем "последнего столкнувшегося"
-  this.lastCollision = null;
+  swapLeft(i, j, models, axis, side, level) {
+    const HALF_DEPTH = level === 1 ? 0.3 : 0.15;
+    const centerB = models[j].root.position[axis];
+    const widthB = models[j].width;
+    const centerA = models[i].root.position[axis];
+    const widthA = models[i].width;
 
-  this.sceneSetup.requestRender();
-}
+    const point = centerB - widthB / 2 - widthA;
+    const newPos = point + widthB / 2;
 
-  swapLeft(i, j) {
-     const models = plannerConfig.modelsDirect;   
-    const centerB = models[j].root.position.x
-    const widthB = models[j].width
-    const centerA = models[i].root.position.x
-    const widthA = models[i].width
+    console.log("newPOs", newPos);
 
-    
+    gsap.to(models[j].root.position, {
+      x: side === "direct" ? newPos : HALF_DEPTH,
+      z: side === "left" ? newPos : HALF_DEPTH,
+      duration: 0.1,
+      ease: "power2.out",
+      onUpdate: () => {
+        this.sceneSetup.requestRender();
+      },
+      onComplete: () => {
+        this.sceneSetup.requestRender();
+        this.swapSelected = false;
+      },
+    });
 
-    const point = centerB - widthB/2 - widthA
-    const newPos = point+widthB/2
-
-    console.log('newPOs', newPos)
- 
-
- 
-
-      gsap.to(models[j].root.position, {
-          x: newPos,
-          duration: 0.1,
-          ease: "power2.out",
-          onUpdate: () => {
-            this.sceneSetup.requestRender();
-          },
-          onComplete: () => {
-            this.sceneSetup.requestRender();
-          },
-        });
-
-   
-
-    const temp = models[i]
-    models[i] = models[j]
+    const temp = models[i];
+    models[i] = models[j];
     models[j] = temp;
-   
-
-
   }
 
-  swapRight(i, j) {
-    const models = plannerConfig.modelsDirect;   
-    const centerB = models[j].root.position.x
-    const widthB = models[j].width
-    const centerA = models[i].root.position.x
-    const widthA = models[i].width
+  swapRight(i, j, models, axis, side, level) {
+    const HALF_DEPTH = level === 1 ? 0.3 : 0.15;
+    const centerB = models[j].root.position[axis];
+    const widthB = models[j].width;
+    const centerA = models[i].root.position[axis];
+    const widthA = models[i].width;
 
-    
-    
-    const moveRight = centerB > centerA
+    const moveRight = centerB > centerA;
 
-    const point = centerB + widthB/2 + widthA
-    const newPos = point-widthB/2
+    const point = centerB + widthB / 2 + widthA;
+    const newPos = point - widthB / 2;
 
-    console.log('newPOs', newPos)
- 
+    console.log("newPOs", newPos);
 
- 
+    gsap.to(models[j].root.position, {
+      x: side === "direct" ? newPos : HALF_DEPTH,
+      z: side === "left" ? newPos : HALF_DEPTH,
+      duration: 0.1,
+      ease: "power2.out",
+      onUpdate: () => {
+        this.sceneSetup.requestRender();
+      },
+      onComplete: () => {
+        this.sceneSetup.requestRender();
+        this.swapSelected = false;
+      },
+    });
 
-      gsap.to(models[j].root.position, {
-          x: newPos,
-          duration: 0.1,
-          ease: "power2.out",
-          onUpdate: () => {
-            this.sceneSetup.requestRender();
-          },
-          onComplete: () => {
-            this.sceneSetup.requestRender();
-          },
-        });
-
-   
-
-    const temp = models[i]
-    models[i] = models[j]
+    const temp = models[i];
+    models[i] = models[j];
     models[j] = temp;
-   
-
-
   }
 
   layoutBoxes(animated = false, moveSelected = false) {
- 
     for (const box of plannerConfig.modelsDirect) {
-    
-        const targetX = box.root.position.x
-        // Пропускаем выбранный куб — его положение управляется мышкой
-        if (box.root.uuid === plannerConfig.selectedObject.root.uuid) {
-        
-          continue;
-        }
-    
+      const targetX = box.root.position.x;
+      // Пропускаем выбранный куб — его положение управляется мышкой
+      if (box.root.uuid === plannerConfig.selectedObject.root.uuid) {
+        continue;
+      }
 
       if (animated) {
         gsap.to(box.root.position, {
@@ -181,8 +188,6 @@ doSwap() {
       } else {
         box.root.position.x = targetX;
       }
-
-      
     }
   }
 
@@ -395,24 +400,28 @@ doSwap() {
   }
 
   moveBack() {
-    console.log("first", this.firstCollision);
+    console.log("first", this.lastCollision);
+
     const selected = plannerConfig.selectedObject;
+    const level = selected.level;
 
     const side = plannerConfig.selectedObject.side;
     const isLeft = side === "left";
+    const HALF_DEPTH = level === 1 ? 0.3 : 0.15;
 
     let posX, posZ, targetPositionX, newPos;
 
-    if (this.firstCollision) {
+    if (this.collissionModule) {
       const widthA = plannerConfig.selectedObject.width;
-      const widthB = this.firstCollision.target.width;
+      const widthB = this.collissionModule.width;
 
-      const centerA = this.firstCollision.selected;
+      const centerA = isLeft
+        ? selected.root.position.z
+        : selected.root.position.x;
+
       const centerB = isLeft
-        ? this.firstCollision.target.root.position.z
-        : this.firstCollision.target.root.position.x;
-
-      //
+        ? this.collissionModule.root.position.z
+        : this.collissionModule.root.position.x;
 
       const movingRight = centerB > centerA;
 
@@ -423,8 +432,8 @@ doSwap() {
       }
 
       gsap.to(plannerConfig.selectedObject.root.position, {
-        x: side == "direct" ? newPos : 0.3,
-        z: side == "left" ? newPos : 0.3,
+        x: side == "direct" ? newPos : HALF_DEPTH,
+        z: side == "left" ? newPos : HALF_DEPTH,
         duration: 0.3,
         ease: "power2.out",
         onUpdate: () => {
@@ -515,6 +524,31 @@ doSwap() {
         };
       } else {
         plannerConfig.isCollision = false;
+      }
+    }
+
+    return false;
+  }
+
+  checkSimpleCollision(testInstance) {
+    const gap = 0.01;
+
+    const selectedBox = new THREE.Box3().setFromObject(
+      testInstance.raycasterBox
+    );
+    selectedBox.expandByScalar(-gap); // уменьшаем на зазор
+
+    for (let model of plannerConfig.arraySwap) {
+      if (model.root.uuid === testInstance.root.uuid) continue;
+
+      const otherBox = new THREE.Box3().setFromObject(model.raycasterBox);
+
+      if (selectedBox.intersectsBox(otherBox)) {
+        this.collissionModule = model;
+
+        return true;
+      } else {
+        this.collissionModule = null;
       }
     }
 
