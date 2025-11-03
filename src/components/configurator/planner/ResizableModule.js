@@ -7,14 +7,16 @@ import { usePlannerStore } from "../../../pinia/PlannerStore";
 
 import { namesToDelete } from "./utils/namesToDelete";
 import { plannerConfig } from "./planerConfig";
+import { UtilsManager } from "./UtilsManager";
 
 export class ResizableModule {
-  constructor(scene, plannerManager, loaderModels) {
-    this.scene = scene;
-    this.plannerManager = plannerManager;
+  constructor(sceneSetup,loaderModels) {
+    this.scene = sceneSetup.scene;
+   
     this.selectedObject = plannerConfig.selectedObject;
     this.loaderModels = loaderModels;
     this.plannerStore = usePlannerStore();
+    this.utils = new UtilsManager(sceneSetup, loaderModels)
 
     //доступные ширины для выбранной модели
     this.allowedWidths = null;
@@ -170,7 +172,7 @@ export class ResizableModule {
     testInstance.name = type;
     testInstance.slot = oldindex;
 
-    testInstance.root.rotation.y = side == "direct" ? -Math.PI / 2 : 0;
+    testInstance.root.rotation.y = side == "direct" ?   0 : Math.PI / 2;
 
     if (side == "direct") {
       if (typeControl == "rightControl") {
@@ -207,10 +209,12 @@ export class ResizableModule {
     }
     }
 
+
+
      
    
 
-    const hasCollision = this.plannerManager.checkSimpleCollision(testInstance);
+    const hasCollision = this.checkSimpleCollision(testInstance);
 
     // Возвращаем назад, если коллизия
     if (side == 'direct' && indexInModels !== -1) {
@@ -232,7 +236,7 @@ export class ResizableModule {
     }
 
     // Теперь можно удалять старый
-    this.plannerManager.deleteSelected();
+    this.utils.deleteSelected();
 
     let instance
 
@@ -309,5 +313,74 @@ export class ResizableModule {
       this.currentIndex = newIndex;
       this.loadModule();
     }
+  }
+
+ 
+   checkSimpleCollision(testInstance) {
+     const gap = 0.02;
+ 
+     const selectedBox = new THREE.Box3().setFromObject(
+       testInstance.root
+     );
+     selectedBox.expandByScalar(-gap); // уменьшаем на зазор
+ 
+     for (let model of plannerConfig.arraySwap) {
+       if (model.root.uuid === testInstance.root.uuid) continue;
+ 
+       const otherBox = new THREE.Box3().setFromObject(model.root);
+ 
+       if (selectedBox.intersectsBox(otherBox)) {
+
+        console.log('test', testInstance)
+        console.log('testPos', testInstance.root.position)
+        console.log('othrer', model)
+        console.log('othrerpos', model.root.pos)
+
+        console.log('selectBox', selectedBox)
+        console.log('OtherBox', otherBox)
+         
+ 
+         return true;
+       } 
+     }
+ 
+     return false;
+   }
+
+     checkSimpleCollision2(testInstance) {
+    const isLeft = plannerConfig.sideOfSelected === "left";
+    const gap = 0.01
+
+    const pos = isLeft
+      ? testInstance.root.position.z
+      : testInstance.root.position.x;
+
+    const size = isLeft
+      ? testInstance.width // ширина вдоль Z → размер по X
+      : testInstance.width; // ширина вдоль X → размер по Z
+
+    const testMin = pos - size / 2 + gap;
+    const testMax = pos + size / 2 - gap;
+
+    for (let model of plannerConfig.models) {
+      if (model.root.uuid === testInstance.root.uuid) continue;
+
+      const modelPos = isLeft ? model.root.position.z : model.root.position.x;
+
+      let modelSize = isLeft ? model.width : model.width
+
+      
+
+      const min = modelPos - modelSize / 2 + gap;
+      const max = modelPos + modelSize / 2 - gap;
+
+      const intersects = !(testMax <= min || testMin >= max);
+      if (intersects) {
+        console.log("Упрощённая коллизия!");
+        return true;
+      }
+    }
+
+    return false;
   }
 }
