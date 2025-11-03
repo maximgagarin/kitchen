@@ -203,14 +203,19 @@ export class UtilsManager {
     const selectedPosZ = selected.root.position.z;
     const width = selected.width;
     const isPenal = selected.name === "penal";
+    const isSelectedFridge = selected.name === "fridge";
+    const isFridge = plannerConfig.fridge
+    
 
     // === PENALS ===
     const penalsX = plannerConfig.models
-      .filter(m => m.name === "penal" && m.side === "direct")
+      .filter(m => ['penal', 'fridge'].includes(m.name) && m.side === 'direct')
       .sort((a, b) => a.root.position.x - b.root.position.x);
 
+      
+
     const penalsZ = plannerConfig.models
-      .filter(m => m.name === "penal" && m.side === "left")
+      .filter(m => ['penal', 'fridge'].includes(m.name) && m.side === 'left')
       .sort((a, b) => a.root.position.z - b.root.position.z);
 
     // === Обычные модули ===
@@ -246,7 +251,7 @@ export class UtilsManager {
     let rightLimitZ = rightPenalZ;
 
     // === Если выбран пенал — ограничиваем по обычным модулям ===
-    if (isPenal) {
+    if (isPenal || isSelectedFridge) {
       const { left: leftModuleX, right: rightModuleX } = findNearest(modulesX, selectedPosX, "x");
       const { left: leftModuleZ, right: rightModuleZ } = findNearest(modulesZ, selectedPosZ, "z");
 

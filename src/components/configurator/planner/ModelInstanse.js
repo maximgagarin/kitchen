@@ -14,7 +14,7 @@ export class ModelInstanse {
     this.tabletop = this.root.getObjectByName('tabletop')
 
   //  this.name = this.findObjectName(this.root, "modelName");
-  this.id = 0
+     this.id = 0
     this.name = ''
     this.fullname = ''
     this.width = null

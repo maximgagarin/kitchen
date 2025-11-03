@@ -718,6 +718,7 @@ restoreOriginalPositions() {
   // из общего массива модулей убираем старые , добаляем новые
     const penalsLeft = plannerConfig.penalsArray.filter(penal=> penal.side == 'left')
     plannerConfig.modelsLeft.push(...penalsLeft)
+    if(plannerConfig.fridge && plannerConfig.fridgeInstance.side === 'left') plannerConfig.modelsLeft.push(plannerConfig.fridgeInstance)
 
     plannerConfig.models = plannerConfig.models.filter(model => !(model.level === 1 && model.side === 'left'));
     plannerConfig.models.push(...plannerConfig.modelsLeft)
@@ -873,6 +874,11 @@ restoreOriginalPositions() {
     
     const penalsDirect = plannerConfig.penalsArray.filter(penal=> penal.side == 'direct')
     plannerConfig.modelsDirect.push(...penalsDirect)
+
+
+    
+    if(plannerConfig.fridge && plannerConfig.fridgeInstance.side === 'direct') plannerConfig.modelsDirect.push(plannerConfig.fridgeInstance)
+
     plannerConfig.models = plannerConfig.models.filter(model => !(model.level === 1 && model.side === 'direct'));
     plannerConfig.models.push(...plannerConfig.modelsDirect)
 

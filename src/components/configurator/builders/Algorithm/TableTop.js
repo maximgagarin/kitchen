@@ -211,7 +211,7 @@ groupModulesForCountertops() {
     // материал для всех столешниц модулей
 
     plannerConfig.modelsDirect.forEach(model=>{
-      if(model.name =='penal') return
+      if (['penal', 'fridge'].includes(model.name)) return;
     //  const width = Number((model.width).toFixed(2))
      // const atlas = this.materialManager.setTexture(width, 'x') 
        model.tabletop.material = new THREE.MeshPhysicalMaterial({
@@ -219,7 +219,7 @@ groupModulesForCountertops() {
       });
     })
     plannerConfig.modelsLeft.forEach(model=>{
-      if(model.name =='penal') return
+      if (['penal', 'fridge'].includes(model.name)) return;
 
     //  const width = Number((model.width).toFixed(2))
   //    const atlas = this.materialManager.setTexture(width, 'z') 

@@ -59,11 +59,13 @@
 </template>
 
 <script setup>
+import * as THREE from "three";
 import { inject, ref } from 'vue';
 import { useRowSegmentsStore } from '../../../pinia/RowSegments'
 import { usePenalStore } from '../../../pinia/penals'
 import { useKitchenSizesStore } from '../../../pinia/kitchenSizes'
 import { plannerConfig } from '../../configurator/planner/planerConfig';
+import { FridgeInstance } from '../../configurator/planner/FridgeInstanse';
 
 const penalStore = usePenalStore();
 const kitchenStore = useKitchenSizesStore();
@@ -85,10 +87,7 @@ const props = defineProps({
 const sideSizes = kitchenStore.sideSizes
 const FRIDGE_WIDTH = 0.6
 const selectedSide = ref('left')
-const model = penalBuilder.value.loaderModels.get('fridge')
-if (!model) {
-    console.log('model not found!')
-}
+
 
 function handleLeft(){
     clear()
@@ -136,6 +135,15 @@ function changeInsideOutside(){
 function addFridge() {
 
     clear()
+
+    const model = penalBuilder.value.loaderModels.get('fridge')
+
+    if (!model) {
+        console.log('model not found!')
+    }
+
+
+    const fridgeInstance = new FridgeInstance(model)
 
     const side = selectedSide.value
     const kitchenType = kitchenStore.type
@@ -241,8 +249,17 @@ function addFridge() {
     model.name = 'fridge'
     model.userData.side  = rule.side
     plannerConfig.fridge = model
-
+ 
+    plannerConfig.fridgeInstance = fridgeInstance
     console.log(kitchenStore.rowSizesWithPanels)
+    fridgeInstance.side = rule.segment
+    const id = THREE.MathUtils.generateUUID()
+    fridgeInstance.id = id
+    fridgeInstance.raycasterBox.userData.id = id
+    model.userData.id = id
+
+
+
    
     
     cabinetBuilder.value.executeConfig("actual", "currectActual");
@@ -331,6 +348,8 @@ function clearStore(){
     kitchenStore.fridge.side = ''
     kitchenStore.fridge.row = ''
     kitchenStore.fridge.inSideFridge = 'false'
+    
+
 }
 
 function deleteFridge() {
@@ -347,6 +366,8 @@ function deleteFridge() {
 }
 
 function removeObjectsByName(name) {
+    plannerConfig.fridgeInstance = null
+
     plannerConfig.fridge = false
     const objectsToRemove = [];
 

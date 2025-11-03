@@ -3,14 +3,13 @@ import { LowerCabinet } from "./cabinets/LowerCabinet";
 import { CaseCabinet } from "./cabinets/CaseCabinet";
 import { useRowSegmentsStore } from "../../pinia/RowSegments";
 import { DimensionLine } from "./builders/DimensionLine";
-import { glass , atlasMaterial} from "./materials";
-
-
+import { glass, atlasMaterial } from "./materials";
 
 import config4 from "../config/config4";
 import config from "../config/config";
 import * as THREE from "three";
 import { element, mod } from "three/tsl";
+import { plannerConfig } from "./planner/planerConfig";
 
 export class CabinetBuilder {
   constructor(sceneSetup, loaderModels, kitchenSizesStore, penalStore) {
@@ -23,9 +22,8 @@ export class CabinetBuilder {
     this.rowSegmentsStore = useRowSegmentsStore();
 
     this.start();
-  
- //   this.test2()
-  
+
+    //   this.test2()
 
     this.height = config.kitchen_size.height;
     this.tableTopAll = [];
@@ -35,43 +33,41 @@ export class CabinetBuilder {
     // ← для отладки
   }
 
-  test1(){
-    const box = new THREE.Mesh(new THREE.BoxGeometry(1.5,0.038,0.6), atlasMaterial )
-    box.position.set(2,1,1)
-    this.scene.add(box)
-
+  test1() {
+    const box = new THREE.Mesh(
+      new THREE.BoxGeometry(1.5, 0.038, 0.6),
+      atlasMaterial
+    );
+    box.position.set(2, 1, 1);
+    this.scene.add(box);
   }
 
-  test2(){
-   setTimeout(()=>{
-    console.log('123')
-        const model = this.loaderModels.get('ПГС2-600');   
-        model.visible = true;
-        model.position.set(1, 1.44, 1);
-        this.scene.add(model);
-         this.getObjectTexturesSize(model);
-      this.sceneSetup.requestRender()
-   }, 12000)
-
-   
-
-  
-
-  
+  test2() {
+    setTimeout(() => {
+      console.log("123");
+      const model = this.loaderModels.get("ПГС2-600");
+      model.visible = true;
+      model.position.set(1, 1.44, 1);
+      this.scene.add(model);
+      this.getObjectTexturesSize(model);
+      this.sceneSetup.requestRender();
+    }, 12000);
   }
 
   getObjectTexturesSize(obj) {
     const seen = new Set(); // уникальные текстуры
     let total = 0;
-  
-    obj.traverse(child => {
+
+    obj.traverse((child) => {
       if (child.isMesh && child.material) {
         // пропускаем troika Text
         if (child.isTroikaText || child.material.baseMaterial) return;
-  
-        const mats = Array.isArray(child.material) ? child.material : [child.material];
-  
-        mats.forEach(mat => {
+
+        const mats = Array.isArray(child.material)
+          ? child.material
+          : [child.material];
+
+        mats.forEach((mat) => {
           for (const key in mat) {
             const val = mat[key];
             if (val && val.isTexture && !seen.has(val.uuid)) {
@@ -84,16 +80,17 @@ export class CabinetBuilder {
         });
       }
     });
-  
+
     console.log(`Всего текстур: ${total.toFixed(2)} MB`);
     return total;
-    }
-  
+  }
+
   getTextureSizeMB(tex) {
     if (!tex) return 0;
-  
-    let w = 0, h = 0;
-  
+
+    let w = 0,
+      h = 0;
+
     // обычные текстуры
     if (tex.image) {
       if (Array.isArray(tex.image)) {
@@ -109,21 +106,18 @@ export class CabinetBuilder {
       w = tex.source.data.width || 0;
       h = tex.source.data.height || 0;
     }
-  
+
     if (!w || !h) return 0;
-  
+
     let bpp = 4; // RGBA8
     if (tex.type === THREE.FloatType) bpp = 16;
     if (tex.type === THREE.HalfFloatType) bpp = 8;
-  
+
     // если кубмап → ×6, мипы +33%
     const factor = tex.isCubeTexture ? 6 * 1.33 : 1.33;
-  
+
     return (w * h * bpp * factor) / (1024 * 1024); // МБ
-    }
-
-
- 
+  }
 
   start() {
     Object.keys(config4.start).forEach((category) => {
@@ -137,26 +131,51 @@ export class CabinetBuilder {
     });
     config.type = "direct";
 
-    let lineDirect = new DimensionLine(this.sceneSetup,this.scene, { x: 0, y: 2.5, z: 0.01 }, { x: 3, y: 2.5, z: 0.01 }, 0);
+    let lineDirect = new DimensionLine(
+      this.sceneSetup,
+      this.scene,
+      { x: 0, y: 2.5, z: 0.01 },
+      { x: 3, y: 2.5, z: 0.01 },
+      0
+    );
     lineDirect.name = "lineDirect";
     config.lines.push(lineDirect);
 
-    let lineLeft = new DimensionLine(this.sceneSetup, this.scene, { x: 0.01, y: 2.5, z: 0 }, { x: 0.01, y: 2.5, z: 2.75 }, 1);
+    let lineLeft = new DimensionLine(
+      this.sceneSetup,
+      this.scene,
+      { x: 0.01, y: 2.5, z: 0 },
+      { x: 0.01, y: 2.5, z: 2.75 },
+      1
+    );
     lineLeft.name = "lineLeft";
-    lineLeft.visibleOff()
+    lineLeft.visibleOff();
     config.lines.push(lineLeft);
 
-    let lineRight = new DimensionLine(this.sceneSetup, this.scene, { x: 3, y: 2.5, z: 0 }, { x:3, y: 2.5, z: 2.75 }, 1);
+    let lineRight = new DimensionLine(
+      this.sceneSetup,
+      this.scene,
+      { x: 3, y: 2.5, z: 0 },
+      { x: 3, y: 2.5, z: 2.75 },
+      1
+    );
     lineRight.name = "lineRight";
-    lineRight.visibleOff()
+    lineRight.visibleOff();
     config.lines.push(lineRight);
 
-    let lineHeight = new DimensionLine(this.sceneSetup, this.scene, { x: 3.1, y: 0, z: 0.01 }, { x:3.1, y: 2.12, z: 0.01 }, 0, true);
+    let lineHeight = new DimensionLine(
+      this.sceneSetup,
+      this.scene,
+      { x: 3.1, y: 0, z: 0.01 },
+      { x: 3.1, y: 2.12, z: 0.01 },
+      0,
+      true
+    );
     lineHeight.name = "lineHeight";
     //lineHeight.visibleOff()
     config.lines.push(lineHeight);
 
-   // console.log('1')
+    // console.log('1')
   }
 
   deleteLowRows() {
@@ -408,9 +427,9 @@ export class CabinetBuilder {
     //   });
     // });
 
-    rules.forEach(element=>{
+    rules.forEach((element) => {
       this[element.type](element.width, element.start);
-    })
+    });
   }
 
   executeConfig(option, stateSizes) {
@@ -427,7 +446,7 @@ export class CabinetBuilder {
     config4.actual.direct = [...config4[option].direct];
 
     if (stateSizes === "currect") {
-      console.log('currect')
+      console.log("currect");
       config4.actual.leftLevel.forEach((item) => {
         item.params[0] = this.kitchenSizesStore.rowSizesWithPanels.side_c;
       });
@@ -439,17 +458,15 @@ export class CabinetBuilder {
       });
     } else if (stateSizes === "currectActual") {
       config4.actual.leftLevel.forEach((item) => {
-        item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_c ;
+        item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_c;
       });
       config4.actual.rightLevel.forEach((item) => {
-        item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_d ;
+        item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_d;
       });
       config4.actual.direct.forEach((item) => {
         item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_a;
       });
-    }
-
-    else {
+    } else {
       config4.actual.leftLevel.forEach((item) => {
         item.params[0] = this.kitchenSizesStore.rowSizesCurrect.side_c;
       });
@@ -467,7 +484,7 @@ export class CabinetBuilder {
       });
     });
 
-   // console.log(this.lowerRows);
+    // console.log(this.lowerRows);
   }
 
   create_backsplash() {
@@ -522,12 +539,15 @@ export class CabinetBuilder {
     }
   }
 
-  build_direct_l1( width,  positionX = Number(this.kitchenSizesStore.offsetForLeftRow)) {
+  build_direct_l1(
+    width,
+    positionX = Number(this.kitchenSizesStore.offsetForLeftRow)
+  ) {
     //если шаг установки раковины отключение удаления
 
-    const adjustments = this.kitchenSizesStore.rowAdjustments ? 0.05 : 0
+    const adjustments = this.kitchenSizesStore.rowAdjustments ? 0.05 : 0;
 
-    const kitchenType = this.kitchenSizesStore.type
+    const kitchenType = this.kitchenSizesStore.type;
 
     if (this.kitchenSizesStore.delete_1level) {
       this.scene.children
@@ -552,10 +572,10 @@ export class CabinetBuilder {
 
       const cabinet = new LowerCabinet(
         isFirst && (kitchenType === "left" || kitchenType === "uShaped")
-          ? cabinetWidth 
+          ? cabinetWidth
           : isLast && (kitchenType === "right" || kitchenType === "uShaped")
-            ? cabinetWidth 
-            : cabinetWidth,
+          ? cabinetWidth
+          : cabinetWidth,
         0.716, //высота
         0.5, //глубина
         kitchenType,
@@ -565,10 +585,10 @@ export class CabinetBuilder {
 
       cabinet.position.set(
         isFirst && (kitchenType === "left" || kitchenType === "uShaped")
-          ? positionX + cabinetWidth / 2 
+          ? positionX + cabinetWidth / 2
           : isLast && (kitchenType === "right" || kitchenType === "uShaped")
-            ? positionX + cabinetWidth / 2 
-            : positionX + cabinetWidth / 2,
+          ? positionX + cabinetWidth / 2
+          : positionX + cabinetWidth / 2,
         0.458,
         0.06
       );
@@ -702,7 +722,7 @@ export class CabinetBuilder {
     let cabinetCount = Math.ceil(width / 0.6);
     let cabinetWidth = width / cabinetCount; // Все шкафы подстраиваются под ширину
 
-    let positionX =0;
+    let positionX = 0;
     let positionZ = 0.55;
 
     for (let i = 0; i < cabinetCount; i++) {
@@ -1034,7 +1054,7 @@ export class CabinetBuilder {
   }
 
   build_right_l1(width, positionZ = 0.56) {
-   // console.log(this.width);
+    // console.log(this.width);
     if (this.kitchenSizesStore.delete_rightLevel) {
       this.scene.children
         .filter((child) => child.name && child.name.includes("build_right_l1"))
@@ -1141,8 +1161,12 @@ export class CabinetBuilder {
   }
 
   movePenal(delta, type) {
+    const fridge = plannerConfig.fridge;
     switch (type) {
       case "left":
+        if (fridge && fridge.userData.side === "left") {
+          fridge.position.z += Number(delta);
+        }
         this.scene.children.forEach((cabinet) => {
           if (cabinet.name === "Penal" && cabinet.userData.side === "left") {
             //сдвигаем пеналы на delta
@@ -1160,8 +1184,11 @@ export class CabinetBuilder {
         break;
 
       case "right":
+        if (fridge && fridge.userData.side === "right") {
+          fridge.position.z += Number(delta);
+        }
         this.scene.children.forEach((cabinet) => {
-          if (cabinet.name === "Penal" && (cabinet.userData.side === "right" )) {
+          if (cabinet.name === "Penal" && cabinet.userData.side === "right") {
             //сдвигаем пеналы на delta
             cabinet.position.z += Number(delta);
 
@@ -1179,8 +1206,15 @@ export class CabinetBuilder {
         break;
 
       case "directRight":
+        if (fridge && fridge.userData.side === "directRight") {
+          fridge.position.x += Number(delta);
+        }
         this.scene.children.forEach((cabinet) => {
-          if (cabinet.name === "Penal" && cabinet.userData.side === "directRight" || cabinet.userData.side === "right" ) {
+          if (
+            (cabinet.name === "Penal" &&
+              cabinet.userData.side === "directRight") ||
+            cabinet.userData.side === "right"
+          ) {
             //сдвигаем пеналы на delta
             cabinet.position.x += Number(delta);
             // Получаем id пенала из userData

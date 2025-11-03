@@ -12,5 +12,6 @@ export const modelsList  = {
     'module-sink-1000-left':[],
     b1000:[],
     b1000left:[],
+    fridge:[]
 
 }

@@ -403,7 +403,8 @@ export class SwapController {
     return null;
   }
 
-  moveBack() {
+  moveBack(isSwap) {
+    console.log('isSwap', isSwap)
     console.log("first", this.lastCollision);
 
     const selected = plannerConfig.selectedObject;
@@ -413,7 +414,7 @@ export class SwapController {
     const isLeft = side === "left";
     const HALF_DEPTH = level === 1 ? 0.3 : 0.15;
 
-    let posX, posZ, targetPositionX, newPos;
+    let posX, posZ, centerB, newPos;
 
     if (this.collissionModule) {
       const widthA = plannerConfig.selectedObject.width;
@@ -423,16 +424,30 @@ export class SwapController {
         ? selected.root.position.z
         : selected.root.position.x;
 
-      const centerB = isLeft
-        ? this.newPos
-        : this.newPos
+        if(!isSwap){
+                         centerB = isLeft
+        ? this.collissionModule.root.position.z
+        : this.collissionModule.root.position.x;
+        }
+
+
+
+        if(isSwap){
+              centerB = isLeft
+            ? this.newPos
+            : this.newPos
+        }
+
+
 
         console.log('newposBack', this.newPos)
 
       const movingRight = centerB > centerA;
 
       if (movingRight) {
+        console.log('moveright')
         newPos = centerB - widthA / 2 - widthB / 2;
+        console.log('notMoveRight')
       } else {
         newPos = centerB + widthA / 2 + widthB / 2;
       }

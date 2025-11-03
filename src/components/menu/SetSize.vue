@@ -64,6 +64,10 @@ const previousSizes = reactive({
 
 // Функция для корректировки значения
 function adjustValue(sideKey, delta) {
+   if(kitchenSizes.sink.isSet) clear()
+   deleteRows()
+
+
   if(kitchenSizes.rowSizesCurrect.side_c < 0.6 && sideKey === 'side_c') return
   if(kitchenSizes.rowSizesCurrect.side_d < 0.6 && sideKey === 'side_d') return
   if((kitchenSizes.rowSizesCurrect.side_a - 0.6) < 0.6 && sideKey === 'side_a') return
@@ -106,6 +110,9 @@ function getDelta(sideKey) {
 }
 
 function changeSideC() {
+   if(kitchenSizes.sink.isSet) clear()
+   deleteRows()
+
   //console.log('minValue', minValue.value)
   const delta = getDelta("side_c");
  // if(kitchenSizes.rowSizesCurrect.side_c < 0.2) return
@@ -117,7 +124,7 @@ function changeSideC() {
           cabinetBuilder.value[key.funk](Number(kitchenSizes.rowSizes.side_c) - Number(penalStore.penalOffsetsState.left))
           cabinetBuilder.value.sceneSetup.requestRender();
         } else {
-          cabinetBuilder.value[key.funk](kitchenSizes.rowSizes.side_c)
+          cabinetBuilder.value[key.funk](kitchenSizes.rowSizesCurrect.side_c)
           cabinetBuilder.value.sceneSetup.requestRender();
     
         }
@@ -132,13 +139,14 @@ function changeSideC() {
 
   cabinetBuilder.value.movePenal(delta, 'left')
 
-  segmentsStore.segments.left.forEach(el=>{
-    el.start +=delta
-    el.end +=delta
-  })
+ 
 }
 
 function changeSideD() {
+   if(kitchenSizes.sink.isSet) clear()
+   deleteRows()
+
+
   const delta = getDelta("side_d");
   
   for (let key in config4) {
@@ -174,6 +182,9 @@ function changeSideD() {
 }
 
 function changeWidth() {
+   if(kitchenSizes.sink.isSet) clear()
+   deleteRows()
+
  // console.log('minValueA', minValueA.value)
   const delta = getDelta("side_a");
  // console.log('delta', delta)
@@ -207,16 +218,42 @@ function changeWidth() {
   cabinetBuilder.value.movePenal(delta, 'directRight')
   cabinetBuilder.value.mooveRightModules(kitchenSizes.rowSizes.side_a)
 
-  segmentsStore.segments.direct.forEach(el=>{
-    if(el.side.includes('directRight')){
-      el.start +=delta
-      el.end +=delta
-    }
+ 
 
-  })
 
 
 }
+
+
+ function clear(){
+    // удалить раковину
+      ['SinkNormal', 'sinkModel'].forEach((name) => {
+      cabinetBuilder.value.scene.children
+        .filter((element) => element.name === name)
+        .forEach((element) => cabinetBuilder.value.scene.remove(element));
+    })
+
+
+
+    kitchenSizes.parts.length = 0
+    kitchenSizes.rules.length = 0
+    kitchenSizes.filtredRules.length = 0,
+    kitchenSizes.filtredRulesTotal.length = 0
+    kitchenSizes.availableOven.length =  0
+    kitchenSizes.availableDish.length = 0
+    kitchenSizes.sink.isSet = false
+
+
+    // this.KitchenSizes.dishwasher.size = 0
+    // this.KitchenSizes.oven.size = 0
+  }
+
+  function deleteRows(){
+    kitchenSizes.delete_1level = true
+    kitchenSizes.delete_leftLevel = true
+    kitchenSizes.delete_rightLevel = true
+  }
+
 </script>
 
 <style scoped>

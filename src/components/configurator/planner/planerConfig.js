@@ -14,6 +14,7 @@ export const plannerConfig = {
     penalsDirect:[],
     penalsRight:[],
     fridge:false,
+    fridgeInstance:null,
 
     namesToDelete:[],
     namesToDeleteDirect:[],
@@ -155,6 +156,8 @@ export const plannerConfig = {
     // ограничения движения модулей
     roomBounds:null,
     objectSize:null,
+
+   
 
 
     //массивы для проверки

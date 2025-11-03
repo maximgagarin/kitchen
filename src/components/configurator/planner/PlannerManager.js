@@ -588,7 +588,7 @@ export class PlannerManager {
           item.visible = false;
         });
         plannerConfig.modelsDirect.forEach((item) => {
-          if (item.name == "penal") return;
+          if (['penal', 'fridge'].includes(item.name)) return;
           item.tabletop.visible = true;
         });
       } else if (plannerConfig.selectedObject.side == "left") {
@@ -596,7 +596,7 @@ export class PlannerManager {
           item.visible = false;
         });
         plannerConfig.modelsLeft.forEach((item) => {
-          if (item.name == "penal") return;
+          if (['penal', 'fridge'].includes(item.name)) return;
           item.tabletop.visible = true;
         });
       }
@@ -856,8 +856,9 @@ export class PlannerManager {
 
     if (intersectsModules.length > 0 && !this.copyController.moving) {
       const id = intersectsModules[0].object.userData.id;
-   //   console.log("id", id);
+      console.log("id", id);
       const module = plannerConfig.models.find((m) => m.id === id);
+      console.log('module', module)
 
       if (module.level == 1) {
         plannerConfig.selectedObject = module;
@@ -880,11 +881,11 @@ export class PlannerManager {
     // отключам столешницу у модулей
     if (!this.swapController.swapSelected) {
       plannerConfig.modelsDirect.forEach((item) => {
-        if (item.name == "penal") return;
+        if (['penal', 'fridge'].includes(item.name)) return;
         item.tabletop.visible = false;
       });
       plannerConfig.modelsLeft.forEach((item) => {
-        if (item.name == "penal") return;
+        if (['penal', 'fridge'].includes(item.name)) return;
         item.tabletop.visible = false;
       }); // отключам столешницу у модулей
     }
@@ -927,10 +928,10 @@ export class PlannerManager {
     if (plannerConfig.selectedObject) {
       if (!this.swapController.swapSelected && plannerConfig.isCollision) {
         console.log("move back");
-        this.swapController.moveBack();
+        this.swapController.moveBack(false);
       }
-      if (this.movedBack) {
-        // this.moveBack();
+      if (this.swapController.swapSelected ) {
+         this.swapController.moveBack(true);
       }
     }
     this.isDragging = false;
