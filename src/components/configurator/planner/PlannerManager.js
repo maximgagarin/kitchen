@@ -479,7 +479,7 @@ export class PlannerManager {
 
       //пустые в секторе
       if (intersectsEmpties.length > 0) {
-        console.log("empty");
+      //  console.log("empty");
 
         let empty = intersectsEmpties[0].object;
 
@@ -559,11 +559,11 @@ export class PlannerManager {
 
     const rule = rules[side];
 
-    console.log("rule", rule);
+   // console.log("rule", rule);
 
     const modelsArray = plannerConfig[rule.array];
 
-    console.log("array", modelsArray);
+  //  console.log("array", modelsArray);
 
     //   console.log(intersect);
     if (intersect.name == "centerControl") {
@@ -576,8 +576,8 @@ export class PlannerManager {
         this.offset
           .copy(plannerConfig.selectedObject.root.position)
           .sub(planeHit.point);
-        console.log("rootPos", plannerConfig.selectedObject.root.position);
-        console.log("planehitPoint", planeHit.point);
+   //     console.log("rootPos", plannerConfig.selectedObject.root.position);
+    //    console.log("planehitPoint", planeHit.point);
         this.moveController.offset
           .copy(plannerConfig.selectedObject.root.position)
           .sub(planeHit.point);
@@ -616,7 +616,7 @@ export class PlannerManager {
     } else if (intersect.name == "menuControl") {
       this.plannerStore.objectMenu = true;
     } else if (intersect.name == "copyControl") {
-      console.log(plannerConfig.selectedObject);
+  //    console.log(plannerConfig.selectedObject);
       this.copyController.moving = true;
       this.copyController.run();
     }
@@ -635,15 +635,15 @@ export class PlannerManager {
             ? this.raycaster.intersectObject(plannerConfig.directPlane2level)[0]
             : this.raycaster.intersectObject(plannerConfig.leftPlane)[0];
 
-        console.log("planeHit", planeHit);
+  //      console.log("planeHit", planeHit);
 
         if (planeHit) {
           // 2. Вычисляем offset: позиция объекта - точка пересечения
           this.offset
             .copy(plannerConfig.selectedObject.root.position)
             .sub(planeHit.point);
-          console.log("rootPos", plannerConfig.selectedObject.root.position);
-          console.log("planehitPoint", planeHit.point);
+      //    console.log("rootPos", plannerConfig.selectedObject.root.position);
+      //    console.log("planehitPoint", planeHit.point);
           this.moveController2L.offset
             .copy(plannerConfig.selectedObject.root.position)
             .sub(planeHit.point);
@@ -652,11 +652,11 @@ export class PlannerManager {
         this.isMoving = true;
       }
       if (intersectControls[0].object.name == "ungroupCombo") {
-        console.log("ungroupCombo");
+    //    console.log("ungroupCombo");
         this.combinationController.ungroupCombo();
       }
       if (intersectControls[0].object.name == "ungroup") {
-        console.log("ungroup");
+  //      console.log("ungroup");
         plannerConfig.selectedObject.edit = true;
         const model = this.loaderModels.get("ПЛВ-400");
         model.visible = true;
@@ -664,12 +664,12 @@ export class PlannerManager {
         plannerConfig.modelToGroup = model;
       }
       if (intersectControls[0].object.name == "copyControl") {
-        console.log("copy");
+    //    console.log("copy");
         this.copyController.moving = true;
         this.copyController.run();
       }
       if (intersectControls[0].object.name == "clone") {
-        console.log("clone");
+   //     console.log("clone");
         this.copyController.clone();
       }
     }
@@ -692,7 +692,7 @@ export class PlannerManager {
     } else {
       // this.copyController.moveNearWallsOnly()
     }
-    console.log(this.scene);
+  //  console.log(this.scene);
   }
 
   handleClickEmpties2L(box) {
@@ -766,7 +766,7 @@ export class PlannerManager {
       -(event.clientY / window.innerHeight) * 2 + 1
     );
 
-    console.log("mmouse", this.mouse);
+  //  console.log("mmouse", this.mouse);
 
     this.plannerStore.emptyPosition.x = event.clientX + 50;
     this.plannerStore.emptyPosition.y = event.clientY - 100;
@@ -830,7 +830,7 @@ export class PlannerManager {
     );
 
     if (intersectsEmpties.length > 0) {
-      console.log(intersectsEmpties[0].object);
+    //  console.log(intersectsEmpties[0].object);
       this.emptiesIntersetsClick(intersectsEmpties[0].object);
     }
 
@@ -850,13 +850,13 @@ export class PlannerManager {
     }
 
     if (intersectsEmpties2L.length > 0) {
-      console.log("klick");
+ 
       this.handleClickEmpties2L(intersectsEmpties2L[0].object);
     }
 
     if (intersectsModules.length > 0 && !this.copyController.moving) {
       const id = intersectsModules[0].object.userData.id;
-      console.log("id", id);
+   //   console.log("id", id);
       const module = plannerConfig.models.find((m) => m.id === id);
 
       if (module.level == 1) {
@@ -913,7 +913,7 @@ export class PlannerManager {
     plannerConfig.selectedInSector = false;
 
     if (plannerConfig.copyObject) {
-      console.log("plannerConfig.copyObject");
+   //   console.log("plannerConfig.copyObject");
       this.copySettings();
     }
 
@@ -947,7 +947,7 @@ export class PlannerManager {
       false
     );
     if (intersectsModules.length > 0) {
-      console.log("intersectModule", intersectsModules[0].object);
+   //   console.log("intersectModule", intersectsModules[0].object);
       if (
         this.object &&
         intersectsModules[0].object.userData.controller.root.uuid !==

@@ -111,7 +111,9 @@ export class SwapController {
     const point = centerB - widthB / 2 - widthA;
     const newPos = point + widthB / 2;
 
-   // console.log("newPOs", newPos);
+    this.newPos = newPos
+
+       console.log("newPOsSwap", newPos);
 
     gsap.to(models[j].root.position, {
       x: side === "direct" ? newPos : HALF_DEPTH,
@@ -144,7 +146,9 @@ export class SwapController {
     const point = centerB + widthB / 2 + widthA;
     const newPos = point - widthB / 2;
 
-   // console.log("newPOs", newPos);
+    this.newPos = newPos
+
+    console.log("newPOsSwap", newPos);
 
     gsap.to(models[j].root.position, {
       x: side === "direct" ? newPos : HALF_DEPTH,
@@ -420,8 +424,10 @@ export class SwapController {
         : selected.root.position.x;
 
       const centerB = isLeft
-        ? this.collissionModule.root.position.z
-        : this.collissionModule.root.position.x;
+        ? this.newPos
+        : this.newPos
+
+        console.log('newposBack', this.newPos)
 
       const movingRight = centerB > centerA;
 
@@ -440,7 +446,7 @@ export class SwapController {
           this.sceneSetup.requestRender();
         },
         onComplete: () => {
-          //   console.log('moveBack')
+         
           this.movedBack = false;
           plannerConfig.moveBack.otherBox = null;
           plannerConfig.isCollision = false;

@@ -123,7 +123,7 @@ export class SinkInstanse {
         this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
         new THREE.MeshStandardMaterial({  color:0x696969  }));
         this.root.add(this.centerControl)
-        this.centerControl.position.set(0, 0.2, this.objectSize.z/2)
+        this.centerControl.position.set(0, 0.45, this.objectSize.z/2)
         this.centerControl.rotation.x = Math.PI/2
         this.centerControl.name = 'centerControl'
         this.centerControl.visible = false
@@ -138,10 +138,10 @@ export class SinkInstanse {
         this.menuControl.name = 'menuControl'
         this.menuControl.visible = false
     
-        this.copyControl = new THREE.Mesh( new THREE.CylinderGeometry(0.03, 0.03, 0.02, 32),
+        this.copyControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
         new THREE.MeshStandardMaterial({  color:'red'  }));
         this.root.add(this.copyControl)
-        this.copyControl.position.set(0, 0.45,this.objectSize.z/2)
+        this.copyControl.position.set(0, 0.2,this.objectSize.z/2)
         this.copyControl.rotation.x = Math.PI/2
         this.copyControl.name = 'copyControl'
         this.copyControl.visible = false
