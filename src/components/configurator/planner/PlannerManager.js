@@ -479,6 +479,11 @@ export class PlannerManager {
     if(side === 'left') plannerConfig.arraySwap = plannerConfig.modelsLeft
     if(side === 'right') plannerConfig.arraySwap = plannerConfig.modelsRight
 
+
+
+
+
+
    
 
     if(this.kitchenSizesStore.type == 'left'){
@@ -587,6 +592,8 @@ export class PlannerManager {
     if(side === 'direct') plannerConfig.arraySwap = plannerConfig.modelsDirect2L
     if(side === 'left') plannerConfig.arraySwap = plannerConfig.modelsLeft2L
     if(side === 'right') plannerConfig.arraySwap = plannerConfig.modelsRight2L
+
+ 
 
     if(this.kitchenSizesStore.type == 'left'){
         if(level === 2){
@@ -850,57 +857,7 @@ export class PlannerManager {
 
   }
 
-  moveBack(){
-    let side = plannerConfig.selectedObject.side
-    let index = plannerConfig.selectedObject.index
-    let oldPos = plannerConfig.slotsDirect.find((obj) => obj.index == index)
-    let posX, posZ
 
-    if(side == 'direct'){
-         if(plannerConfig.moveBack.side == 'right'){
-         posX = plannerConfig.moveBack.otherBox.root.position.x - plannerConfig.moveBack.otherBox.width/2
-     - plannerConfig.selectedObject.width/2
-    }
-
-     if(plannerConfig.moveBack.side == 'left'){
-          posX = plannerConfig.moveBack.otherBox.root.position.x + plannerConfig.moveBack.otherBox.width/2
-     + plannerConfig.selectedObject.width/2
-    }
-    }
-
-    if(side == 'left'){
-         if(plannerConfig.moveBack.side == 'right'){
-         posZ = plannerConfig.moveBack.otherBox.root.position.z + plannerConfig.moveBack.otherBox.width/2
-     + plannerConfig.selectedObject.width/2
-    }
-
-     if(plannerConfig.moveBack.side == 'left'){
-          posZ = plannerConfig.moveBack.otherBox.root.position.z - plannerConfig.moveBack.otherBox.width/2
-     - plannerConfig.selectedObject.width/2
-    }
-    }
- 
- 
- 
-
-
- //  console.log('posX', posX)
-
-    gsap.to(plannerConfig.selectedObject.root.position, {
-      x: side == 'direct'? posX : 0.3 ,
-      z: side == 'left'? posZ: 0.3 ,
-      duration: 0.3,
-      ease: "power2.out",
-      onUpdate: () => {
-        this.sceneSetup.requestRender();
-      },
-      onComplete: () => {
-     //   console.log('moveBack')
-        this.movedBack = false
-        plannerConfig.moveBack.otherBox = null
-      },
-    });
-  }
 
   copySettings(){
     console.log(plannerConfig.selectedObject.name)
