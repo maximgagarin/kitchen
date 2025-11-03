@@ -101,64 +101,11 @@ moveNearWallsOnly() {
   this.sceneSetup.requestRender();
 }
 
-  checkRaycaster(){
-    
-  }
 
-  bounds2level(){
-    if (this.kitchenStore.type == "direct") {
-      plannerConfig.roomBounds = {
-        minX: 0 ,
-        maxX: this.kitchenStore.sideSizes.side_a,
-        minZ: 0.3,
-        maxZ: 0.3,
-      };
-    }
 
-    if (this.kitchenStore.type == "left") {
-      if (plannerConfig.selectedObject.side == "direct") {
-        plannerConfig.roomBounds = {
-          minX:  0, // ограничение движения если левый ряд до угла
-          maxX: this.kitchenStore.sideSizes.side_a,
-        };
-      }
-      if (plannerConfig.selectedObject.side == "left") {
-        plannerConfig.roomBounds = {
-          minZ:   0.3 , // ограничение движения если левый ряд до угла
-          maxZ: this.kitchenStore.sideSizes.side_c,
-        };
-      }
-    }
 
-  }
 
-  bounds1level() {
-    // диапазон движений модулей
-
-    if (this.kitchenStore.type == "direct") {
-      plannerConfig.roomBounds = {
-        minX: 0 + plannerConfig.penalsBorders.directLeft,
-        maxX: plannerConfig.penalsBorders.directRight,
-        minZ: 0.3,
-        maxZ: 0.3,
-      };
-    }
-
-    if (this.kitchenStore.type == "left") {
-      if (plannerConfig.selectedObject.side == "direct") {
-        plannerConfig.roomBounds = {
-          minX: plannerConfig.isAngleRow == "left" ? 0.6 : 0, // ограничение движения если левый ряд до угла
-          maxX: plannerConfig.penalsBorders.directRight,
-        };
-      }
-      if (plannerConfig.selectedObject.side == "left") {
-        plannerConfig.roomBounds = {
-          minZ: plannerConfig.isAngleRow == "direct" ? 0.6 : 0, // ограничение движения если левый ряд до угла
-          maxZ: plannerConfig.penalsBorders.left,
-        };
-      }
-    }
-  }
+ 
 
   checkCollision(testInstance, nextPosition) {
      
@@ -239,86 +186,8 @@ moveNearWallsOnly() {
 
   return false;
 }
-  checkCollisionManual(){
-    let collision
-    const side = plannerConfig.selectedObject.side
-    const movingPosX = plannerConfig.selectedObject.root.position.x
-    const movingPosZ = plannerConfig.selectedObject.root.position.z
-
-    const movingWidth = plannerConfig.selectedObject.width
-    let modelsArray = plannerConfig.penalsArray
-
-    if (side == 'direct') modelsArray = modelsArray.filter(model=> model.side == 'direct')
-    if (side == 'left') modelsArray = modelsArray.filter(model=> model.side == 'left')
-
- //     console.log('penalArray', modelsArray)
 
 
 
-    const movingRightSide = movingPosX + movingWidth/2
-    const movingLeftSide = movingPosX - movingWidth/2
-    const movingLeftSideZ = movingPosZ + movingWidth/2
 
-
-   // console.log('movingLeftSide', movingLeftSideZ)
-
-
-   
-
-      for (let model of modelsArray) {
-       // if (model.root.uuid === plannerConfig.selectedObject.root.uuid) continue;
-  
-        const otherBoxX = model.root.position.x
-        const otherBoxZ = model.root.position.z
-
-        const otherWidth = model.width
-        const otherLeftSide =  otherBoxX - otherWidth/2
-        const otherRightSide =  otherBoxZ - otherWidth/2
-
-   //     console.log('otherRight', otherRightSide)
-
-
-        if(side == 'left' && movingLeftSideZ > otherRightSide)   return  'left'     
-      
-        if(side == 'direct' && movingRightSide > otherLeftSide)  return 'direct'
-      }
-  }
-
-
-
-   checkCollisionRay(testInstance, nextPosition ,movementDirection) {
-
-
-    // направление движения
-    const from = testInstance.root.position.clone();
-    from.y = 1.55
-    const to = nextPosition.clone();
-    const direction = new THREE.Vector3(movementDirection.x, 0, 0).normalize();
-    const distance = 2;
-
-
-
-    const modelsArray = plannerConfig.penalsArray
-    const raycaster = new THREE.Raycaster(from, direction, 0, distance);
-
-    
-
-    const targets = modelsArray
-      .filter(model => model.root.uuid !== testInstance.root.uuid)
-      .map(model => model.raycasterBox);
-
-
-    const intersects = raycaster.intersectObjects(targets, false); // true — проверка всех потомков
-
-    if (intersects.length > 0) {
-      console.log(intersects[0].distance)
-      const collision = intersects[0].distance - 0.3
-    if (collision < 0.01){
-       console.log('фиксируем дистанцию', intersects[0].distance)
-       return true;
-    } 
-    }
-
-    return false;
-}
 }

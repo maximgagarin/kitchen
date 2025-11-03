@@ -472,6 +472,9 @@ export class PlannerManager {
     if(side === 'left') plannerConfig.arraySwap = plannerConfig.modelsLeft
     if(side === 'right') plannerConfig.arraySwap = plannerConfig.modelsRight
 
+
+    
+
     //рассчет ограничений движения для модуля
     this.utils.roomBounds()
 
@@ -590,19 +593,6 @@ export class PlannerManager {
 
  
 
-    if(this.kitchenSizesStore.type == 'left'){
-        if(level === 2){
-          console.log('1')
-          if(side == 'direct'){
-          console.log('2')
-            plannerConfig.arraysToCheck.push(...plannerConfig.modelsLeft2L)
-          }
-          if(side == 'left'){
-          console.log('3')
-            plannerConfig.arraysToCheck.push(...plannerConfig.modelsDirect2L)
-          }
-        }
-    }
 
 
 
@@ -627,7 +617,7 @@ export class PlannerManager {
   //    console.log('otherBox', otherBox)
 
     
-      this.moveController2L.bounds2level()
+   
         const objectSize = new THREE.Vector3();
     const box = new THREE.Box3().setFromObject(plannerConfig.selectedObject.raycasterBox);
     box.getSize(objectSize);
@@ -1195,7 +1185,7 @@ export class PlannerManager {
     this.createRaycasterPlanes()
     this.utils.calcCornerModules()
     this.utils.calcCornerModules2L()
-    this.utils.roomBounds()
+ //   this.utils.roomBoundsPenal()
 
 
     this.sceneSetup.requestRender();
