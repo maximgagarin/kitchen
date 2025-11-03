@@ -63,8 +63,8 @@ export class PanalBuilder {
       object.visible = true;
       object.userData.id = element.id;
       const instance = new PenalInstanse(object);
-      instance.id = id
-      instance.raycasterBox.userData.id = id
+      instance.id = element.id
+      instance.raycasterBox.userData.id = element.id
       instance.level = 1
      // console.log(element.id);
 

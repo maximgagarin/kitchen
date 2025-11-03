@@ -91,43 +91,22 @@
       
         ]"
 
-        :disabled="(isLeftEndPenal && selectedOption == 10 && selectedPosition == 'left') ||
-         ((kitchenStore.fridge.side == 'left' || kitchenStore.fridge.side == 'directLeft') && selectedOption == 10 && selectedPosition == 'left' && kitchenStore.fridge.isSet) 
-        
+        :disabled="(isLeftEndPenal && selectedOption == 10 && selectedPosition === 'left') ||
+         ((kitchenStore.fridge.side === 'left' || kitchenStore.fridge.side === 'directLeft') && selectedOption === 10 && selectedPosition === 'left' && kitchenStore.fridge.isSet) 
         "
-       
-      >
-        добавить слева
+      > добавить слева
       </button>
 
       <button
-       
         @click="addRight"
         :class="[
           'px-1 py-1 rounded-lg border text-sm text-xs font-medium transition flex items-center gap-2',
-
         ]"
-        :disabled = " (isRightEndPenal && selectedOption == 10 && selectedPosition == 'right') ||
-          ((kitchenStore.fridge.side == 'right' || kitchenStore.fridge.side == 'directRight') && selectedOption == 10 && selectedPosition == 'right' && kitchenStore.fridge.isSet)"
-        
-      >
-        добавить справа
+        :disabled = " (isRightEndPenal && selectedOption == 10 && selectedPosition === 'right') ||
+          ((kitchenStore.fridge.side === 'right' || kitchenStore.fridge.side == 'directRight') && selectedOption === 10 && selectedPosition === 'right' && kitchenStore.fridge.isSet)"
+
+      >  добавить справа
       </button>
-      
-  <!-- Кнопка добавления -->
-  <!-- <button
-    class=" bg-gray-100 text-black text-xs font-medium  py-2 px-2 rounded-lg shadow transition-colors duration-200 hover:text-brand"
-    @click="addPenal"
-    :disabled="
-      !selectedPosition ||
-      (isLeftEndPenal && selectedOption == 10 && selectedPosition == 'left') ||
-      (isRightEndPenal && selectedOption == 10 && selectedPosition == 'right') ||
-      ((kitchenStore.fridge.side == 'left' || kitchenStore.fridge.side == 'directLeft') && selectedOption == 10 && selectedPosition == 'left' && kitchenStore.fridge.isSet) ||
-      ((kitchenStore.fridge.side == 'right' || kitchenStore.fridge.side == 'directRight') && selectedOption == 10 && selectedPosition == 'right' && kitchenStore.fridge.isSet)
-"
-  >
-    Добавить пенал
-  </button> -->
     </div>
 
 
@@ -151,6 +130,9 @@
           v-for="(penal, index) in leftPenals"
           :key="penal.id"
           class="flex justify-between items-center bg-gray-100   pl-2  rounded-lg  shadow-sm"
+          :class="{ 'bg-gray-200': hoveredPenalId === penal.id }"
+          @mouseenter="highlightPenal(penal.id)"
+          @mouseleave="clearHighlight()"
         >
           <div class="text-gray-700 font-medium text-xs ">
             <span>{{ penal.width * 1000 }} мм</span>
@@ -177,6 +159,9 @@
           v-for="(penal, index) in rightPenals"
           :key="penal.id"
           class="flex justify-between items-center bg-gray-100  pl-2 rounded-lg  shadow-sm"
+           :class="{ 'bg-gray-200': hoveredPenalId === penal.id }"
+          @mouseenter="highlightPenal(penal.id)"
+          @mouseleave="clearHighlight()"
         >
           <div class="text-gray-700 font-medium  text-xs">
             <span>{{ penal.width * 1000 }} мм</span>
@@ -222,6 +207,7 @@ import { ref, inject, computed } from "vue";
 import fridge from "./components/fridge.vue";
 import { algorithmConfig } from "../configurator/builders/Algorithm/algorithmConfig";
 import { useAlgorithmStore } from "../../pinia/Algorithm";
+import { plannerConfig } from "../configurator/planner/planerConfig";
 
 const penalOptions = [
   { value: "1", label: "1" },
@@ -246,6 +232,7 @@ const selectedOption = ref("1");
 const selectedPosition = ref(null);
 const selectedWidth = ref("450");
 const show = ref(false)
+const hoveredPenalId = ref(null)
 
 const selectedPositionFirdge = ref('left')
 
@@ -283,14 +270,73 @@ const PANEL_WIDTH = computed(() => {
 const PANEL_DEPTH = 0.6;
 const maxPanels = 3;
 
+function highlightPenal(id) {
+  hoveredPenalId.value = id
+  console.log('id', id)
 
-function addLeft(){
+  // Скрыть все подсветки
+  plannerConfig.penalsArray.forEach(p => {
+    if (p.boxHelper) p.boxHelper.visible = false
+  })
+
+  // Найти нужный пенал и включить подсветку
+  const penal =  plannerConfig.penalsArray.find(p => p.id === id)
+  if (penal && penal.boxHelper) {
+    penal.boxHelper.visible = true
+  }
+
+  penalBuilder.value.sceneSetup.requestRender()
+}
+
+// Очистка подсветки
+function clearHighlight() {
+  hoveredPenalId.value = null
+   plannerConfig.penalsArray.forEach(p => {
+    if (p.boxHelper) p.boxHelper.visible = false
+  })
+  penalBuilder.value.sceneSetup.requestRender()
+
+}
+
+
+
+function addLeft() {
   selectedPosition.value = 'left'
+
+  const option = Number(selectedOption.value)
+
+  // 1. Если уже есть левый конечный пенал — не добавляем
+  if (isLeftEndPenal.value && option === 10 && selectedPosition.value === 'left') return
+
+  // 2. Если с этой стороны стоит холодильник — тоже не добавляем
+  if (
+    (kitchenStore.fridge.side === 'left' || kitchenStore.fridge.side === 'directLeft') &&
+    option === 10 &&
+    selectedPosition.value === 'left' &&
+    kitchenStore.fridge.isSet
+  ) return
+
+  // 3. Добавляем пенал
   addPenal()
 }
 
-function addRight(){
+function addRight() {
   selectedPosition.value = 'right'
+
+  const option = Number(selectedOption.value)
+
+
+  if (isRightEndPenal.value && option === 10 && selectedPosition.value === 'right') return
+
+ 
+  if (
+    (kitchenStore.fridge.side === 'right' || kitchenStore.fridge.side === 'directRight') &&
+    option === 10 &&
+    selectedPosition.value === 'right' &&
+    kitchenStore.fridge.isSet
+  ) return
+
+ 
   addPenal()
 }
 
@@ -361,18 +407,14 @@ function addLeftPenal() {
   //если торцевой пенал сдвигаем другие
   if(selectedOption.value == 10){
     isLeftEndPenal.value = true
+
     const leftPenals = penalStore.penals.filter(penal => penal.side === 'left')
 
     leftPenals.forEach(penal =>{
       penal.z -=PENAL_END  / 1000
     })
 
-    rowSegmentsStore.segments.left.forEach(segment=>{
-      if(segment.type.includes('penal')){
-        segment.start -=PENAL_END  / 1000
-        segment.end -=PENAL_END  / 1000 
-      }
-    })
+
     z =  kitchenStore.sideSizes.side_c - PANEL_WIDTH.value / 2 
   }
 
@@ -392,15 +434,8 @@ function addLeftPenal() {
     oven: selectedOption.value,
   });
 
-  const start = z - Number(PANEL_WIDTH.value / 2);
-  const end = z + Number(PANEL_WIDTH.value / 2);
-  rowSegmentsStore.addSegment("left", {
-    start: start,
-    end: end,
-    width: PANEL_WIDTH.value,
-    type: select.value,
-    id: penalId,
-  });
+
+
 
   penalBuilder.value.builder();
   cabinetBuilder.value.executeConfig("actual", "currect");
@@ -424,12 +459,7 @@ function addRightDirectPenal() {
     x =  kitchenStore.sideSizes.side_a - PANEL_WIDTH.value / 2 
 
 
-    rowSegmentsStore.segments.direct.forEach(segment=>{
-      if(segment.side.includes('directRight')  ){
-         segment.start -=PENAL_END  / 1000
-         segment.end -=PENAL_END  / 1000 
-      }
-    })
+
 
 
 
@@ -454,14 +484,7 @@ function addRightDirectPenal() {
 
   const start = x - PANEL_WIDTH.value / 2;
   const end = x + PANEL_WIDTH.value / 2;
-  rowSegmentsStore.addSegment("direct", {
-    start: start,
-    end: end,
-    width: PANEL_WIDTH.value,
-    type: select.value,
-    id: penalId,
-    side: "directRight",
-  });
+
 
   penalBuilder.value.builder();
   cabinetBuilder.value.executeConfig("actual", "currect");
@@ -483,12 +506,7 @@ function addRighPenal() {
     z =  kitchenStore.sideSizes.side_d - PANEL_WIDTH.value / 2 
 
 
-     rowSegmentsStore.segments.right.forEach(segment=>{
-      if(segment.type.includes('penal')){
-        segment.start -=PENAL_END  / 1000
-        segment.end -=PENAL_END  / 1000 
-      }
-    })
+
   }
 
 
@@ -514,13 +532,7 @@ function addRighPenal() {
 
   const start = z - Number(PANEL_WIDTH.value / 2);
   const end = z + Number(PANEL_WIDTH.value / 2);
-  rowSegmentsStore.addSegment("right", {
-    start: start,
-    end: end,
-    width: PANEL_WIDTH.value,
-    type: select.value,
-    id: penalId,
-  });
+
 
   penalBuilder.value.builder();
   cabinetBuilder.value.executeConfig("actual", "currect");
@@ -540,12 +552,7 @@ function addDirectLeftPenal() {
     })
     x =   PANEL_WIDTH.value / 2 
 
-    rowSegmentsStore.segments.direct.forEach(segment=>{
-      if(segment.side.includes('directLeft')  ){
-         segment.start +=PENAL_END  / 1000
-         segment.end +=PENAL_END  / 1000 
-      }
-    })
+ 
   }
 
 
@@ -567,14 +574,7 @@ function addDirectLeftPenal() {
 
   const start = x - PANEL_WIDTH.value / 2;
   const end = x + PANEL_WIDTH.value / 2;
-  rowSegmentsStore.addSegment("direct", {
-    start: start,
-    end: end,
-    width: PANEL_WIDTH.value,
-    type: select.value,
-    id: penalId,
-    side: "directLeft"
-  });
+
 
   penalBuilder.value.builder();
   cabinetBuilder.value.executeConfig("actual", "currect");

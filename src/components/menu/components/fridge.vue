@@ -10,11 +10,9 @@
                 
                  :class="[
                     ' py-1 px-1  rounded-lg border text-xs font-medium transition flex items-center gap-2',
-
                 ]"
-                 :disabled="(props.isLeftEndPenal && selectedSide == 'left')"
-               >
-                    добавить слева
+                 :disabled="(props.isLeftEndPenal && selectedSide === 'left')"
+               >добавить слева
                 </button>
 
                 <button @click="handleRight" 
@@ -22,9 +20,8 @@
                      ' py-1 px-1  rounded-lg border text-xs font-medium transition flex items-center gap-2',
 
                 ]"
-                :disabled="(props.isRightEndPenal && selectedSide == 'right')"
-                >
-                    добавить справа
+                :disabled="(props.isRightEndPenal && selectedSide === 'right')"
+                >добавить справа
                 </button>
 
              
@@ -105,13 +102,15 @@ function handleLeft(){
 function handleRight(){
     clear()
     selectedSide.value = 'right'
-    if(props.isRightEndPenal && selectedSide.value === 'right') return
+    console.log('props', props)
+  
 
     if(kitchenStore.fridge.isSet){
+      if(props.isRightEndPenal && selectedSide.value === 'right') return
       deleteFridge()
       addFridge()
     } else {
-      if(props.isLeftEndPenal && selectedSide.value === 'right') return
+      if(props.isRightEndPenal && selectedSide.value === 'right') return
       addFridge()   
     }
 }

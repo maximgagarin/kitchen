@@ -83,10 +83,11 @@ export class PenalInstanse {
     this.raycasterBox = helper; // сохраняем для Raycaster
     this.root.add(this.raycasterBox)
     this.width = this.objectSize.x
-     const boxHelper = new THREE.BoxHelper( this.root, 0xffff00 );
+     const boxHelper = new THREE.BoxHelper( this.raycasterBox, 0xffff00 );
         this.root.add(boxHelper)
         this.boxHelper = boxHelper
         this.boxHelper.visible = false
+        
   }
 
   createControls(){
