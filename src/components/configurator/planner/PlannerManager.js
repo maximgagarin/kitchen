@@ -460,13 +460,6 @@ export class PlannerManager {
     // plannerConfig.selectedObject.tabletop.visible = true
     // console.log(plannerConfig.selectedObject.tabletop.visible)
 
-  
-
-
-
-
-    
-
 
     //создание массива для проверки коллизии
     plannerConfig.arraysToCheck.length = 0
@@ -479,9 +472,8 @@ export class PlannerManager {
     if(side === 'left') plannerConfig.arraySwap = plannerConfig.modelsLeft
     if(side === 'right') plannerConfig.arraySwap = plannerConfig.modelsRight
 
-
-
-
+    //рассчет ограничений движения для модуля
+    this.utils.roomBounds()
 
 
    
@@ -592,6 +584,9 @@ export class PlannerManager {
     if(side === 'direct') plannerConfig.arraySwap = plannerConfig.modelsDirect2L
     if(side === 'left') plannerConfig.arraySwap = plannerConfig.modelsLeft2L
     if(side === 'right') plannerConfig.arraySwap = plannerConfig.modelsRight2L
+
+
+    this.utils.roomBounds()
 
  
 
@@ -1173,158 +1168,36 @@ export class PlannerManager {
    this.sceneSetup.requestRender()
 
   }
-
-
-
-
-  calculateCornerBounds(){
-
-       if(this.kitchenSizesStore.type == 'direct'){
-        plannerConfig.roomBounds = {
-        minX: 0 + plannerConfig.penalsBorders.directLeft,
-        maxX: plannerConfig.penalsBorders.directRight,
-        minZ: 0.3,
-        maxZ: 0.3,
-      };
-    }
-
-    if(this.kitchenSizesStore.type == 'left'){
-        if (plannerConfig.selectedObject.side == "direct") {
-        plannerConfig.roomBounds = {
-          minX:  0 ,
-          maxX: plannerConfig.penalsBorders.directRight,
-             minZ: 0.3,
-        maxZ: 0.3,
-        };
-      }
-      if (plannerConfig.selectedObject.side == "left") {
-        plannerConfig.roomBounds = {
-          minX:0.3,
-          maxX:0.3,
-          minZ:  0, // ограничение движения если левый ряд до угла
-          maxZ: plannerConfig.penalsBorders.left,
-        };
-      }
-
-
-      //оперделяем какой модуль зашёл в угол
-    const leftEdge = plannerConfig.newSlotsLeft[0].center - plannerConfig.newSlotsLeft[0].width/2
-    if (leftEdge < 0.59) {
-   //   console.log('left yes')
-      plannerConfig.isAngleRow = 'left'
-       if (plannerConfig.selectedObject.side == "direct") {
-        plannerConfig.roomBounds = {
-          minX:  0.6 ,
-          maxX: plannerConfig.penalsBorders.directRight,
-              minZ: 0.3,
-        maxZ: 0.3,
-        };
-      }
-      if (plannerConfig.selectedObject.side == "left") {
-        plannerConfig.roomBounds = {
-          minZ:  0, // ограничение движения если левый ряд до угла
-          maxZ: plannerConfig.penalsBorders.left,
-          minX:0.3,
-          maxX:0.3,
-        };
-      }
-
-    }
-    const directEdge = plannerConfig.newSlotsDirect[0].center - plannerConfig.newSlotsDirect[0].width/2
-     if (directEdge < 0.59) {
-      plannerConfig.isAngleRow = 'direct'
-
-         if (plannerConfig.selectedObject.side == "direct") {
-        plannerConfig.roomBounds = {
-          minX:  0 ,
-          maxX: plannerConfig.penalsBorders.directRight,
-            minZ: 0.3,
-        maxZ: 0.3,
-        };
-      }
-      if (plannerConfig.selectedObject.side == "left") {
-        plannerConfig.roomBounds = {
-          minZ:  0.6, // ограничение движения если левый ряд до угла
-          maxZ: plannerConfig.penalsBorders.left,
-            minX:0.3,
-          maxX:0.3,
-        };
-      }
-    } 
-    if(leftEdge >= 0.6 && directEdge >= 0.6){
-      plannerConfig.isAngleRow = 'none'
-    }
-    }
-
- 
-   
-
-      
-  }
-
-
-
-
- 
-
-  start() {
-    // window.addEventListener("start-drag-module", (e) => {
-    //  // const module = e.name;
-    //   console.log('123efe')
-    // });
-
-
-    plannerConfig.kitchenBounds = {
-      minX:0,
-      maxX: this.kitchenSizesStore.sideSizes.side_a,
-      minZ:0,
-      maxZ: this.kitchenSizesStore.sideSizes.side_c,
-    }
-
-    //оффсет от пеналов
-    this.calculateOffsets();
-  //  deletePlane(this.scene);
-    plannerConfig.models.length = 0;
-
-    this.kitchenType = this.kitchenSizesStore.type;
-
-    const penalsDirect = plannerConfig.penalsArray.filter(penal=> penal.side == 'direct')
-    const penalsLeft = plannerConfig.penalsArray.filter(penal=> penal.side == 'left')
-    const penalsRight = plannerConfig.penalsArray.filter(penal=> penal.side == 'right')
-
-
-
   
-
-
-
-  
-    plannerConfig.models = [...plannerConfig.modelsLeft, ...plannerConfig.modelsDirect ,
-       ...plannerConfig.modelsDirect2L, ...plannerConfig.modelsLeft2L];
-   
-
-    console.log('models', plannerConfig.models);
-    console.log('modelsDirect', plannerConfig.modelsDirect);
-    console.log('modelsLeft', plannerConfig.modelsLeft);
-
+  createRaycasterPlanes(){
     
-
-
-
     this.resizableModule.init(plannerConfig.models);
     const { directPlane, wallPlane, leftPlane, directPlane2level } = createPlanesForRaycaster(); // создание плоскости для raycaster
-  //  this.scene.add(directPlane,directPlane2level );
-  this.scene.add(leftPlane, directPlane, directPlane2level)
- // this.scene.add(directPlane2level)
 
+     this.scene.add(leftPlane, directPlane, directPlane2level)
+     
     plannerConfig.directPlane1level = directPlane;
     plannerConfig.directPlane2level = directPlane2level;
     plannerConfig.leftPlane = leftPlane;
 
+  }
 
-  //  this.wallPlane = wallPlane;
+  createModelsArray(){
+        plannerConfig.models.length = 0;
 
-   // console.log("models", plannerConfig.models);
+    plannerConfig.models = [...plannerConfig.modelsLeft, ...plannerConfig.modelsDirect ,
+       ...plannerConfig.modelsDirect2L, ...plannerConfig.modelsLeft2L];
+  }
+
+
+  start() {
+    this.createModelsArray()
+    this.createRaycasterPlanes()
+    this.utils.calcCornerModules()
+    this.utils.calcCornerModules2L()
+    this.utils.roomBounds()
+
+
     this.sceneSetup.requestRender();
     this.container.addEventListener("mousemove", this.mouseSync);
     this.container.addEventListener("mousedown", this.onMouseDown);
@@ -1349,7 +1222,7 @@ export class PlannerManager {
       plannerConfig.selectedObject = false;
       this.plannerStore.selectedObject.isSelect = false;
       this.copyController.moving = false
-      this.removeObjectsByName('copyObject')
+      this.utils.removeObjectsByName('copyObject')
       plannerConfig.copyObject = false
       plannerConfig.copyObjectName = false
       plannerConfig.copyObjectSide = false
@@ -1362,120 +1235,5 @@ export class PlannerManager {
     }
   }
 
-
-
-  calculateOffsets() {
-    const filtredirectRight = plannerConfig.penalsArray.filter(penal=>penal.side =='directRight')
-    
-    if(filtredirectRight.length>0){
-      const objectWithMinX = filtredirectRight.reduce((min, current) =>
-      current.root.position.x < min.root.position.x ? current : min);
-
-      const rightBorder = Number((objectWithMinX.root.position.x - objectWithMinX.objectSize.x/2).toFixed(3))
-      plannerConfig.penalsBorders.directRight = rightBorder
-    } else {
-      plannerConfig.penalsBorders.directRight = this.kitchenSizesStore.sideSizes.side_a
-    }
-  
-
-    const filtredirectLeft = plannerConfig.penalsArray.filter(penal=>penal.side =='directLeft')
-    if(filtredirectLeft.length>0){
-      const objectWithMaxX = filtredirectLeft.reduce((min, current) =>
-      current.root.position.x > min.root.position.x ? current : min);
-
-      const leftBorder = Number((objectWithMaxX.root.position.x + objectWithMaxX.objectSize.x/2).toFixed(3))
-      plannerConfig.penalsBorders.directLeft = leftBorder
-    } else {
-      plannerConfig.penalsBorders.directLeft = 0
-    }
-
-     const filtredLeft = plannerConfig.penalsArray.filter(penal=>penal.side =='left')
-    if(filtredLeft.length>0){
-      const objectWithMaxZ = filtredLeft.reduce((min, current) =>
-      current.root.position.z < min.root.position.z ? current : min);
-
-      const leftBorder = Number((objectWithMaxZ.root.position.z - objectWithMaxZ.objectSize.x/2).toFixed(3))
-      plannerConfig.penalsBorders.left = leftBorder
-    } else {
-      plannerConfig.penalsBorders.left = this.kitchenSizesStore.sideSizes.side_c
-    }
-        
-   // console.log('plannerConfig', plannerConfig)
-   // this.moveController.bounds1level()
-  }
-
-  roomBoundsCalculate() {
-    // диапазон движений модулей
-
-    if(this.kitchenSizesStore.type =='direct'){
-      plannerConfig.roomBounds = {
-      minX:  0 + plannerConfig.penalsBorders.directLeft,
-      maxX: plannerConfig.penalsBorders.directRight,
-      minZ:  0.3,
-      maxZ: 0.3 ,
-      };
-    }
-
-    if(this.kitchenSizesStore.type == 'left'){
-      if(plannerConfig.selectedObject.side =='direct'){
-        plannerConfig.roomBounds = {
-          minX: plannerConfig.isAngleRow == 'left'? 0.6: 0, // ограничение движения если левый ряд до угла
-          maxX: plannerConfig.penalsBorders.directRight,
-        };
-      }
-       if(plannerConfig.selectedObject.side =='left'){
-        plannerConfig.roomBounds = {
-          minZ: plannerConfig.isAngleRow == 'direct'? 0.6: 0, // ограничение движения если левый ряд до угла
-          maxZ: plannerConfig.penalsBorders.left,
-        };
-      }
-    }
-
-    // this.roomBounds = {
-    //   minX: this.kitchenSizesStore.type == "left" ? 0 : 0 + plannerConfig.penalsBorders.directLeft,
-    //   maxX: plannerConfig.penalsBorders.directRight,
-    //   minZ: this.kitchenSizesStore.type == "left" ? 1 : 0,
-    //   maxZ: plannerConfig.penalsBorders.left ,
-    // };
-
-    // if (this.kitchenSizesStore.sink.side == "right") {
-    //   this.roomBounds = {
-    //     minX: this.kitchenSizesStore.type == "left" ? 0.6 : 0,
-    //     maxX:  plannerConfig.penalsBorders.directRight,
-    //     minZ: this.kitchenSizesStore.type == "left" ? 1 : 0,
-    //     maxZ: plannerConfig.penalsBorders.left,
-    //   };
-    // }
-  }
-
-  removeObjectsByName(name) {
-    const objectsToRemove = [];
-
-    // 1. Находим все объекты с указанным именем
-    this.scene.traverse((object) => {
-      if (object.name === name) {
-        objectsToRemove.push(object);
-      }
-    });
-
-    // 2. Удаляем объекты и очищаем ресурсы
-    objectsToRemove.forEach((object) => {
-      if (object.parent) {
-        object.parent.remove(object);
-      }
-
-      // Очистка ресурсов
-      if (object.geometry) object.geometry.dispose();
-
-      if (object.material) {
-        if (Array.isArray(object.material)) {
-          object.material.forEach((m) => m.dispose());
-        } else {
-          object.material.dispose();
-        }
-      }
-    });
-
-    console.log(`Удалено объектов: ${objectsToRemove.length}`);
-  }
+ 
 }

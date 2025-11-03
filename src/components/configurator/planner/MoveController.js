@@ -37,7 +37,7 @@ export class MoveController {
 
       const currentPos = plannerConfig.selectedObject.root.position.clone();
 
-      const bounds =   plannerConfig.kitchenBounds
+      const bounds =   plannerConfig.roomBounds
       const halfWidth = plannerConfig.selectedObject.objectSize.x / 2;
      
 

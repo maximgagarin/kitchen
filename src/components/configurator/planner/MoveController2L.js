@@ -24,7 +24,7 @@ export class MoveController2L {
 
 
 moveNearWallsOnly() {
-      this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
+  this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
   this.raycaster.setFromCamera(this.mouse, this.camera);
 
   let intersects;
@@ -40,47 +40,44 @@ moveNearWallsOnly() {
   const point = intersects[0].point.clone().add(this.offset);
   const currentPos = plannerConfig.selectedObject.root.position.clone();
 
-  const bounds = plannerConfig.kitchenBounds
+  const bounds =   plannerConfig.roomBounds
   const halfWidth = plannerConfig.selectedObject.objectSize.x / 2;
   const halfDepth = plannerConfig.selectedObject.objectSize.z / 2 || 0.2;
 
-  //console.log('bounds', bounds)
 
-  // Ограничим точку рамками
   point.x = THREE.MathUtils.clamp(point.x, bounds.minX + halfWidth, bounds.maxX - halfWidth);
   point.z = THREE.MathUtils.clamp(point.z, bounds.minZ + halfWidth, bounds.maxZ - halfWidth);
 
- // console.log('point', point)
 
-  const direction = point.clone().sub(currentPos);
+  // const direction = point.clone().sub(currentPos);
 
-  //   console.log('directtion2', direction)
-  const distance = direction.length();
 
-  if (distance < 0.001) return;
+  // const distance = direction.length();
 
-  const stepSize = 0.05; // 2 см шаг
-      const steps = Math.round(distance / stepSize);
-  const stepVec = direction.clone().normalize().multiplyScalar(stepSize);
+  // if (distance < 0.001) return;
 
-  //  console.log('steps', steps)
-  //    console.log('stepVec', stepVec)
+  // const stepSize = 0.05; // 2 см шаг
+  // const steps = Math.round(distance / stepSize);
+  // const stepVec = direction.clone().normalize().multiplyScalar(stepSize);
 
-  let finalPos = currentPos.clone();
 
- //   console.log('finalPos', finalPos.x)
 
-  for (let i = 0; i < steps; i++) {
-    const testPos = finalPos.clone().add(stepVec);
+  //let finalPos = currentPos.clone();
+  let finalPos = point
 
-    if (this.checkFutureCollision(testPos)) {
-      break;
-    }
 
-    finalPos.copy(testPos);
-  }
 
-//    console.log('finalPosAfter', finalPos.x)
+  // for (let i = 0; i < steps; i++) {
+  //   const testPos = finalPos.clone().add(stepVec);
+
+  //   if (this.checkFutureCollision(testPos)) {
+  //     break;
+  //   }
+
+  //   finalPos.copy(testPos);
+  // }
+
+
 
 
 

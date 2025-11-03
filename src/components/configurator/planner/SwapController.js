@@ -44,14 +44,14 @@ export class SwapController {
     const selectedBox = plannerConfig.selectedObject;
 
     const collis = this.checkSimpleCollision(selectedBox);
-    console.log("collis", collis);
+  //  console.log("collis", collis);
     if (collis) {
       plannerConfig.isCollision = true;
     } else {
       plannerConfig.isCollision = false;
     }
 
-    console.log(plannerConfig.isCollision);
+  //  console.log(plannerConfig.isCollision);
 
     const level = selectedBox.level;
     const side = selectedBox.side;
@@ -96,7 +96,7 @@ export class SwapController {
     // если ни с кем не пересекаемся — сбрасываем "последнего столкнувшегося"
     this.lastCollision = null;
 
-    console.log("collis", plannerConfig.isCollision);
+  //  console.log("collis", plannerConfig.isCollision);
 
     this.sceneSetup.requestRender();
   }
@@ -111,7 +111,7 @@ export class SwapController {
     const point = centerB - widthB / 2 - widthA;
     const newPos = point + widthB / 2;
 
-    console.log("newPOs", newPos);
+   // console.log("newPOs", newPos);
 
     gsap.to(models[j].root.position, {
       x: side === "direct" ? newPos : HALF_DEPTH,
@@ -144,7 +144,7 @@ export class SwapController {
     const point = centerB + widthB / 2 + widthA;
     const newPos = point - widthB / 2;
 
-    console.log("newPOs", newPos);
+   // console.log("newPOs", newPos);
 
     gsap.to(models[j].root.position, {
       x: side === "direct" ? newPos : HALF_DEPTH,
