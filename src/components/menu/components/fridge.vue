@@ -90,7 +90,9 @@ function handleLeft(){
     clear()
     selectedSide.value = 'left'
     if(kitchenStore.fridge.isSet){
+        console.log('props.isLeftEndPenal', props.isLeftEndPenal)
         if(props.isLeftEndPenal && selectedSide.value === 'left') return
+     
         deleteFridge()
         addFridge()
     } else{

@@ -240,8 +240,8 @@ groupModulesForCountertops() {
   //  console.log('partsLeft', partsLeft)
 
   //  console.log('модули столешниц', parts )
- //  this.createTableTops(parts)
-  // this.createTableTopsLeft(partsLeft)
+   this.createTableTops(parts)
+   this.createTableTopsLeft(partsLeft)
 
  
   }

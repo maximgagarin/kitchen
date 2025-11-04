@@ -44,14 +44,14 @@ export class SwapController {
     const selectedBox = plannerConfig.selectedObject;
 
     const collis = this.checkSimpleCollision(selectedBox);
-  //  console.log("collis", collis);
+    //  console.log("collis", collis);
     if (collis) {
       plannerConfig.isCollision = true;
     } else {
       plannerConfig.isCollision = false;
     }
 
-  //  console.log(plannerConfig.isCollision);
+    //  console.log(plannerConfig.isCollision);
 
     const level = selectedBox.level;
     const side = selectedBox.side;
@@ -96,7 +96,7 @@ export class SwapController {
     // если ни с кем не пересекаемся — сбрасываем "последнего столкнувшегося"
     this.lastCollision = null;
 
-  //  console.log("collis", plannerConfig.isCollision);
+    //  console.log("collis", plannerConfig.isCollision);
 
     this.sceneSetup.requestRender();
   }
@@ -111,9 +111,9 @@ export class SwapController {
     const point = centerB - widthB / 2 - widthA;
     const newPos = point + widthB / 2;
 
-    this.newPos = newPos
+    this.newPos = newPos;
 
-       console.log("newPOsSwap", newPos);
+    console.log("newPOsSwap", newPos);
 
     gsap.to(models[j].root.position, {
       x: side === "direct" ? newPos : HALF_DEPTH,
@@ -126,6 +126,7 @@ export class SwapController {
       onComplete: () => {
         this.sceneSetup.requestRender();
         this.swapSelected = false;
+        //  this.tableTop.create()
       },
     });
 
@@ -146,7 +147,7 @@ export class SwapController {
     const point = centerB + widthB / 2 + widthA;
     const newPos = point - widthB / 2;
 
-    this.newPos = newPos
+    this.newPos = newPos;
 
     console.log("newPOsSwap", newPos);
 
@@ -161,38 +162,13 @@ export class SwapController {
       onComplete: () => {
         this.sceneSetup.requestRender();
         this.swapSelected = false;
+        //   this.tableTop.create()
       },
     });
 
     const temp = models[i];
     models[i] = models[j];
     models[j] = temp;
-  }
-
-  layoutBoxes(animated = false, moveSelected = false) {
-    for (const box of plannerConfig.modelsDirect) {
-      const targetX = box.root.position.x;
-      // Пропускаем выбранный куб — его положение управляется мышкой
-      if (box.root.uuid === plannerConfig.selectedObject.root.uuid) {
-        continue;
-      }
-
-      if (animated) {
-        gsap.to(box.root.position, {
-          x: targetX,
-          duration: 0.3,
-          ease: "power2.out",
-          onUpdate: () => {
-            this.sceneSetup.requestRender();
-          },
-          onComplete: () => {
-            this.sceneSetup.requestRender();
-          },
-        });
-      } else {
-        box.root.position.x = targetX;
-      }
-    }
   }
 
   doSwapInSector() {
@@ -404,7 +380,7 @@ export class SwapController {
   }
 
   moveBack(isSwap) {
-    console.log('isSwap', isSwap)
+    console.log("isSwap", isSwap);
     console.log("first", this.lastCollision);
 
     const selected = plannerConfig.selectedObject;
@@ -424,30 +400,24 @@ export class SwapController {
         ? selected.root.position.z
         : selected.root.position.x;
 
-        if(!isSwap){
-                         centerB = isLeft
-        ? this.collissionModule.root.position.z
-        : this.collissionModule.root.position.x;
-        }
+      if (!isSwap) {
+        centerB = isLeft
+          ? this.collissionModule.root.position.z
+          : this.collissionModule.root.position.x;
+      }
 
+      if (isSwap) {
+        centerB = isLeft ? this.newPos : this.newPos;
+      }
 
-
-        if(isSwap){
-              centerB = isLeft
-            ? this.newPos
-            : this.newPos
-        }
-
-
-
-        console.log('newposBack', this.newPos)
+      console.log("newposBack", this.newPos);
 
       const movingRight = centerB > centerA;
 
       if (movingRight) {
-        console.log('moveright')
+        console.log("moveright");
         newPos = centerB - widthA / 2 - widthB / 2;
-        console.log('notMoveRight')
+        console.log("notMoveRight");
       } else {
         newPos = centerB + widthA / 2 + widthB / 2;
       }
@@ -461,10 +431,10 @@ export class SwapController {
           this.sceneSetup.requestRender();
         },
         onComplete: () => {
-         
           this.movedBack = false;
           plannerConfig.moveBack.otherBox = null;
           plannerConfig.isCollision = false;
+          this.tableTop.create();
         },
       });
     }

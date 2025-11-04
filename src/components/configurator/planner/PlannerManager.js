@@ -114,6 +114,7 @@ export class PlannerManager {
       this.emptyManager.calculateEmpties();
       this.tableTop.create();
       this.sceneSetup.requestRender();
+      
     } else if (plannerConfig.selectedEmpty) {
       console.log("addToEmpty");
 
@@ -316,6 +317,10 @@ export class PlannerManager {
     this.plannerStore.objectMenu = false;
     this.plannerStore.objectMenuL2 = false;
     plannerConfig.selectedEmpty2L = false;
+       this.plannerStore.selectedType = null
+    this.plannerStore.selectedWidth = null
+      this.plannerStore.changeMenu = false;
+
 
     this.sceneSetup.requestRender();
   }
@@ -324,6 +329,11 @@ export class PlannerManager {
     console.log(plannerConfig.selectedObject);
     // plannerConfig.selectedObject.tabletop.visible = true
     // console.log(plannerConfig.selectedObject.tabletop.visible)
+
+   
+
+    this.plannerStore.selectedType = plannerConfig.selectedObject.name
+    this.plannerStore.selectedWidth = Number(plannerConfig.selectedObject.width.toFixed(1))
 
     //создание массива для проверки коллизии
     plannerConfig.arraysToCheck.length = 0;
@@ -526,11 +536,11 @@ export class PlannerManager {
       console.log("Нашли userData:", intersect.userData);
     }
     //   this.emptyManager.calcEmtyForPenal(intersect)
-    console.log(intersect);
+  //  console.log(intersect);
     this.plannerStore.objectMenu = true;
     plannerConfig.selectedEmpty = intersect;
     // this.selectedEmpty = intersect;
-    console.log(this.emptyPosition);
+  //  console.log(this.emptyPosition);
   }
 
   // emptiesIntersetsClick(intersect) {
@@ -614,7 +624,7 @@ export class PlannerManager {
       this.isDragging = true;
       this.resizableModule.setSettings(intersect, event);
     } else if (intersect.name == "menuControl") {
-      this.plannerStore.objectMenu = true;
+      this.plannerStore.changeMenu = true;
     } else if (intersect.name == "copyControl") {
   //    console.log(plannerConfig.selectedObject);
       this.copyController.moving = true;
@@ -1034,7 +1044,11 @@ export class PlannerManager {
       plannerConfig.copyObjectSide = false;
       plannerConfig.copyObjectFullName = "";
       this.plannerStore.objectMenuL2 = false;
+      this.plannerStore.changeMenu = false;
+
       plannerConfig.selectedEmpty2L = false;
+         this.plannerStore.selectedType = null
+    this.plannerStore.selectedWidth =null
 
       // this.plannerStore.selectedObject.name = null;
     }

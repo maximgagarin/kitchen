@@ -64,6 +64,7 @@ export class ChangeController {
   }
 
   changeSelected(modelType, width) {
+
     const rules = {
       direct: {
         axis: "x",
@@ -97,12 +98,14 @@ export class ChangeController {
     const position = oldInstance.root.position.clone();
     let cabinetName
 
+    console.log('cabName', cabinetName)
     
     if (modelType === 'ms'){
       cabinetName = `${modelType}${width * 1000}`;
     } else {
       cabinetName = `${modelType}-${width * 1000}`;
     }
+
 
 
     const cabinetOriginal = this.loaderModels.get(cabinetName);

@@ -100,16 +100,16 @@ export class PanalBuilder {
       object.userData.side = element.side;
 
 
-      console.log('width', element.width)
-
+      //console.log('width', element.width)
+//
 
 
       // Добавляем антресоль
       if (config.panels_size.height2level == 0.9) {
         const type = this.anp[element.width]
-        console.log('type', type)
+      //  console.log('type', type)
         const cabinet = this.loaderModels.get(type)
-        console.log('rotate', element.rotate)
+    //    console.log('rotate', element.rotate)
         if(element.width === 0.2) cabinet.rotation.y =  this.anpRotationMap[element.rotate];
         cabinet.visible = true
         cabinet.position.y = 2.118

@@ -1,10 +1,25 @@
 <template>
   <!-- Левая панель с изображением -->
+
+
+    <!-- Блок превью -->
   <div
-    class="fixed top-20 right-[70vh] w-[300px] h-[350px] mr-4 bg-gray-100 pointer-events-none rounded-md shadow-lg"
-    v-if="hoveredItem"
+    class="fixed top-20 right-[50vh] w-[300px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-100"
+    :style="{
+      
+      opacity: hoveredItem ? 1 : 0,
+      transform: hoveredItem ? 'scale(1)' : 'scale(0.95)',
+    }"
   >
-    <img src="/img/penal.png" alt="Пенал" class="w-full h-full object-contain p-4">
+    <transition name="fade" mode="out-in">
+      <img
+        v-if="hoveredItem"
+        :key="hoveredItem.src"
+        :src="hoveredItem.src"
+        alt="Модуль"
+        class="w-full h-full object-contain p-4"
+      />
+    </transition>
   </div>
 
   <div  class="max-w-4xl mx-auto p-1">
@@ -210,12 +225,12 @@ import { useAlgorithmStore } from "../../pinia/Algorithm";
 import { plannerConfig } from "../configurator/planner/planerConfig";
 
 const penalOptions = [
-  { value: "1", label: "1" },
-  { value: "2", label: "2" },
-  { value: "3", label: "3" },
-  { value: "4", label: "4" },
-  { value: "10", label: "т" },
-  { value: "6", label: "5" },
+  { value: "1", label: "1" , src:"/img/penals/penal1.png"},
+  { value: "2", label: "2" , src:"/img/penals/penal2.png" },
+  { value: "3", label: "3" , src:"/img/penals/penal3.png" },
+  { value: "4", label: "4" , src:"/img/penals/penal1.png" },
+  { value: "10", label: "т" , src:"/img/penals/penal2.png" },
+  { value: "6", label: "5" , src:"/img/penals/penal3.png"},
   // { value: "7", label: "Встроенный холодильник" },
   // { value: "8", label: "2 пенала со встроенным хол. и мор." },
 ];
@@ -270,33 +285,6 @@ const PANEL_WIDTH = computed(() => {
 const PANEL_DEPTH = 0.6;
 const maxPanels = 3;
 
-function highlightPenal(id) {
-  hoveredPenalId.value = id
-  console.log('id', id)
-
-  // Скрыть все подсветки
-  plannerConfig.penalsArray.forEach(p => {
-    if (p.boxHelper) p.boxHelper.visible = false
-  })
-
-  // Найти нужный пенал и включить подсветку
-  const penal =  plannerConfig.penalsArray.find(p => p.id === id)
-  if (penal && penal.boxHelper) {
-    penal.boxHelper.visible = true
-  }
-
-  penalBuilder.value.sceneSetup.requestRender()
-}
-
-// Очистка подсветки
-function clearHighlight() {
-  hoveredPenalId.value = null
-   plannerConfig.penalsArray.forEach(p => {
-    if (p.boxHelper) p.boxHelper.visible = false
-  })
-  penalBuilder.value.sceneSetup.requestRender()
-
-}
 
 
 
@@ -581,7 +569,7 @@ function addDirectLeftPenal() {
 }
 
 
- function clear(){
+function clear(){
     // удалить раковину
       ['SinkNormal', 'sinkModel'].forEach((name) => {
       cabinetBuilder.value.scene.children
@@ -605,11 +593,52 @@ function addDirectLeftPenal() {
 
     // this.KitchenSizes.dishwasher.size = 0
     // this.KitchenSizes.oven.size = 0
+}
+function highlightPenal(id) {
+  hoveredPenalId.value = id
+  console.log('id', id)
+
+  // Скрыть все подсветки
+  plannerConfig.penalsArray.forEach(p => {
+    if (p.boxHelper) p.boxHelper.visible = false
+  })
+
+  // Найти нужный пенал и включить подсветку
+  const penal =  plannerConfig.penalsArray.find(p => p.id === id)
+  if (penal && penal.boxHelper) {
+    penal.boxHelper.visible = true
   }
+
+  penalBuilder.value.sceneSetup.requestRender()
+}
+
+// Очистка подсветки
+function clearHighlight() {
+  hoveredPenalId.value = null
+   plannerConfig.penalsArray.forEach(p => {
+    if (p.boxHelper) p.boxHelper.visible = false
+  })
+  penalBuilder.value.sceneSetup.requestRender()
+
+}
+
 
 
 </script>
 <style scoped>
+
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+
 .radio-card {
   @apply border-2 border-gray-300 rounded-lg cursor-pointer transition-all duration-200;
   @apply flex items-center justify-center text-center;

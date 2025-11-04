@@ -84,12 +84,12 @@ export const usePlannerStore = defineStore("plannerStore", () => {
 
   const objectMenu = ref(false)
   const objectMenuL2 = ref(false)
+  const changeMenu = ref(false)
 
-  //самый правый пустой первого уровня
-  //const isRightmost = ref (false)
+  const selectedType = ref(null)
+  const selectedWidth = ref(null)
 
-  //самый правый модуль это пенал
- // const isPenalRightCorner = ref(false)
+
 
 
   //только пенал в меню
@@ -126,6 +126,9 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     sectorReady,
     onlyPenal,
     anyModule,
-    emptyPosition
+    emptyPosition,
+    selectedType,
+    selectedWidth,
+    changeMenu
   };
 });
