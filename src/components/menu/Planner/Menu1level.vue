@@ -7,7 +7,7 @@
       left: (plannerStore.emptyPosition.x +10  ) + 'px',
     }"
   >
-    <img src="/img/penals/penal1.png" alt="Модуль" class="w-full h-full object-contain p-4">
+    <img src="/img/penals/penal2.png" alt="Модуль" class="w-full h-full object-contain p-4">
   </div>
 
   <!-- Панель с характеристиками -->

@@ -18,43 +18,43 @@ export class TableTop {
 
  
 
-groupModulesForCountertops() {
-  const tolerance = 0.01; // 2 мм
-  const filteredModels = plannerConfig.modelsDirect.filter(m => m.name !== 'penal');
+  groupModulesForCountertops() {
+    const tolerance = 0.01; // 2 мм
+    const filteredModels = plannerConfig.modelsDirect.filter(m => m.name !== 'penal' && m.name !=='fridge');
 
-  // Сортируем по X
-  filteredModels.sort((a, b) => a.root.position.x - b.root.position.x);
+    // Сортируем по X
+    filteredModels.sort((a, b) => a.root.position.x - b.root.position.x);
 
-  const groups = [];
-  let currentGroup = [];
+    const groups = [];
+    let currentGroup = [];
 
-  for (let i = 0; i < filteredModels.length; i++) {
-    const current = filteredModels[i];
-    const next = filteredModels[i + 1];
+    for (let i = 0; i < filteredModels.length; i++) {
+      const current = filteredModels[i];
+      const next = filteredModels[i + 1];
 
-    const box1 = new THREE.Box3().setFromObject(current.root);
-    currentGroup.push(current);
+      const box1 = new THREE.Box3().setFromObject(current.root);
+      currentGroup.push(current);
 
-    if (next) {
-      const box2 = new THREE.Box3().setFromObject(next.root);
-      const gap = box2.min.x - box1.max.x;
+      if (next) {
+        const box2 = new THREE.Box3().setFromObject(next.root);
+        const gap = box2.min.x - box1.max.x;
 
-      if (gap > tolerance) {
+        if (gap > tolerance) {
+          groups.push(currentGroup);
+          currentGroup = [];
+        }
+      } else {
         groups.push(currentGroup);
-        currentGroup = [];
       }
-    } else {
-      groups.push(currentGroup);
     }
-  }
 
-  return groups;
-}
+    return groups;
+  }
 
 
   groupModulesForCountertopsLeft() {
     const tolerance = 0.02; // 2 мм (если 1 единица = 1 метр)
-     const filteredModels = plannerConfig.modelsLeft.filter(m => m.name !== 'penal');
+     const filteredModels = plannerConfig.modelsLeft.filter(m => m.name !== 'penal' && m.name !=='fridge');
 
     // сортируем по X
     filteredModels.sort((a, b) => a.root.position.z - b.root.position.z);

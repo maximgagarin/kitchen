@@ -429,10 +429,16 @@ export class PlannerManager {
 
     //содание массивов для проверки
 
-    if (side === "direct")
-      plannerConfig.arraySwap = plannerConfig.modelsDirect2L;
+    plannerConfig.modelsDirect2L.sort((a,b) => a.root.position.x - b.root.position.x)
+    plannerConfig.modelsLeft2L.sort((a,b) => a.root.position.z - b.root.position.z)
+    plannerConfig.modelsRight2L.sort((a,b) => a.root.position.z - b.root.position.z)
+
+    if (side === "direct")plannerConfig.arraySwap = plannerConfig.modelsDirect2L;
     if (side === "left") plannerConfig.arraySwap = plannerConfig.modelsLeft2L;
     if (side === "right") plannerConfig.arraySwap = plannerConfig.modelsRight2L;
+
+
+
 
     this.utils.roomBounds();
 

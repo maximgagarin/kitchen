@@ -4,10 +4,10 @@
     v-if="hoveredItem"
       :style="{
       top: (plannerStore.emptyPosition.y  - 360) + 'px',
-      left: (plannerStore.emptyPosition.x +10  ) + 'px',
+      left: (plannerStore.emptyPosition.x +50  ) + 'px',
     }"
   >
-    <img src="/img/penals/penal1.png" alt="Модуль" class="w-full h-full object-contain p-4">
+    <img src="/img/penals/penal2.png" alt="Модуль" class="w-full h-full object-contain p-4">
   </div>
 
   <!-- Панель с характеристиками -->
@@ -16,16 +16,9 @@
     class="fixed  w-[400px] p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
         :style="{
       top: plannerStore.emptyPosition.y + 'px',
-      left: plannerStore.emptyPosition.x + 'px',
+      left: (plannerStore.emptyPosition.x +50 ) + 'px',
     }"
   >
-    <!-- Заголовок -->
-    <div class="flex items-center justify-between mb-2">
-      <span class="font-medium text-gray-700 truncate">
-        {{ plannerStore.selectedObject.name }}
-      </span>
-      <!-- <button class="text-gray-500 hover:text-red-500 text-xs" @click="deleteSelected">✕ удалить</button> -->
-    </div>
 
     <div class="flex items-center justify-between mb-2">
       <p class="text-gray-600">Сменить модуль</p>
