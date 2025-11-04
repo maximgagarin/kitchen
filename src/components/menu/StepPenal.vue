@@ -4,7 +4,7 @@
 
     <!-- Блок превью -->
   <div
-    class="fixed top-20 right-[70vh] w-[300px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-100"
+    class="fixed top-20 right-[450px] w-[300px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-100"
     :style="{
       
       opacity: hoveredItem ? 1 : 0,
