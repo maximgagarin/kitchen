@@ -13,19 +13,19 @@
   <!-- Панель с характеристиками -->
   <div
     v-if="plannerStore.objectMenu"
-    class="fixed  w-[400px] p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
+    class="fixed  w-[420px] p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
         :style="{
       top: plannerStore.emptyPosition.y + 'px',
       left: plannerStore.emptyPosition.x + 'px',
     }"
   >
     <!-- Заголовок -->
-    <div class="flex items-center justify-between mb-2">
+    <!-- <div class="flex items-center justify-between mb-2">
       <span class="font-medium text-gray-700 truncate">
         {{ plannerStore.selectedObject.name }}
       </span>
-      <!-- <button class="text-gray-500 hover:text-red-500 text-xs" @click="deleteSelected">✕ удалить</button> -->
-    </div>
+      <button class="text-gray-500 hover:text-red-500 text-xs" @click="deleteSelected">✕ удалить</button>
+    </div> -->
 
     <div class="flex items-center justify-between mb-2">
       <p class="text-gray-600">Добавить модуль</p>
@@ -52,9 +52,10 @@
           v-model="selectedType"
           @change="onTypeChange"
         />
-        <span>{{ option.label }}</span>
+       <img  :src="option.src" alt="Описание иконки" width="32" height="32">
       </label>
     </div>
+    
 
     <!-- Контейнер для выбора размера/пенала -->
     <div class="flex flex-col gap-2">
@@ -155,14 +156,14 @@ const hoveredItem = ref(null);
 
 
 const typeOptions = computed(() => [
-  { value: "cd", label: "с" },
-  { value: "c1", label: "1 ящ" },
-  { value: "c2", label: "2 ящ" },
-  { value: "c3", label: "3 ящ" },
-  { value: "ms", label: "мойка" },
+  { value: "cd", label: "с" , src: '/img/icons/c.png' },
+  { value: "c1", label: "1 ящ" , src: '/img/icons/c1.png' },
+  { value: "c2", label: "2 ящ" , src: '/img/icons/c2.png'},
+  { value: "c3", label: "3 ящ" , src: '/img/icons/c3.png'},
+  { value: "ms", label: "мойка" , src: '/img/icons/sink.png'},
 
-  { value: "su", label: "su" },
-  { value: "penal", label: "Пенал" },
+  { value: "su", label: "su" ,  src: '/img/icons/cabinet_1.png' },
+  { value: "penal", label: "Пенал" ,  src: '/img/icons/penal.png'},
 ]);
 
 
