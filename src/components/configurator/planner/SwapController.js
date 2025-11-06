@@ -173,7 +173,7 @@ export class SwapController {
 
   doSwapInSector() {
     this.checkCollisionInSector(plannerConfig.selectedInSector);
-    console.log("firstCollisionInSector", this.firstCollisionInSector);
+ //   console.log("firstCollisionInSector", this.firstCollisionInSector);
     const swapCandidate = this.checkSwapCandidateInSector();
     //   console.log('swapCand', swapCandidate)
 

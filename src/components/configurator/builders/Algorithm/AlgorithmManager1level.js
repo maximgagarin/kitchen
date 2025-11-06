@@ -92,7 +92,7 @@ export class AlgorithmManager1level {
 
 
 
-    //plannerConfig.boxesArray.length = 0;
+   
 
     this.deleteDirect()
     this.deleteLeft()

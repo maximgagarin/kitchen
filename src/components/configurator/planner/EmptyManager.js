@@ -232,8 +232,7 @@ export class EmptyManager {
   }
 
   calculateEmpties() {
-    //
-    //  if()
+
 
     this.removeObjectsByName("gapBox1level");
     this.removeObjectsByName("gapBoxLeft1level");
@@ -242,7 +241,7 @@ export class EmptyManager {
     plannerConfig.empties2levelLeft.length = 0;
 
     if (plannerConfig.modelsDirect.length >= 0) {
-      this.createGapBoxes();
+     this.createGapBoxes();
     }
     if (
       this.kitchenStore.type === "left" &&
@@ -251,6 +250,16 @@ export class EmptyManager {
       this.createGapBoxesLeft();
     }
   }
+
+  castShadow(cabinet){
+    cabinet.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }
+
 
   addToEmpty(type, width, penal = null) {
     const id = THREE.MathUtils.generateUUID();
@@ -323,6 +332,12 @@ export class EmptyManager {
     }
 
     const cabinet = this.loaderModels.get(cabinetName);
+
+ //   this.castShadow(cabinet)
+
+
+
+
 
     plannerConfig.namesToDelete.push(cabinetName);
     cabinet.visible = true;

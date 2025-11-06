@@ -2,6 +2,7 @@
 
 
   <ShowError />
+  <SettingsButtons />
 
 
   <div
@@ -66,7 +67,7 @@
           Далее
         </button>
       </div>
-       <!-- <button @click="showConfig">конфиг</button> -->
+       <button @click="showConfig">конфиг</button>
     </div>
   </div>
 </template>
@@ -95,6 +96,7 @@ import { algorithmConfig } from "../configurator/builders/Algorithm/algorithmCon
 import { plannerConfig } from "../configurator/planner/planerConfig";
 import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
 import { useUiStore } from "../../pinia/Ui";
+import SettingsButtons from "./components/SettingsButtons.vue";
 
 const kitchenSizes = useKitchenSizesStore();
 const uiStore  = useUiStore()

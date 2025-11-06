@@ -223,7 +223,7 @@ export const doorMaterial = [
 ];
 
 export const basicMaterial = new THREE.MeshStandardMaterial({
-  color: 0xf2f2f2,
+  color:0xDCDCDC,
 });
 
 export const BoxForSinkMaterial = new THREE.MeshStandardMaterial({

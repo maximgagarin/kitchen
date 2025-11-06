@@ -45,6 +45,14 @@ const algorithmManager = ref(null);
 const plannerManager = ref(null)
 
 const showLoading = ref(true);
+const icons = [
+  '/img/icons/c.png',
+  '/img/icons/c1.png',
+  '/img/icons/c2.png',
+  '/img/icons/c3.png',
+  '/img/icons/sink.png',
+  '/img/icons/penal.png'
+]
 
 
 const penalStore = usePenalStore()
@@ -66,9 +74,17 @@ provide("plannerManager", plannerManager);
 
 
 onMounted(() => {
-    setTimeout(() => {
+  setTimeout(() => {
     showLoading.value = false;
   }, 5000);
+
+    icons.forEach(src => {
+    const link = document.createElement('link')
+    link.rel = 'preload'
+    link.as = 'image'
+    link.href = src
+    document.head.appendChild(link)
+  })
   
   const init = new Init()
   init.start()

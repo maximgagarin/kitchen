@@ -74,7 +74,7 @@ export const plannerConfig = {
 
 
     //движение внутри секора
-    isSector:false,
+  
     selectedInSector:false,
     setFromObject:null,
 
@@ -109,10 +109,6 @@ export const plannerConfig = {
     emptiesObjectsLeft:[],
 
 
-    // массив пустых промежутков боксов
-    boxesArrayDirect:[],
-    boxesArrayLeft:[],
-    boxesArray:[],
 
     point:null,
 

@@ -407,5 +407,21 @@ export class UtilsManager {
     this.sceneSetup.requestRender();
   }
 
+  shadow(){
+      //   включить тень
+    const excludedNames = ['p', 'm', 'd'];
+
+    plannerConfig.models.forEach(model => {
+      if (!excludedNames.includes(model.name)) {
+        model.root.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+      }
+    });
+  }
+
 
 }

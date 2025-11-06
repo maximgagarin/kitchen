@@ -304,6 +304,12 @@ export class PlannerManager {
       plannerConfig.selectedObject.boxHelper.visible = false;
     }
 
+    if (plannerConfig.selectedInSector) { 
+   
+      plannerConfig.selectedInSector.boxHelper.visible = false;
+      plannerConfig.selectedInSector = false;
+    }
+
     //  удлить из стора если кликаем в пустоту
     plannerConfig.selectedObject = false;
     this.selectedPenal = null;
@@ -320,6 +326,7 @@ export class PlannerManager {
        this.plannerStore.selectedType = null
     this.plannerStore.selectedWidth = null
       this.plannerStore.changeMenu = false;
+      this.plannerStore.sectorMenu = false;
 
 
     this.sceneSetup.requestRender();
@@ -443,6 +450,7 @@ export class PlannerManager {
     this.utils.roomBounds();
 
     //  this.controls.enabled = false
+
     plannerConfig.selectedObject.controls.forEach((model) => {
       model.visible = true;
     });
@@ -462,10 +470,6 @@ export class PlannerManager {
         .sub(planeHit.point);
     }
 
-    const otherBox = new THREE.Box3().setFromObject(
-      plannerConfig.selectedObject.root
-    );
-    //    console.log('otherBox', otherBox)
 
     const objectSize = new THREE.Vector3();
     const box = new THREE.Box3().setFromObject(
@@ -483,7 +487,9 @@ export class PlannerManager {
       this.plannerStore.sectorReady = plannerConfig.selectedObject.ready;
 
       plannerConfig.selectedSector = plannerConfig.selectedObject;
+
       this.emptyManager2L.calcEmptyInSector();
+
       const intersectsModules = this.raycaster.intersectObjects(
         plannerConfig.selectedObject.modules.map((m) => m.raycasterBox),
         false
@@ -505,9 +511,14 @@ export class PlannerManager {
 
         plannerConfig.selectedEmptyInSector = empty;
 
+        this.plannerStore.empty2levelHeight = empty.userData.height
+
         const box = new THREE.Box3().setFromObject(
           plannerConfig.selectedEmptyInSector
         );
+
+
+
         plannerConfig.selectedEmptyInSectorMinY = box.min.y;
 
         plannerConfig.selectedEmptyInSectorWorldPos =
@@ -515,7 +526,7 @@ export class PlannerManager {
             new THREE.Vector3()
           );
 
-        this.plannerStore.objectMenuL2 = true;
+        this.plannerStore.sectorMenu = true;
       }
 
       //выделенный модуль в секторе
@@ -527,8 +538,9 @@ export class PlannerManager {
           (m) => m.id == id
         );
         // console.log(controller)
-        plannerConfig.isSector = true;
+        this.moveInSector.isMoving = true;
         plannerConfig.selectedInSector = model;
+        plannerConfig.selectedInSector.boxHelper.visible = true;
       }
     }
   }
@@ -737,7 +749,7 @@ export class PlannerManager {
       this.epmtyBoxesMouseOver();
     }
 
-    if (plannerConfig.isSector && !this.isMoving) {
+    if ( this.moveInSector.isMoving && !this.isMoving) {
       this.moveInSector.move();
       this.swapController.doSwapInSector();
     }
@@ -790,16 +802,7 @@ export class PlannerManager {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.moveController.raycaster.setFromCamera(this.mouse, this.camera);
 
-    //группировка
-    if (plannerConfig.ctrlPressed && plannerConfig.selectedObject) {
-      const intersectsModules = this.raycaster.intersectObjects(
-        plannerConfig.models.map((m) => m.raycasterBox),
-        false
-      );
-      this.combinationController.checkCandidate(intersectsModules);
-      this.clearSettings();
-      return;
-    }
+ 
 
     //вставка в сектор
     if (plannerConfig.modelToGroup) {
@@ -839,11 +842,7 @@ export class PlannerManager {
       plannerConfig.iconsArray1L,
       true
     );
-    plannerConfig.boxesArray.length = 0;
-    plannerConfig.boxesArray.push(
-      ...plannerConfig.boxesArrayDirect,
-      ...plannerConfig.boxesArrayLeft
-    );
+
 
     if (intersectsEmpties.length > 0) {
     //  console.log(intersectsEmpties[0].object);
@@ -855,11 +854,7 @@ export class PlannerManager {
       true
     );
 
-    plannerConfig.boxesArray.length = 0;
-    plannerConfig.boxesArray.push(
-      ...plannerConfig.boxesArrayDirect,
-      ...plannerConfig.boxesArrayLeft
-    );
+
 
     if (intersectsEmpties.length > 0) {
       this.emptiesIntersetsClick(intersectsEmpties[0].object);
@@ -926,8 +921,8 @@ export class PlannerManager {
     if (plannerConfig.selectedObject.name == "sector")
       this.emptyManager2L.calcEmptyInSector();
 
-    plannerConfig.isSector = false;
-    plannerConfig.selectedInSector = false;
+    this.moveInSector.isMoving = false;
+    
 
     if (plannerConfig.copyObject) {
    //   console.log("plannerConfig.copyObject");
@@ -1018,6 +1013,12 @@ export class PlannerManager {
     this.utils.calcCornerModules2L();
     //   this.utils.roomBoundsPenal()
 
+
+
+
+
+
+
     this.sceneSetup.requestRender();
     this.container.addEventListener("mousemove", this.mouseSync);
     this.container.addEventListener("mousedown", this.onMouseDown);
@@ -1051,10 +1052,11 @@ export class PlannerManager {
       plannerConfig.copyObjectFullName = "";
       this.plannerStore.objectMenuL2 = false;
       this.plannerStore.changeMenu = false;
+      this.plannerStore.sectorMenu = false
 
       plannerConfig.selectedEmpty2L = false;
-         this.plannerStore.selectedType = null
-    this.plannerStore.selectedWidth =null
+      this.plannerStore.selectedType = null
+      this.plannerStore.selectedWidth =null
 
       // this.plannerStore.selectedObject.name = null;
     }

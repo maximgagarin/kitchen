@@ -306,7 +306,7 @@ export class LoaderModels {
         // object.position.sub(center);
 
         const group = new THREE.Group();
-        group.add(object);
+         group.add(object);
         // object.traverse((child) => {
         //     if (child.isMesh) {
         //       addOutline(child)
@@ -314,6 +314,13 @@ export class LoaderModels {
         //   });
 
         //материал для стекла
+
+          //  object.traverse((child) => {
+          //   if (child.isMesh) {
+          //      child.receiveShadow = true
+          //      child.castShadow = true
+          //   }
+          // });
      
 
 

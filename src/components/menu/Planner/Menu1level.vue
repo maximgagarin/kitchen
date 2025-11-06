@@ -1,13 +1,23 @@
 <template>
     <div
-    class="fixed top-20 right-[70vh] w-[350px] h-[350px] mr-4 bg-gray-100 pointer-events-none rounded-md shadow-lg"
-    v-if="hoveredItem"
+    class="fixed w-[350px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-300"
+    
       :style="{
       top: (plannerStore.emptyPosition.y  - 360) + 'px',
       left: (plannerStore.emptyPosition.x +10  ) + 'px',
+            opacity: hoveredItem ? 1 : 0,
+      transform: hoveredItem ? 'scale(1)' : 'scale(0.95)',
     }"
   >
-    <img src="/img/penals/penal2.png" alt="Модуль" class="w-full h-full object-contain p-4">
+      <transition name="fade" mode="out-in">
+      <img
+        v-if="hoveredItem"
+        :key="hoveredItem.img"
+        :src="hoveredItem.img"
+        alt="Модуль"
+        class="w-full h-full object-contain p-4"
+      />
+    </transition>
   </div>
 
   <!-- Панель с характеристиками -->
@@ -52,7 +62,7 @@
           v-model="selectedType"
           @change="onTypeChange"
         />
-       <img  :src="option.src" alt="Описание иконки" width="32" height="32">
+       <img  :src="option.icon" alt="Описание иконки" width="32" height="32">
       </label>
     </div>
     
@@ -155,16 +165,16 @@ const hoveredItem = ref(null);
 
 
 
-const typeOptions = computed(() => [
-  { value: "cd", label: "с" , src: '/img/icons/c.png' },
-  { value: "c1", label: "1 ящ" , src: '/img/icons/c1.png' },
-  { value: "c2", label: "2 ящ" , src: '/img/icons/c2.png'},
-  { value: "c3", label: "3 ящ" , src: '/img/icons/c3.png'},
-  { value: "ms", label: "мойка" , src: '/img/icons/sink.png'},
+const typeOptions =  [
+  { value: "cd", label: "с" , icon: '/img/icons/c.png',  img: '/img/modules/c.png' },
+  { value: "c1", label: "1 ящ" , icon: '/img/icons/c1.png' ,  img: '/img/modules/c1.png' },
+  { value: "c2", label: "2 ящ" , icon: '/img/icons/c2.png' ,  img: '/img/modules/c2.png' },
+  { value: "c3", label: "3 ящ" , icon: '/img/icons/c3.png' ,  img: '/img/modules/c3.png' },
+  { value: "ms", label: "мойка" , icon: '/img/icons/sink.png' ,  img: '/img/modules/sink.png' },
 
-  { value: "su", label: "su" ,  src: '/img/icons/cabinet_1.png' },
-  { value: "penal", label: "Пенал" ,  src: '/img/icons/penal.png'},
-]);
+  { value: "su", label: "su" ,  icon: '/img/icons/cabinet_1.png' ,  img: '/img/modules/c1.png' },
+  { value: "penal", label: "Пенал" ,  icon: '/img/icons/penal.png' ,  img: '/img/modules/penal.png' },
+];
 
 
 
@@ -196,3 +206,13 @@ watch(selectedType, (newVal) => {
 });
 
 </script>
+<style scoped> 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

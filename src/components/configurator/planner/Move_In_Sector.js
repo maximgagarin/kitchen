@@ -1,10 +1,12 @@
 import * as THREE from "three";
 import { plannerConfig } from "./planerConfig";
 import { useKitchenSizesStore } from "../../../pinia/kitchenSizes";
+import { useMouseStore } from "../../../pinia/mouseStore";
 
 
 export class MoveInSector {
   constructor(sceneSetup) {
+    this.isMoving = false
     this.objectSize = new THREE.Vector3();
     this.sceneSetup = sceneSetup;
     this.scene = sceneSetup.scene;
@@ -13,15 +15,18 @@ export class MoveInSector {
     this.mouse = new THREE.Vector2();
     this.camera = this.sceneSetup.camera;
     this.kitchenStore = useKitchenSizesStore();
+    this.mouseStore = useMouseStore()
+
 
   }
 
   move() {
+    this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
     const is900 = this.kitchenStore.modules_height.height2level == 0.9
     this.raycaster.setFromCamera(this.mouse, this.camera);
     let intersects
 
-     if(plannerConfig.selectedSector.side == 'direct'){
+    if(plannerConfig.selectedSector.side == 'direct'){
       intersects = this.raycaster.intersectObject(plannerConfig.directPlane2level);
     }
 

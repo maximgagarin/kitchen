@@ -80,11 +80,13 @@ export const usePlannerStore = defineStore("plannerStore", () => {
 
   const sectorWidth = ref(0.4)
   const sectorReady = ref(false)
+  const empty2levelHeight = ref(false)
 
 
   const objectMenu = ref(false)
   const objectMenuL2 = ref(false)
   const changeMenu = ref(false)
+  const sectorMenu = ref(false)
 
   const selectedType = ref(null)
   const selectedWidth = ref(null)
@@ -129,6 +131,8 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     emptyPosition,
     selectedType,
     selectedWidth,
-    changeMenu
+    changeMenu,
+    sectorMenu,
+    empty2levelHeight
   };
 });

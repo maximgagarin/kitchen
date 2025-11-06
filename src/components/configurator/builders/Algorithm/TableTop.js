@@ -4,23 +4,20 @@ import { plannerConfig } from "../../planner/planerConfig";
 import { CSG } from "three-csg-ts";
 import { MaterialManager } from "../../MaterialManager";
 
-
 export class TableTop {
   constructor(sceneSetup, loaderModels) {
     this.sceneSetup = sceneSetup;
     this.scene = this.sceneSetup.scene;
     this.loaderModels = loaderModels;
-    this.materialManager = new MaterialManager()
-    this.materialManager.start()
+    this.materialManager = new MaterialManager();
+    this.materialManager.start();
   }
-
- 
-
- 
 
   groupModulesForCountertops() {
     const tolerance = 0.01; // 2 мм
-    const filteredModels = plannerConfig.modelsDirect.filter(m => m.name !== 'penal' && m.name !=='fridge');
+    const filteredModels = plannerConfig.modelsDirect.filter(
+      (m) => m.name !== "penal" && m.name !== "fridge"
+    );
 
     // Сортируем по X
     filteredModels.sort((a, b) => a.root.position.x - b.root.position.x);
@@ -51,15 +48,16 @@ export class TableTop {
     return groups;
   }
 
-
   groupModulesForCountertopsLeft() {
     const tolerance = 0.02; // 2 мм (если 1 единица = 1 метр)
-     const filteredModels = plannerConfig.modelsLeft.filter(m => m.name !== 'penal' && m.name !=='fridge');
+    const filteredModels = plannerConfig.modelsLeft.filter(
+      (m) => m.name !== "penal" && m.name !== "fridge"
+    );
 
     // сортируем по X
     filteredModels.sort((a, b) => a.root.position.z - b.root.position.z);
 
-  //  console.log('modelsSortLeft', models)
+    //  console.log('modelsSortLeft', models)
 
     const groups = [];
     let currentGroup = [];
@@ -74,7 +72,6 @@ export class TableTop {
       if (next) {
         const box2 = new THREE.Box3().setFromObject(next.root);
         const gap = box2.min.z - box1.max.z;
-       
 
         // если есть зазор больше допустимого — закрываем группу
         if (gap > tolerance) {
@@ -90,160 +87,166 @@ export class TableTop {
     return groups;
   }
 
-  createTableTops(parts){
-  //  console.log('parts', parts)
-      // удаляем старые столешницы из сцены
-      plannerConfig.tabletops.forEach(top => this.scene.remove(top));
-      plannerConfig.tabletops.length = 0;  
-      const countertopHeight = 0.036; 
-      const countertopDepth = 0.6;
+  createTableTops(parts) {
+    //  console.log('parts', parts)
+    // удаляем старые столешницы из сцены
+    plannerConfig.tabletops.forEach((top) => this.scene.remove(top));
+    plannerConfig.tabletops.length = 0;
+    const countertopHeight = 0.036;
+    const countertopDepth = 0.6;
 
-      const countertops = [];
+    const countertops = [];
 
-      parts.forEach((group) => {
-          let isSink = false;
-          let boxForHole;
+    parts.forEach((group) => {
+      let isSink = false;
+      let boxForHole;
 
-          const groupBox = new THREE.Box3();
-          group.forEach(model => {
-            if(model.name === 'm'){ 
-              isSink = true;
-              boxForHole = model.root.getObjectByName('BoxForHole');
-        //      console.log('bxHole', boxForHole)
-              if (boxForHole) boxForHole.visible = false;
-            } 
-            const box = new THREE.Box3().setFromObject(model.root);
-            groupBox.union(box);
-          });
+      const groupBox = new THREE.Box3();
+      group.forEach((model) => {
+        if (model.name === "m") {
+          isSink = true;
+          boxForHole = model.root.getObjectByName("BoxForHole");
+          //      console.log('bxHole', boxForHole)
+          if (boxForHole) boxForHole.visible = false;
+        }
+        const box = new THREE.Box3().setFromObject(model.root);
+        groupBox.union(box);
+      });
 
-          const width = groupBox.max.x - groupBox.min.x;
-          const depth = groupBox.max.z - groupBox.min.z;
+      const width = groupBox.max.x - groupBox.min.x;
+      const depth = groupBox.max.z - groupBox.min.z;
       //    console.log('width', width)
 
-          const atlas = this.materialManager.setTexture(width, 'x') 
+      const atlas = this.materialManager.setTexture(width, "x");
 
-          const geometry = new THREE.BoxGeometry(width, countertopHeight, countertopDepth);
-          const tabletop = new THREE.Mesh(geometry, atlas);
+      const geometry = new THREE.BoxGeometry(
+        width,
+        countertopHeight,
+        countertopDepth
+      );
+      const tabletop = new THREE.Mesh(geometry, atlas);
 
-          tabletop.position.set(
-            groupBox.min.x + width / 2,
-            0.835,
-            groupBox.min.z + depth / 2
-          );
+      tabletop.position.set(
+        groupBox.min.x + width / 2,
+        0.835,
+        groupBox.min.z + depth / 2
+      );
 
-       //   console.log('tabletop', tabletop)
-       //   console.log('boxHole', boxForHole)
+      //   console.log('tabletop', tabletop)
+      //   console.log('boxHole', boxForHole)
 
-          if(isSink && boxForHole){
-         //   console.log('makeHole')
-            const newTabletop = this.makeHole(tabletop, boxForHole);
-            this.scene.remove(tabletop);
-            newTabletop.position.copy(tabletop.position);
-            this.scene.add(newTabletop);
-            plannerConfig.tabletops.push(newTabletop);
-          } else {
-            this.scene.add(tabletop);
-            plannerConfig.tabletops.push(tabletop);
-          }
-      });
+      if (isSink && boxForHole) {
+        //   console.log('makeHole')
+        const newTabletop = this.makeHole(tabletop, boxForHole);
+        this.scene.remove(tabletop);
+        newTabletop.position.copy(tabletop.position);
+        this.scene.add(newTabletop);
+        plannerConfig.tabletops.push(newTabletop);
+      } else {
+        this.scene.add(tabletop);
+        plannerConfig.tabletops.push(tabletop);
+      }
+    });
   }
 
   createTableTopsLeft(parts) {
-  // удаляем старые столешницы левой стороны
-  plannerConfig.tabletopsLeft.forEach(top => this.scene.remove(top));
-  plannerConfig.tabletopsLeft.length = 0;
+    // удаляем старые столешницы левой стороны
+    plannerConfig.tabletopsLeft.forEach((top) => this.scene.remove(top));
+    plannerConfig.tabletopsLeft.length = 0;
 
-  const countertopHeight = 0.036;
-  const countertopDepth = 0.6;
+    const countertopHeight = 0.036;
+    const countertopDepth = 0.6;
 
-  parts.forEach(group => {
-    let isSink = false;
-    let boxForHole;
+    parts.forEach((group) => {
+      let isSink = false;
+      let boxForHole;
 
-    const groupBox = new THREE.Box3();
-    group.forEach(model => {
-      if (model.name === 'm') {
-        isSink = true;
-        boxForHole = model.root.getObjectByName('BoxForHole');
-        if (boxForHole) boxForHole.visible = false;
+      const groupBox = new THREE.Box3();
+      group.forEach((model) => {
+        if (model.name === "m") {
+          isSink = true;
+          boxForHole = model.root.getObjectByName("BoxForHole");
+          if (boxForHole) boxForHole.visible = false;
+        }
+        const box = new THREE.Box3().setFromObject(model.root);
+        groupBox.union(box);
+      });
+
+      const width = groupBox.max.x - groupBox.min.x;
+      const depth = groupBox.max.z - groupBox.min.z;
+
+      //   console.log('width', width)
+      //   console.log('depth', depth)
+
+      const atlas = this.materialManager.setTexture(depth, "z");
+
+      const geometry = new THREE.BoxGeometry(
+        countertopDepth,
+        countertopHeight,
+        depth
+      );
+      const tabletop = new THREE.Mesh(geometry, atlas);
+
+      tabletop.position.set(0.3, 0.835, groupBox.min.z + depth / 2);
+
+      if (isSink && boxForHole) {
+        const newTabletop = this.makeHole(tabletop, boxForHole);
+        this.scene.remove(tabletop);
+        newTabletop.position.copy(tabletop.position);
+        this.scene.add(newTabletop);
+        plannerConfig.tabletopsLeft.push(newTabletop);
+      } else {
+        this.scene.add(tabletop);
+        plannerConfig.tabletopsLeft.push(tabletop);
       }
-      const box = new THREE.Box3().setFromObject(model.root);
-      groupBox.union(box);
     });
+  }
 
-    
-
-    const width = groupBox.max.x - groupBox.min.x;
-    const depth = groupBox.max.z - groupBox.min.z;
-
- //   console.log('width', width)
- //   console.log('depth', depth)
-
-
-    const atlas = this.materialManager.setTexture(depth , 'z');
-
-    const geometry = new THREE.BoxGeometry( countertopDepth,  countertopHeight, depth );
-    const tabletop = new THREE.Mesh(geometry, atlas);
-
-    tabletop.position.set(
-      0.3,
-      0.835,
-      groupBox.min.z + depth / 2
-    );
-
-    if (isSink && boxForHole) {
-      const newTabletop = this.makeHole(tabletop, boxForHole);
-      this.scene.remove(tabletop);
-      newTabletop.position.copy(tabletop.position);
-      this.scene.add(newTabletop);
-      plannerConfig.tabletopsLeft.push(newTabletop);
-    } else {
-      this.scene.add(tabletop);
-      plannerConfig.tabletopsLeft.push(tabletop);
-    }
-  });
-}
-
-
-  
-
-  setMaterial(){
+  setMaterial() {
     // материал для всех столешниц модулей
 
-    plannerConfig.modelsDirect.forEach(model=>{
-      if (['penal', 'fridge'].includes(model.name)) return;
-    //  const width = Number((model.width).toFixed(2))
-     // const atlas = this.materialManager.setTexture(width, 'x') 
-       model.tabletop.material = new THREE.MeshPhysicalMaterial({
-        color: 'grey'
+    plannerConfig.modelsDirect.forEach((model) => {
+      if (["penal", "fridge"].includes(model.name)) return;
+      //  const width = Number((model.width).toFixed(2))
+      // const atlas = this.materialManager.setTexture(width, 'x')
+      model.tabletop.material = new THREE.MeshPhysicalMaterial({
+        color: "grey",
       });
-    })
-    plannerConfig.modelsLeft.forEach(model=>{
-      if (['penal', 'fridge'].includes(model.name)) return;
+    });
+    plannerConfig.modelsLeft.forEach((model) => {
+      if (["penal", "fridge"].includes(model.name)) return;
 
-    //  const width = Number((model.width).toFixed(2))
-  //    const atlas = this.materialManager.setTexture(width, 'z') 
+      //  const width = Number((model.width).toFixed(2))
+      //    const atlas = this.materialManager.setTexture(width, 'z')
 
       model.tabletop.material = new THREE.MeshPhysicalMaterial({
-        color: 'grey'
+        color: "grey",
       });
-    })
+    });
+  }
+
+  castShadow(){
+    plannerConfig.tabletops.forEach((item) => {
+      item.castShadow = true;
+      item.receiveShadow = true;
+    });
   }
 
   create() {
-    this.removeObjectsByName('tabletop1')
-    this.removeObjectsByName('tableTopSink')
+    this.removeObjectsByName("tabletop1");
+    this.removeObjectsByName("tableTopSink");
 
-    const parts = this.groupModulesForCountertops()
-    const partsLeft = this.groupModulesForCountertopsLeft()
+    const parts = this.groupModulesForCountertops();
+    const partsLeft = this.groupModulesForCountertopsLeft();
 
-  //  console.log('partsLeft', partsLeft)
+    //  console.log('partsLeft', partsLeft)
 
-  //  console.log('модули столешниц', parts )
-   this.createTableTops(parts)
-   this.createTableTopsLeft(partsLeft)
+    //  console.log('модули столешниц', parts )
+    this.createTableTops(parts);
+    this.createTableTopsLeft(partsLeft);
 
- 
+ //   this.castShadow()
+
   }
 
   makeHole(tableObject, box) {
@@ -307,22 +310,21 @@ export class TableTop {
         }
       }
     });
-// console.log(`Удалено объектов: ${objectsToRemove.length}`);
+    // console.log(`Удалено объектов: ${objectsToRemove.length}`);
   }
 
-
   removeObjectByUUID(uuid) {
-  const object = this.scene.getObjectByProperty('uuid', uuid);
-  if (object) {
-    this.scene.remove(object);
-    object.geometry?.dispose();
-    if (object.material) {
-      if (Array.isArray(object.material)) {
-        object.material.forEach(mat => mat.dispose());
-      } else {
-        object.material.dispose();
+    const object = this.scene.getObjectByProperty("uuid", uuid);
+    if (object) {
+      this.scene.remove(object);
+      object.geometry?.dispose();
+      if (object.material) {
+        if (Array.isArray(object.material)) {
+          object.material.forEach((mat) => mat.dispose());
+        } else {
+          object.material.dispose();
+        }
       }
     }
   }
-}
 }

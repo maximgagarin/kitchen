@@ -4,6 +4,7 @@
   <Menu1level />
   <Menu2level />
   <Menu1levelChange />
+  <MenuSector />
 
 
   <!-- <AccordionMenu @select="handleSelectModule" /> -->
@@ -94,6 +95,7 @@ import { useKitchenSizesStore } from "../../pinia/kitchenSizes";
 import Menu2level from "./Planner/Menu2level.vue";
 import Menu1levelChange from "./Planner/Menu1levelChange.vue";
 import Menu1level from "./Planner/Menu1level.vue";
+import MenuSector from "./Planner/MenuSector.vue";
 
 
 

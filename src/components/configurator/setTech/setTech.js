@@ -89,8 +89,9 @@ export class SetTech {
 
   //  console.log("SinkNormal", SinkNormal);
 
-    BoxForDelete.material.opacity = 0;
-    BoxForDelete.material.transparent = true;
+  //  BoxForDelete.material.opacity = 0;
+   // BoxForDelete.material.transparent = true;
+   BoxForDelete.visible = false
     return { SinkNormal, BoxForDelete };
   }
 

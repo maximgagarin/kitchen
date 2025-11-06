@@ -23,13 +23,13 @@
   <!-- Меню -->
   <div
     class="fixed w-[350px] p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
-    v-if="plannerStore.objectMenuL2"
+    v-if="plannerStore.sectorMenu"
     :style="{
       top: plannerStore.emptyPosition.y + 'px',
       left: (plannerStore.emptyPosition.x + 30) + 'px',
     }"
   >
-    <p class="mb-2 text-gray-600">Добавить модуль</p>
+    <p class="mb-2 text-gray-600">Добавить</p>
 
     <!-- Выбор типа -->
     <div class="flex flex-wrap gap-2 mb-3">
@@ -58,7 +58,7 @@
     <!-- Выбор ширины -->
     <div v-if="selectedType" class="flex flex-wrap gap-2">
       <label
-        v-for="(width, index) in plannerStore.modelsListL2[selectedType]"
+        v-for="(width, index) in filteredWidths"
         :key="index"
         class="cursor-pointer border rounded-lg px-2 py-1 flex items-center text-xs transition hover:bg-gray-100 hover:shadow-sm border-gray-300"
         :class="
@@ -103,7 +103,18 @@ const moduleTypes = [
   { value: "ОПМГ", label: "ОПМГ" , src:"/img/2level/ВПС.png"},
 ];
 
-
+const filteredWidths = computed(() => {
+  if (!selectedType.value || !plannerStore.modelsListL2[selectedType.value])
+    return [];
+  if (!plannerStore.sectorReady) {
+    return plannerStore.modelsListL2[selectedType.value];
+  }
+  if (plannerStore.sectorReady) {
+    return plannerStore.modelsListL2[selectedType.value].filter(
+      (width) => width == plannerStore.sectorWidth
+    );
+  }
+});
 
 function changeModule() {
   console.log("elsr");
@@ -113,7 +124,7 @@ function changeModule() {
   selectedType.value = "";
   selectedWidth.value = null;
 
-  plannerStore.objectMenuL2 = false;
+  plannerStore.sectorMenu = false;
 }
 </script>
 
