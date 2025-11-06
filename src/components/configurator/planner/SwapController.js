@@ -171,6 +171,146 @@ export class SwapController {
     models[j] = temp;
   }
 
+  doSwap2() {
+    const selectedBox = plannerConfig.selectedInSector;
+
+    // const collis = this.checkSimpleCollision(selectedBox);
+    // //  console.log("collis", collis);
+    // if (collis) {
+    //   plannerConfig.isCollision = true;
+    // } else {
+    //   plannerConfig.isCollision = false;
+    // }
+
+    //  console.log(plannerConfig.isCollision);
+
+
+    const models = plannerConfig.selectedSector.modules
+    const index = models.findIndex(
+      (m) => m.root.uuid === selectedBox.root.uuid
+    );
+    const axis = "y"
+    if (index === -1) return;
+
+    // --- Левый сосед ---
+    if (index > 0) {
+      const leftBox = models[index - 1];
+      const leftSide = selectedBox.root.position[axis] ;
+
+      if (leftSide < (leftBox.root.position[axis] + leftBox.height/2)) {
+        // если уже свапались с этим кубом — пропускаем
+        if (this.lastCollision === leftBox.root.uuid) return;
+        this.swapRight2(index, index - 1, models, axis);
+        this.swapSelectedInSector = true;
+        this.lastCollision = leftBox.root.uuid; // запоминаем, с кем свапнулись
+        return;
+      }
+    }
+
+    // --- Правый сосед ---
+    if (index < models.length - 1) {
+      const rightBox = models[index + 1];
+      const rightSide = selectedBox.root.position[axis] + selectedBox.height ;
+
+      if (rightSide > (rightBox.root.position[axis] + rightBox.height/2)) {
+        // если уже свапались с этим кубом — пропускаем
+        if (this.lastCollision === rightBox.root.uuid) return;
+
+        this.swapLeft2(index, index + 1, models, axis);
+        this.swapSelectedInSector = true;
+        this.lastCollision = rightBox.root.uuid; // запоминаем
+        return;
+      }
+    }
+
+    // если ни с кем не пересекаемся — сбрасываем "последнего столкнувшегося"
+    this.lastCollision = null;
+
+    //  console.log("collis", plannerConfig.isCollision);
+
+    this.sceneSetup.requestRender();
+  }
+
+  swapLeft2(i, j, models, axis) {
+    
+    const centerB = models[j].root.position[axis];
+    const widthB = models[j].height;
+    const centerA = models[i].root.position[axis];
+    const widthA = models[i].height;
+
+    const point = centerB - widthB / 2 - widthA;
+    const newPos = point + widthB / 2;
+
+    this.newPos = newPos;
+
+    console.log("newPOsSwap", newPos);
+
+    gsap.to(models[j].root.position, {
+      y:newPos,
+      duration: 0.1,
+      ease: "power2.out",
+      onUpdate: () => {
+        this.sceneSetup.requestRender();
+      },
+      onComplete: () => {
+        this.sceneSetup.requestRender();
+        this.swapSelectedInSector = false;
+        //  this.tableTop.create()
+      },
+    });
+
+    const temp = models[i];
+    models[i] = models[j];
+    models[j] = temp;
+  }
+
+  swapRight2(i, j, models, axis) {
+  
+    const centerB = models[j].root.position[axis];
+    const widthB = models[j].height;
+    const centerA = models[i].root.position[axis];
+    const widthA = models[i].height;
+
+    const moveRight = centerB > centerA;
+
+    const point = centerB + widthB / 2 + widthA;
+    const newPos = point - widthB / 2;
+
+    this.newPos = newPos;
+
+    console.log("newPOsSwap", newPos);
+
+    gsap.to(models[j].root.position, {
+      y:newPos,
+      duration: 0.1,
+      ease: "power2.out",
+      onUpdate: () => {
+        this.sceneSetup.requestRender();
+      },
+      onComplete: () => {
+        this.sceneSetup.requestRender();
+        this.swapSelectedInSector = false;
+        //   this.tableTop.create()
+      },
+    });
+
+    const temp = models[i];
+    models[i] = models[j];
+    models[j] = temp;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
   doSwapInSector() {
     this.checkCollisionInSector(plannerConfig.selectedInSector);
  //   console.log("firstCollisionInSector", this.firstCollisionInSector);

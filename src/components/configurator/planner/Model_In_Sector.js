@@ -126,6 +126,7 @@ export class Model_In_Sector {
     this.boxHelper.visible = false
 
     this.width = this.objectSize.x
+    this.height = this.objectSize.y
 
     if (this.objectSize.y <= 0.37) {
       this.heightType = 0.35;

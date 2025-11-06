@@ -592,7 +592,7 @@ export class EmptyManager2L {
     plannerConfig.selectedObject.empties.push(icon);
   }
 
-   checkCollisionInSector(testInstance) {
+  checkCollisionInSector(testInstance) {
    
 
     const gap = 0.005;

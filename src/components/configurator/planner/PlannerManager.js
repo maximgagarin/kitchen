@@ -751,7 +751,7 @@ export class PlannerManager {
 
     if ( this.moveInSector.isMoving && !this.isMoving) {
       this.moveInSector.move();
-      this.swapController.doSwapInSector();
+      this.swapController.doSwap2();
     }
 
     if (plannerConfig.selectedObject) {
@@ -913,7 +913,7 @@ export class PlannerManager {
       plannerConfig.selectedObject.name == "sector" &&
       this.swapController.swapSelectedInSector
     ) {
-      this.swapController.moveAfterSwapInSectror();
+ //     this.swapController.moveAfterSwapInSectror();
     }
 
     // this.moveController.penalBounds()

@@ -83,68 +83,67 @@ export class MoveInSector {
       this.sceneSetup.requestRender();
     }
   }
+  
+   snapToNearby(selectedObject, models) {
+  
 
-  snapToNearby(selectedObject, models) {
-    const snapThreshold = 0.06;
-    const unsnapDistance = 0.06;
-  
-    const selected = selectedObject;
-    if (!selected) return;
-  
-    if (!selected.prevPosition) {
-      selected.prevPosition = selected.root.position.clone();
-    }
-  
-    const movedDistance = selected.root.position.distanceTo(selected.prevPosition);
-  
-    if (selected.wasSnapped && movedDistance > unsnapDistance) {
-      selected.wasSnapped = false;
-      return;
-    }
-  
-    const movingBox = new THREE.Box3().setFromObject(selected.raycasterBox);
-    const movingCenter = new THREE.Vector3();
-    movingBox.getCenter(movingCenter);
-    const movingSize = new THREE.Vector3();
-    movingBox.getSize(movingSize);
-  
-    for (let model of models) {
-      if (model.root.uuid === selected.root.uuid) continue;
-  
-      const staticBox = new THREE.Box3().setFromObject(model.raycasterBox);
-      const staticCenter = new THREE.Vector3();
-      staticBox.getCenter(staticCenter);
-      const staticSize = new THREE.Vector3();
-      staticBox.getSize(staticSize);
-  
-      // По Z
-   
-  
-      // По X (для глубины)
-    
-  
-      // По Y (для вертикального прилипания)
-      if (Math.abs(staticCenter.x - movingCenter.x) < snapThreshold &&
-          Math.abs(staticCenter.z - movingCenter.z) < snapThreshold) {
-        
-        const dy = Math.abs(staticBox.max.y - movingBox.min.y);
-        if (dy < snapThreshold) {
-          selected.root.position.y = model.root.position.y + staticSize.y / 2 + movingSize.y / 2;
-          selected.wasSnapped = true;
-          selected.prevPosition = selected.root.position.clone();
-          return;
-        }
-  
-        const dy2 = Math.abs(movingBox.max.y - staticBox.min.y);
-        if (dy2 < snapThreshold) {
-          selected.root.position.y = model.root.position.y - staticSize.y / 2 - movingSize.y / 2;
-          selected.wasSnapped = true;
-          selected.prevPosition = selected.root.position.clone();
-          return;
-        }
-      }
-    }
-  
-    selected.wasSnapped = false;
+  const snapThreshold = 0.06
+  const unsnapDistance = 0.06
+
+  const selected = selectedObject
+  if (!selected) return
+
+  if (!selected.prevPosition) {
+    selected.prevPosition = selected.root.position.clone()
   }
+
+  const movedDistance = selected.root.position.distanceTo(selected.prevPosition)
+
+  if (selected.wasSnapped && movedDistance > unsnapDistance) {
+    selected.wasSnapped = false
+    return
+  }
+
+  // Высота двигаемого объекта
+  const movingBox = new THREE.Box3().setFromObject(selected.raycasterBox)
+  const movingSize = new THREE.Vector3()
+  movingBox.getSize(movingSize)
+  const movingHeight = movingSize.y
+
+  for (let model of models) {
+    if (model.root.uuid === selected.root.uuid) continue
+
+    // Высота статичного модуля
+    const staticBox = new THREE.Box3().setFromObject(model.raycasterBox)
+    const staticSize = new THREE.Vector3()
+    staticBox.getSize(staticSize)
+    const staticHeight = staticSize.y
+
+    const topOfStatic = model.root.position.y + staticHeight
+    const bottomOfMoving = selected.root.position.y
+    const topOfMoving = selected.root.position.y + movingHeight
+    const bottomOfStatic = model.root.position.y
+
+    // Прилипание "сверху" (ставим на модуль)
+    const dy = Math.abs(topOfStatic - bottomOfMoving)
+    if (dy < snapThreshold) {
+      selected.root.position.y = topOfStatic
+      selected.wasSnapped = true
+      selected.prevPosition = selected.root.position.clone()
+      return
+    }
+
+    // Прилипание "снизу" (подвешиваем под модулем)
+    const dy2 = Math.abs(topOfMoving - bottomOfStatic)
+    if (dy2 < snapThreshold) {
+      selected.root.position.y = bottomOfStatic - movingHeight
+      selected.wasSnapped = true
+      selected.prevPosition = selected.root.position.clone()
+      return
+    }
+  }
+
+  selected.wasSnapped = false
+}
+
 }
