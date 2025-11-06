@@ -96,7 +96,7 @@ export class AlgorithmManager2level {
        item => !["rowNum", "l", "m"].includes(item.key)
      )
 
-     console.log('filtred', filtered)
+ //    console.log('filtred', filtered)
 
      const index = filtered.findIndex(item => item.key === "d")
 
@@ -106,7 +106,7 @@ export class AlgorithmManager2level {
       isOvenEnd = true
     }
 
-    console.log("isOvenEnd", isOvenEnd)
+  //  console.log("isOvenEnd", isOvenEnd)
 
 
 
@@ -135,7 +135,7 @@ export class AlgorithmManager2level {
     ovenSize === 0.6 ? OVEN_HALF = 0.3 : OVEN_HALF =  0.2 
 
 
-    console.log('ovenHalf', OVEN_HALF)
+ //   console.log('ovenHalf', OVEN_HALF)
     
 
     const levels = this.kitchenSizesStore.levels
@@ -391,7 +391,7 @@ export class AlgorithmManager2level {
     
         const filtered = (this.filter2(size) || []).filter(rule => rule.P_1 !== 0);
 
-       console.log('filter', filtered)
+ //      console.log('filter', filtered)
 
       const rule = filtered[variantIndex] || []
     

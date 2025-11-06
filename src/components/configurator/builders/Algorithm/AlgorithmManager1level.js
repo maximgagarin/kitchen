@@ -53,6 +53,26 @@ export class AlgorithmManager1level {
       clean:"без дх и пм",
       ovenDish:"угл мк и дух слева",
     }
+
+    this.check = {
+      oven:{
+        D:true,
+        P:false
+      },
+      dishwasher:{
+        D:false,
+        P:true,
+      },
+      clean:{
+        D:false,
+        P:false
+      },
+      ovenDish:{
+        D:true,
+        P:true
+      }
+    }
+
     this.adjustment = false // была корректировка
 
   }
@@ -150,7 +170,7 @@ export class AlgorithmManager1level {
       )
 
 
-      console.log('penals', penals)
+    // console.log('penals', penals)
 
       const fridge = plannerConfig.fridge
 
@@ -184,7 +204,7 @@ export class AlgorithmManager1level {
 
       this.kitchenSizesStore.sideSizes[rule.row] -= decrease
 
-      console.log('this.orig', this.originalPositions)
+    //  console.log('this.orig', this.originalPositions)
 
 
   }
@@ -229,7 +249,7 @@ export class AlgorithmManager1level {
 
       if (!isInvalid) return isInvalid
 
-      console.log('размер не подходит')
+    //  console.log('размер не подходит')
 
       const delta = Number((length - moduleSize).toFixed(2))
 
@@ -242,8 +262,8 @@ export class AlgorithmManager1level {
 
       const decrease = decreaseMap[delta] ?? 0.05 // безопасное значение по умолчанию
 
-      console.log('delta', delta)
-      console.log('decrease', decrease)
+ //     console.log('delta', delta)
+   //   console.log('decrease', decrease)
 
       rule.length = Number((length - decrease).toFixed(2))
       this.moviePenal(side, decrease)
@@ -253,15 +273,60 @@ export class AlgorithmManager1level {
   }
   
 
+  // добавить к вариантам строну и тип
+  correction(rule){
+      rule.variants.forEach(item => {
+      console.log(item)
+      item.forEach(variant=>{
+        if (variant.modules.length === 2){
+          variant.type = 'ovenDish'
+        }
+        if(variant.modules.length === 0){
+             variant.type = 'clean'
+        }
+        if(variant.modules.length === 1) {
+        const moduleName = variant.modules[0].name 
+        
+        moduleName === 'oven' ? variant.type = 'oven' : variant.type = 'dishWasher'
+        }
+        if(variant.name === 'C1' || variant.name === 'C2') variant.side = 'left'
+        if(variant.name === 'A1' || variant.name === 'A2') variant.side = 'direct'
+      })
+    })
+
+  }
+
   new(value = 0){
     this.clear()
     const rule = this.kitchenSizesStore.filtredRulesTotal[0]
-    console.log('value', value)
-    console.log(rule)
+
+    this.correction(rule)
+
+    
+
+
+    // Заполняем объект индексами
+    rule.variants.forEach((arr, index) => {
+      arr.forEach(obj => {
+        if (obj.type === 'oven' || obj.type === 'dishWasher') {
+          if (obj.side === 'direct') {
+            this.algStore.indexObj[obj.type].direct.push(index);
+          } else if (obj.side === 'left') {
+            this.algStore.indexObj[obj.type].left.push(index);
+          }
+        }
+      });
+    });
+
+
+    
+
     this.algStore.variants = rule.variants
     const variant = rule.variants[value]
 
-    console.log('varaint', variant)
+    console.log('variant', variant)
+
+ 
   
     const newRules = []
 
@@ -270,14 +335,15 @@ export class AlgorithmManager1level {
         const module1size = variant.modules[0].size 
         const module2size = variant.modules[1].size 
         const totalSize = module1size + module2size
-         newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width , moduleSize:totalSize})
+         newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width , moduleSize:totalSize, P:true, D:true})
       }
         
-      if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width  })
+      if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width , P:false, D:false })
       if(variant.modules.length === 1) {
         const moduleName = variant.modules[0].name 
         const moduleSize = variant.modules[0].size 
-        newRules.push({side:variant.name, rule:this.rules[moduleName] , length:variant.width , moduleSize:moduleSize })
+        newRules.push({side:variant.name, rule:this.rules[moduleName] , length:variant.width , moduleSize:moduleSize ,
+           P: moduleName === 'dishWasher' ? true : false , D: moduleName === 'oven' ? true : false})
       }
     })
 
@@ -285,27 +351,14 @@ export class AlgorithmManager1level {
 
     const rulesCopy = this.currectSizes(newRules)
 
-    console.log('rulesCopy' , rulesCopy)
-  
-    console.log('newRules' , newRules)
-
-
-    // setTimeout(()=>{
-    //   this.restoreOriginalPositions()
-    // }, 2000)
 
 
     const leftRules = rulesCopy.filter(rule => rule.side === "C1" || rule.side === "C2");
     const directRules = rulesCopy.filter(rule => rule.side === "A1" || rule.side === "A2");
 
-    
     this.algStore.rulesName = newRules
 
-    console.log('left', leftRules)
-    console.log('direct', directRules)
-
  
-
   if(this.kitchenSizesStore.type === 'direct')  this.buildSideRowDirect(directRules)
   
   if(this.kitchenSizesStore.type === 'left'){
@@ -318,29 +371,29 @@ export class AlgorithmManager1level {
   }
 
 
-restoreOriginalPositions() {
-  if (!this.originalPositions) return
+  restoreOriginalPositions() {
+    if (!this.originalPositions) return
 
-  const { penals, fridge, sizes } = this.originalPositions
+    const { penals, fridge, sizes } = this.originalPositions
 
-  // восстановление холодильника
-  if (fridge && plannerConfig.fridge) {
-    plannerConfig.fridge.position.copy(fridge)
+    // восстановление холодильника
+    if (fridge && plannerConfig.fridge) {
+      plannerConfig.fridge.position.copy(fridge)
+    }
+
+    // восстановление пеналов
+    plannerConfig.penalsArray.forEach(penal => {
+      const saved = penals[penal.root.uuid]
+      if (saved) penal.root.position.copy(saved)
+    })
+
+    // восстановление размеров рядов
+    for (const row in sizes) {
+      this.kitchenSizesStore.sideSizes[row] = sizes[row]
+    }
+
+  // console.log('✅ Позиции и размеры восстановлены')
   }
-
-  // восстановление пеналов
-  plannerConfig.penalsArray.forEach(penal => {
-    const saved = penals[penal.root.uuid]
-    if (saved) penal.root.position.copy(saved)
-  })
-
-  // восстановление размеров рядов
-  for (const row in sizes) {
-    this.kitchenSizesStore.sideSizes[row] = sizes[row]
-  }
-
-  console.log('✅ Позиции и размеры восстановлены')
-}
 
 
  
@@ -532,8 +585,8 @@ restoreOriginalPositions() {
     const m = this.sinkSize; // фиксированная мойка, можно передать из параметров
     const id = THREE.MathUtils.generateUUID()
 
-    console.log('type', type)
-    console.log('modelName', modelName)
+  //  console.log('type', type)
+ //   console.log('modelName', modelName)
 
     
     
@@ -899,6 +952,8 @@ restoreOriginalPositions() {
    const rulesPart1 = resultData[rules?.[0]?.rule] || []
    const rulesPart2 = resultData[rules?.[1]?.rule] || []
 
+   
+
 
 
    const length1 = rules[0]?.length || 0 
@@ -909,28 +964,50 @@ restoreOriginalPositions() {
   
 
 
+
     let D = this.kitchenSizesStore.oven.size;
     let P = this.kitchenSizesStore.dishwasher.size;
 
+    const isD = rules[0].D // нужно проверять духовку
+    const isP = rules[0].P // нужно проверять ПМ
 
-    
-   // console.log('lenght1', length1)
-  //  console.log('lenght2', length2)
+    const isD2 = rules[1]?.D ?? false // нужно проверять духовку
+    const isP2 = rules[1]?.P ?? false// нужно проверять ПМ
 
-//   console.log('духовка', D)
-   // console.log('посудмк', P)
 
 
 
 
     rulesPart1.forEach((rule) => {
+
+ 
+
+
+
+      let matchOven, matchDishwasher
+
+      if(isD){
+        matchOven =  rule.d === D 
+      } else {
+        matchOven = true
+      } 
+
+
+
+      if(isP){
+        matchDishwasher =  rule.p === P 
+      } else {
+        matchDishwasher = true
+      } 
+
+
       let matchLength = rule.l == length1;
 
-      let matchDishwasher  = "p" in rule ? rule.p == P : true;
-      let matchOven = "d" in rule ? rule.d == D : true;
+      //  let matchDishwasher  = "p" in rule ? rule.p == P : true;
+      //  let matchOven = "d" in rule ? rule.d == D : true;
 
-     //let matchDishwasher  =  rule.p == P 
-   //  let matchOven =  rule.d == D 
+   //  let matchDishwasher  =  rule.p == P 
+  
 
 
       if (matchLength && matchDishwasher && matchOven ) {
@@ -940,9 +1017,27 @@ restoreOriginalPositions() {
 
 
       rulesPart2.forEach((rule) => {
+
+
+
+      let matchOven, matchDishwasher
+
+      if(isD2){
+        matchOven =  rule.d === D 
+      } else {
+        matchOven = true
+      } 
+
+      if(isP2){
+        matchDishwasher =  rule.p === P 
+      } else {
+        matchDishwasher = true
+      } 
+
+
       const matchLength = rule.l == length2;
-      let matchDishwasher  = "p" in rule ? rule.p == P : true;
-      let matchOven = "d" in rule ? rule.d == D : true;
+      // let matchDishwasher  = "p" in rule ? rule.p == P : true;
+      // let matchOven = "d" in rule ? rule.d == D : true;
       if (matchLength && matchDishwasher && matchOven ) {
         this.algStore.filtredDirectPart2.push(rule);
       }
@@ -974,27 +1069,48 @@ restoreOriginalPositions() {
    const length1 = rules[0]?.length || 0 
    const length2 = rules[1]?.length || 0
 
-  // console.log(length1)
-   //console.log(length2)
-    
-    
+
+
+   
+    const isD = rules[0].D // нужно проверять духовку
+    const isP = rules[0].P // нужно проверять ПМ
+
+    const isD2 = rules[1]?.D ?? false // нужно проверять духовку
+    const isP2 = rules[1]?.P ?? false// нужно проверять ПМ
 
 
     let D = this.kitchenSizesStore.oven.size;
     let P = this.kitchenSizesStore.dishwasher.size;
 
-  //  console.log('духовка', D)
-  //  console.log('посудмк', P)
+
 
 
 
     rulesPart1.forEach((rule) => {
+
+
+          let matchOven, matchDishwasher
+
+      if(isD){
+        matchOven =  rule.d === D 
+      } else {
+        matchOven = true
+      } 
+
+
+
+      if(isP){
+        matchDishwasher =  rule.p === P 
+      } else {
+        matchDishwasher = true
+      } 
+
      
      
       let matchLength = rule.l == length1;
     //  let matchDishwasher = P == 0 ? !("p" in rule)  : rule.p == P; 
-      let matchDishwasher  = "p" in rule ? rule.p == P : true;
-      let matchOven = "d" in rule ? rule.d == D : true;
+      // let matchDishwasher  = "p" in rule ? rule.p == P : true;
+      // let matchOven = "d" in rule ? rule.d == D : true;
 
     
 
@@ -1007,9 +1123,29 @@ restoreOriginalPositions() {
     
    //   if(this.sinkSide == 'left'  && this.kitchenSizesStore.type == 'left') P  = 0
       //let matchDishwasher = P == 0  ? !("p" in rule)       : rule.p == P; 
+
+
+          let matchOven, matchDishwasher
+
+      if(isD){
+        matchOven =  rule.d === D 
+      } else {
+        matchOven = true
+      } 
+
+
+
+      if(isP){
+        matchDishwasher =  rule.p === P 
+      } else {
+        matchDishwasher = true
+      } 
+
+
+
       const matchLength = rule.l == length2;
-      let matchDishwasher  = "p" in rule ? rule.p == P : true;
-      let matchOven = "d" in rule ? rule.d == D : true;
+      // let matchDishwasher  = "p" in rule ? rule.p == P : true;
+      // let matchOven = "d" in rule ? rule.d == D : true;
 
       // if(rulesPart2hasDirect2) matchDishwasher = true
 

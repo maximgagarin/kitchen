@@ -23,7 +23,7 @@
   <!-- Панель с характеристиками -->
   <div
     v-if="plannerStore.objectMenu"
-    class="fixed  w-[420px] p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
+    class="fixed   p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
         :style="{
       top: plannerStore.emptyPosition.y + 'px',
       left: plannerStore.emptyPosition.x + 'px',

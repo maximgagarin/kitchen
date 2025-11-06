@@ -90,21 +90,21 @@ watch(
   () => kitchenStore.dishwasher.size,
   (newVal) => {
     if (newVal === 0.45) {
-      console.log("45");
+     // console.log("45");
 
       const filtered = filtredDish(rules, 0.45);
-      console.log("filteredDish", filtered);
+  //    console.log("filteredDish", filtered);
 
       kitchenStore.filtredRulesTotal = filtered;
       //   printResults(filtered)
     } else if (newVal === 0.6) {
-      console.log("60");
+  //    console.log("60");
 
       const filtered = filtredDish(rules, 0.6);
       kitchenStore.filtredRulesTotal = filtered;
       //    printResults(filtered)
     } else {
-      console.log("else");
+    //  console.log("else");
       kitchenStore.filtredRulesTotal = rulesCopy;
 
 
@@ -123,7 +123,7 @@ watch(
 
 
 
-        console.log("0+0");
+     //   console.log("0+0");
         kitchenStore.parts.forEach((part) => {
           variant.push({
             name: part.name,

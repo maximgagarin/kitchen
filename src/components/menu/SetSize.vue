@@ -242,6 +242,7 @@ function changeWidth() {
     kitchenSizes.availableOven.length =  0
     kitchenSizes.availableDish.length = 0
     kitchenSizes.sink.isSet = false
+    kitchenSizes.offsetForLeftRow = 0
 
 
     // this.KitchenSizes.dishwasher.size = 0

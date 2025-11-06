@@ -42,7 +42,7 @@ export class Room {
     this.wallLeft.castShadow =true
 
 
-    this.wall.position.set(0, this.height / 2, 0);
+    this.wall.position.set(0, this.height / 2, -0.005);
     this.wallLeft.position.set(-0.001, this.height / 2, this.depth / 2);
     this.wallRight.position.set(
       config.kitchen_size.width,

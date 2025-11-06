@@ -136,9 +136,9 @@ function togglePanel() {
 }
 
 function next() {
-console.log('123')
+//console.log('123')
   if(kitchenSizes.step === 2 && !kitchenSizes.sink.isSet){
-    console.log('123')
+  //  console.log('123')
     uiStore.showError('установите раковину')
   }  else {
 

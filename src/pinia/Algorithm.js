@@ -29,6 +29,7 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
 
   
 
+
   
   const filtredDirectPart1 = ref([])
   const filtredDirectPart2 = ref([])
@@ -46,6 +47,22 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
     rightPart2:[]
   })
   
+  // индексы где есть дх и пм
+  const indexObj = ref({
+      oven: {
+        direct: [],
+        left: []
+      },
+      dishWasher: {
+        direct: [],
+        left: []
+      },
+      ovenDishwasher:{
+        direct: [],
+        left: []
+      }
+    });
+
 
   const variantIndex = ref({
     level1:{
@@ -84,6 +101,7 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
     resultLeft,
     resultRight,
     partSizes,
-    reverse
+    reverse,
+    indexObj
   };
 });

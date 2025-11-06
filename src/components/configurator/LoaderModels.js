@@ -68,6 +68,8 @@ export class LoaderModels {
        { name: "П-700", path: "/models/upperModels/700/p700.glb" },
        { name: "П-800", path: "/models/upperModels/700/p800.glb" },
 
+
+       { name: "ВП-150", path: "/models/upperModels/900/p150-900.glb" },
        { name: "ВП-200", path: "/models/upperModels/900/p200-900.glb" },
        { name: "ВП-300", path: "/models/upperModels/900/p300-900.glb" },
        { name: "ВП-350", path: "/models/upperModels/900/p350-900.glb" },
