@@ -33,7 +33,7 @@
           id="selectedOven"
           class="w-30 px-1 py-1 text-xs border-gray-300 rounded-md border focus:ring-indigo-500 focus:border-indigo-500"
           v-model="selectOvenSide"
-          @change="onTypeChange"
+          @change="ovenChange"
         >
           <option value="left">слева</option>
           <option value="direct">справа</option>
@@ -41,22 +41,26 @@
       </div>
     </div>
 
-    <div></div>
 
     <!-- Посудомойка -->
+
     <div>
-      <label
-        for="selectedDishwasher"
-        class="block text-xs font-medium text-gray-700 mb-1"
-        >Посудомойка:</label
-      >
-      <select
-        id="selectedDishwasher"
-        class="w-30 px-1 py-1 text-xs border-gray-300 rounded-md border focus:ring-indigo-500 focus:border-indigo-500"
-      >
-        <option value="direct">справа</option>
-        <option value="left">слева</option>
-      </select>
+      <div>
+        <label
+          for="selectedOven"
+          class="block text-xs font-medium text-gray-700 mb-1"
+          >Посудомойка:</label
+        >
+        <select
+          id="selectedOven"
+          class="w-30 px-1 py-1 text-xs border-gray-300 rounded-md border focus:ring-indigo-500 focus:border-indigo-500"
+          v-model="selectDishSide"
+          @change="dishChange"
+        >
+          <option value="left">слева</option>
+          <option value="direct">справа</option>
+        </select>
+      </div>
     </div>
   </div>
 </template>
@@ -71,6 +75,7 @@ const kitchenStore = useKitchenSizesStore();
 const algorithmManager = inject("algorithmManager");
 const plannerManager = inject("plannerManager");
 const selectOvenSide = ref(null);
+const selectDishSide = ref(null);
 const selectedType = ref(0);
 let index = ref(0);
 
@@ -101,7 +106,7 @@ function changeVariant(value) {
   );
 }
 
-function onTypeChange() {
+function ovenChange() {
   // algStore.indexObj.oven.direct = [];
   // algStore.indexObj.oven.left = [];
   // algStore.indexObj.dishWasher.direct = [];
@@ -119,6 +124,34 @@ function onTypeChange() {
     change(variants[0])
   }
 }
+
+function dishChange() {
+  // algStore.indexObj.oven.direct = [];
+  // algStore.indexObj.oven.left = [];
+  // algStore.indexObj.dishWasher.direct = [];
+  // algStore.indexObj.dishWasher.left = [];
+
+  if (selectDishSide.value === "left") {
+    const variants = algStore.indexObj.dishWasher.left;
+    console.log(variants);
+    console.log('variantLeft', variants[0])
+    change(variants[0])
+     selectOvenSide.value = null
+  }
+
+  if (selectDishSide.value === "direct") {
+    const variants = algStore.indexObj.dishWasher.direct;
+    console.log(variants);
+    console.log('variantDirect', variants[0])
+
+    change(variants[0])
+     selectDishSide.value = null
+   
+  }
+}
+
+
+
 function change(variant) {
   algorithmManager.value.algorithm1level.new(variant);
 

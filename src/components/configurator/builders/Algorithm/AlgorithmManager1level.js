@@ -302,13 +302,21 @@ export class AlgorithmManager1level {
 
     this.correction(rule)
 
+
+    this.algStore.indexObj.oven.direct = [];
+    this.algStore.indexObj.oven.left = [];
+    this.algStore.indexObj.dishWasher.direct = [];
+    this.algStore.indexObj.dishWasher.left = [];
+    this.algStore.indexObj.ovenDish.left = [];
+    this.algStore.indexObj.ovenDish.direct = [];
+
     
 
 
     // Заполняем объект индексами
     rule.variants.forEach((arr, index) => {
       arr.forEach(obj => {
-        if (obj.type === 'oven' || obj.type === 'dishWasher') {
+        if (obj.type === 'oven' || obj.type === 'dishWasher' || obj.type === 'ovenDish') {
           if (obj.side === 'direct') {
             this.algStore.indexObj[obj.type].direct.push(index);
           } else if (obj.side === 'left') {

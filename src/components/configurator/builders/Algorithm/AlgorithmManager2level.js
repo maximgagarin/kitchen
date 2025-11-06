@@ -163,6 +163,7 @@ export class AlgorithmManager2level {
         setSize('directPart1', (ovenPos-OVEN_HALF) - offsets.directLeft)
         setSize('directPart2', sideSizes.side_a - (ovenPos + OVEN_HALF) - offsets.directRight)
         algorithmConfig.level2.rowStart.direct += offsets.directLeft
+        algorithmConfig.level2.rowStart.direct2 = ovenPos + OVEN_HALF
       }
     }
 
@@ -181,6 +182,8 @@ export class AlgorithmManager2level {
         levels.left2? algorithmConfig.level2.resultLeft.unshift(puModule ) : ''
 
         algorithmConfig.level2.rowStart.direct += levels.left2? ROW_OFFSET : 0
+        algorithmConfig.level2.rowStart.left2 = ovenPos + OVEN_HALF
+
       }
 
       else if (ovenSide === ''){
@@ -203,6 +206,8 @@ export class AlgorithmManager2level {
 
         levels.direct2? algorithmConfig.level2.resultDirect.unshift(puModule ) : ''
         algorithmConfig.level2.rowStart.left += levels.direct2? ROW_OFFSET : 0
+        algorithmConfig.level2.rowStart.direct2 = ovenPos + OVEN_HALF
+
         
       }
     }
@@ -583,24 +588,17 @@ export class AlgorithmManager2level {
     model.name = modelName + side;
 
     if (side == 'direct') {
-    
       plannerConfig.namesToDeleteDirect2L.push(nameTodelete)
     }
 
     if (side == 'left') {
-  
       plannerConfig.namesToDeleteLeft2L.push(nameTodelete)
 
     }
 
-        if (side == 'right') {
-    
+    if (side == 'right') {
       plannerConfig.namesToDeleteRight2L.push(nameTodelete)
-
     }
-
-
-
 
     this.scene.add(model);
     
@@ -621,6 +619,7 @@ export class AlgorithmManager2level {
   
         let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
         position.x = ovenPos
+        algorithmConfig.level2.rowStart.direct = algorithmConfig.level2.rowStart.direct2
 
       }
 
@@ -637,6 +636,7 @@ export class AlgorithmManager2level {
       if(modelName == ('hood2-450') || modelName == ('hood2-600') ||  modelName == ('hood-400') ){
         let ovenPos = Math.round(algorithmConfig.oven.position * 20) / 20;
         position.z = ovenPos
+        algorithmConfig.level2.rowStart.left = algorithmConfig.level2.rowStart.left2
 
       }
 

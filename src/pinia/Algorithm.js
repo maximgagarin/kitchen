@@ -2,89 +2,85 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useAlgorithmStore = defineStore("Algorithm", () => {
+  const rulesName = ref([]);
+  const resultDirect = ref([]);
+  const resultLeft = ref([]);
+  const resultRight = ref([]);
 
+  const resultDirect2L = ref([]);
+  const resultLeft2L = ref([]);
+  const resultRight2L = ref([]);
 
- const rulesName = ref([])
- const resultDirect = ref([])
- const resultLeft = ref([])
- const resultRight = ref([])
+  const partSizes = ref({
+    direct1: 0,
+    direct2: 0,
+    left1: 0,
+    left2: 0,
+    right1: 0,
+    right2: 0,
+  });
 
- const partSizes  = ref({
-    direct1:0,
-    direct2:0,
-    left1:0,
-    left2:0,
-    right1:0,
-    right2:0
- })
+  const reverse = ref({
+    A1: false,
+    A2: false,
+    C1: false,
+    C2: false,
+    D1: false,
+    D2: false,
+  });
 
- const reverse = ref({
-  A1:false,
-  A2:false,
-  C1:false,
-  C2:false,
-  D1:false,
-  D2:false
- })
-
-  
-
-
-  
-  const filtredDirectPart1 = ref([])
-  const filtredDirectPart2 = ref([])
-  const filtredLeftPart1 = ref([])
-  const filtredLeftPart2 = ref([])
-  const filtredRightPart1 = ref([])
-  const filtredRightPart2 = ref([])
+  const filtredDirectPart1 = ref([]);
+  const filtredDirectPart2 = ref([]);
+  const filtredLeftPart1 = ref([]);
+  const filtredLeftPart2 = ref([]);
+  const filtredRightPart1 = ref([]);
+  const filtredRightPart2 = ref([]);
 
   const filtredLevel2 = ref({
-    directPart1:[],
-    directPart2:[],
-    leftPart1:[],
-    leftPart2:[],
-    rightPart1:[],
-    rightPart2:[]
-  })
-  
+    directPart1: [],
+    directPart2: [],
+    leftPart1: [],
+    leftPart2: [],
+    rightPart1: [],
+    rightPart2: [],
+  });
+
   // индексы где есть дх и пм
   const indexObj = ref({
-      oven: {
-        direct: [],
-        left: []
-      },
-      dishWasher: {
-        direct: [],
-        left: []
-      },
-      ovenDishwasher:{
-        direct: [],
-        left: []
-      }
-    });
-
+    oven: {
+      direct: [],
+      left: [],
+    },
+    dishWasher: {
+      direct: [],
+      left: [],
+    },
+    ovenDish: {
+      direct: [],
+      left: [],
+    },
+  });
 
   const variantIndex = ref({
-    level1:{
-      direct1:0,
-      direct2:0,
-      left1:0,
-      left2:0,
-      right1:0,
-      right2:0,
+    level1: {
+      direct1: 0,
+      direct2: 0,
+      left1: 0,
+      left2: 0,
+      right1: 0,
+      right2: 0,
     },
-    level2:{
-      direct1:0,
-      direct2:0,
-      left1:0,
-      left2:0,
-      right1:0,
-      right2:0,
+    level2: {
+      direct1: 0,
+      direct2: 0,
+      left1: 0,
+      left2: 0,
+      right1: 0,
+      right2: 0,
     },
-    
-  })
+  });
 
-  const variants = ref([])
+  const variants = ref([]);
 
   return {
     rulesName,
@@ -94,14 +90,17 @@ export const useAlgorithmStore = defineStore("Algorithm", () => {
     filtredLeftPart1,
     filtredLeftPart2,
     filtredLevel2,
-    
-    variantIndex, 
+
+    variantIndex,
     rulesName,
     resultDirect,
     resultLeft,
     resultRight,
+    resultDirect2L,
+    resultLeft2L,
+    resultRight2L,
     partSizes,
     reverse,
-    indexObj
+    indexObj,
   };
 });
