@@ -21,6 +21,7 @@ export class MoveInSector {
   }
 
   move() {
+   
     this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
     const is900 = this.kitchenStore.modules_height.height2level == 0.9
     this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -41,25 +42,18 @@ export class MoveInSector {
 
       const size = plannerConfig.selectedInSector.objectSize;
     
-
-      // const minX = bounds.min.x + halfSizeX;
-      // const maxX = bounds.max.x - halfSizeX;
-      // const minY = bounds.min.y ;
-      // const maxY = bounds.max.y - size.y;
-
-   
       const minY = 1.41 ;
       const maxY = is900? 2.31 - size.y :2.11 - size.y;
 
      // console.log('maxY', maxY)
 
-      const worldPoint = intersects[0].point.clone();
+      const worldPoint = intersects[0].point.clone().add(this.offset);
     //  worldPoint.x = THREE.MathUtils.clamp(worldPoint.x, minX, maxX);
       worldPoint.y = THREE.MathUtils.clamp(worldPoint.y, minY, maxY);
       worldPoint.z = 0.15;
 
-      const localPoint =
-        plannerConfig.selectedInSector.root.parent.worldToLocal(worldPoint);
+      const localPoint = worldToLocal(worldPoint);
+
       plannerConfig.selectedInSector.root.position.y = localPoint.y
 
       this.snapToNearby(plannerConfig.selectedInSector, plannerConfig.selectedObject.modules);
