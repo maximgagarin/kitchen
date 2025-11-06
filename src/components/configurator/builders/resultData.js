@@ -42,7 +42,11 @@ function renameKeys(data) {
         value = value.trim();
 
         // Если нужно удалить все пробелы внутри строк:
-        // value = value.replace(/\s+/g, '');
+         value = value.replace(/\s+/g, '');
+
+          if (value === '') {
+          value = null; // Используем null для явного указания отсутствия значения
+        }
       }
 
       // Округляем числовые значения

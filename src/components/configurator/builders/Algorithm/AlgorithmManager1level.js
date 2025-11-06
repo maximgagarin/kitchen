@@ -416,6 +416,8 @@ export class AlgorithmManager1level {
    
    
     algorithmConfig.resultDirect.forEach(elem=>{
+      console.log('elem value', elem.value)
+      if(typeof elem.value !== 'number') return
       const width = Number((elem.value).toFixed(2));
       const type = typesMap[elem.key] || elem.key;
          let name;
