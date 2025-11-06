@@ -145,6 +145,7 @@ export const plannerConfig = {
     objectControls:[],
     swapCandidate:false,
     isCollision:false,
+    isCollisionInSector:false,
     oldPosition:0,
     directPlane1level:null,
     directPlane2level:null,

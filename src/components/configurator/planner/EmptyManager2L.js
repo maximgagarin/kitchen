@@ -516,11 +516,11 @@ export class EmptyManager2L {
     //    Нижний край
     const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
 
-      console.log('maxY', maxY)
-    console.log('firstBox', firstBox)
+   //   console.log('maxY', maxY)
+   // console.log('firstBox', firstBox)
 
     if (firstBox.min.y > 1.41) {
-          console.log('нижний')
+  //        console.log('нижний')
       this.addGapBoxInSectror(1.41, firstBox.min.y, side,  firstBox, posY);
     }
 
@@ -531,7 +531,7 @@ export class EmptyManager2L {
   
 
     if (maxY - lastBox.max.y >= 0.2) {
-        console.log('верхний')
+      //  console.log('верхний')
       this.addGapBoxInSectror(lastBox.max.y, maxY, side, lastBox, 1.5);
     }
 
@@ -544,7 +544,7 @@ export class EmptyManager2L {
     icon.visible = true;
 
     const gap = endY - startY;
-    console.log('gap', gap)
+ //   console.log('gap', gap)
     if (gap < 0.2) return;
 
     const geometry = new THREE.BoxGeometry(

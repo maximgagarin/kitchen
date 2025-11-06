@@ -535,35 +535,18 @@ export class PlannerManager {
       if (intersectsModules.length > 0) {
         this.controls.enabled = false;
 
-
-
-      
-
-
-
         const id = intersectsModules[0].object.userData.id;
         const model = plannerConfig.selectedObject.modules.find(
           (m) => m.id == id
         );
         // console.log(controller)
-        this.moveInSector.isMoving = true;
+ 
         plannerConfig.selectedInSector = model;
 
+        this.moveInSector.set(intersectsModules[0])
 
-      const worldPos = new THREE.Vector3();
-      plannerConfig.selectedInSector.root.getWorldPosition(worldPos);
 
-      // Прибавляем половину высоты по Y
-     
-
-      // Записываем в offset
-      this.moveInSector.offset.copy(worldPos).sub(intersectsModules[0].point);
        
-
-
-        console.log('offset', this.moveInSector.offset)
-
-        plannerConfig.selectedInSector.boxHelper.visible = true;
       }
     }
   }
@@ -961,13 +944,30 @@ export class PlannerManager {
 
     if (plannerConfig.selectedObject) {
       if (!this.swapController.swapSelected && plannerConfig.isCollision) {
-        console.log("move back");
+        console.log("move back Selected false");
         this.swapController.moveBack(false);
       }
       if (this.swapController.swapSelected ) {
+        console.log("move back Selected true");
+
          this.swapController.moveBack(true);
       }
     }
+
+    if(plannerConfig.selectedInSector){
+      if (!this.swapController.swapSelectedInSector && plannerConfig.isCollisionInSector) {
+        console.log("move back inSector false");
+        this.swapController.moveBackInSector(false);
+      }
+      if (this.swapController.swapSelectedInSector ) {
+        console.log("move back inSector true");
+
+         this.swapController.moveBackInSector(true);
+      }
+    }
+
+
+
     this.isDragging = false;
     //  this.calculateSlotPositions()
     // this.calculateSlotsNew()

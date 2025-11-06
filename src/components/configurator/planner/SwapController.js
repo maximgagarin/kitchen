@@ -113,7 +113,7 @@ export class SwapController {
 
     this.newPos = newPos;
 
-    console.log("newPOsSwap", newPos);
+ //   console.log("newPOsSwap", newPos);
 
     gsap.to(models[j].root.position, {
       x: side === "direct" ? newPos : HALF_DEPTH,
@@ -149,7 +149,7 @@ export class SwapController {
 
     this.newPos = newPos;
 
-    console.log("newPOsSwap", newPos);
+  //  console.log("newPOsSwap", newPos);
 
     gsap.to(models[j].root.position, {
       x: side === "direct" ? newPos : HALF_DEPTH,
@@ -174,30 +174,27 @@ export class SwapController {
   doSwap2() {
     const selectedBox = plannerConfig.selectedInSector;
 
-    // const collis = this.checkSimpleCollision(selectedBox);
-    // //  console.log("collis", collis);
-    // if (collis) {
-    //   plannerConfig.isCollision = true;
-    // } else {
-    //   plannerConfig.isCollision = false;
-    // }
+     const collis = this.checkCollisionInSector(selectedBox);
+ //    console.log("collis", collis);
+    if (collis) {
+      plannerConfig.isCollisionInSector = true;
+    } else {
+      plannerConfig.isCollisionInSector = false;
+    }
 
-    //  console.log(plannerConfig.isCollision);
-
-
-    const models = plannerConfig.selectedSector.modules
+    const models = plannerConfig.selectedSector.modules;
     const index = models.findIndex(
       (m) => m.root.uuid === selectedBox.root.uuid
     );
-    const axis = "y"
+    const axis = "y";
     if (index === -1) return;
 
     // --- Левый сосед ---
     if (index > 0) {
       const leftBox = models[index - 1];
-      const leftSide = selectedBox.root.position[axis] ;
+      const leftSide = selectedBox.root.position[axis];
 
-      if (leftSide < (leftBox.root.position[axis] + leftBox.height/2)) {
+      if (leftSide < leftBox.root.position[axis] + leftBox.height / 2) {
         // если уже свапались с этим кубом — пропускаем
         if (this.lastCollision === leftBox.root.uuid) return;
         this.swapRight2(index, index - 1, models, axis);
@@ -210,9 +207,9 @@ export class SwapController {
     // --- Правый сосед ---
     if (index < models.length - 1) {
       const rightBox = models[index + 1];
-      const rightSide = selectedBox.root.position[axis] + selectedBox.height ;
+      const rightSide = selectedBox.root.position[axis] + selectedBox.height;
 
-      if (rightSide > (rightBox.root.position[axis] + rightBox.height/2)) {
+      if (rightSide > rightBox.root.position[axis] + rightBox.height / 2) {
         // если уже свапались с этим кубом — пропускаем
         if (this.lastCollision === rightBox.root.uuid) return;
 
@@ -232,7 +229,6 @@ export class SwapController {
   }
 
   swapLeft2(i, j, models, axis) {
-    
     const centerB = models[j].root.position[axis];
     const widthB = models[j].height;
     const centerA = models[i].root.position[axis];
@@ -246,7 +242,7 @@ export class SwapController {
     console.log("newPOsSwap", newPos);
 
     gsap.to(models[j].root.position, {
-      y:newPos,
+      y: newPos,
       duration: 0.1,
       ease: "power2.out",
       onUpdate: () => {
@@ -265,7 +261,6 @@ export class SwapController {
   }
 
   swapRight2(i, j, models, axis) {
-  
     const centerB = models[j].root.position[axis];
     const widthB = models[j].height;
     const centerA = models[i].root.position[axis];
@@ -281,7 +276,7 @@ export class SwapController {
     console.log("newPOsSwap", newPos);
 
     gsap.to(models[j].root.position, {
-      y:newPos,
+      y: newPos,
       duration: 0.1,
       ease: "power2.out",
       onUpdate: () => {
@@ -299,229 +294,71 @@ export class SwapController {
     models[j] = temp;
   }
 
+  moveBackInSector(isSwap) {
+    console.log("isSwap", isSwap);
+    console.log("this.collissionModule", this.collissionModule);
 
+    const selected = plannerConfig.selectedInSector;
 
+    let posX, posZ, centerB, newPos;
 
+    if (this.collissionModule) {
+      const heightA = plannerConfig.selectedInSector.height;
+      const heightB = this.collissionModule.height;
 
+      console.log('heigA', heightA)
+      console.log('heigB', heightB)
 
+      const centerA = selected.root.position.y + selected.height/2;
 
-
-
-
-
-
-
-  doSwapInSector() {
-    this.checkCollisionInSector(plannerConfig.selectedInSector);
- //   console.log("firstCollisionInSector", this.firstCollisionInSector);
-    const swapCandidate = this.checkSwapCandidateInSector();
-    //   console.log('swapCand', swapCandidate)
-
-    if (swapCandidate && swapCandidate !== this.lastSwapCandidate) {
-      this.lastSwapCandidate = swapCandidate;
-      this.swapSelectedInSector = true;
-
-      const heightA = plannerConfig.selectedInSector.objectSize.y;
-      const heightB = swapCandidate.objectSize.y;
-
-      const posA = this.firstCollisionInSector.selected;
-      const posB = swapCandidate.root.position.y;
-
-      const movingUp = posB > posA;
-
-      console.log("movingUp", movingUp);
-
-      console.log("heightA", heightA);
-      console.log("heightB", heightB);
-
-      console.log("posA", posA);
-      console.log("posB", posB);
-
-      this.firstCollisionInSector = null;
-
-      if (movingUp) {
-        this.newPosA = posB + heightB - heightA;
-        this.newPosB = posA;
-      } else {
-        this.newPosA = posB;
-        this.newPosB = posA + heightA - heightB; //сдесь неправильно
+      if (!isSwap) {
+        console.log('!isSwap')
+        centerB = this.collissionModule.root.position.y + this.collissionModule.height/2;
       }
 
-      console.log("newPosA", this.newPosA);
-      console.log("newPosB", this.newPosB);
+      if (isSwap) {  
+        console.log('isSwap')
 
-      gsap.to(swapCandidate.root.position, {
-        y: this.newPosB,
+        centerB = this.newPos;
+      }
+
+      console.log('centerB', centerB)
+
+      const movingUp = centerB > centerA;
+
+      if (movingUp) {
+        console.log("moveUp");
+        newPos = centerB - heightB / 2 - heightA ;
+       
+      } else {
+         console.log("MoveDown");
+        newPos = centerB + heightB / 2  ;
+      }
+
+      console.log('newPos', newPos)
+
+      gsap.to(plannerConfig.selectedInSector.root.position, {
+        y: newPos,
         duration: 0.3,
         ease: "power2.out",
-        onUpdate: () => this.sceneSetup.requestRender(),
+        onUpdate: () => {
+          this.sceneSetup.requestRender();
+        },
         onComplete: () => {
-          this.movingProcess = false;
-          this.swapInProgress = false; // 💡 разблокировка
-          this.firstCollisionInSector = null;
+          this.movedBack = false;
+          plannerConfig.moveBack.otherBox = null;
+          plannerConfig.isCollision = false;
+          this.tableTop.create();
         },
       });
     }
-  }
 
-  checkSwapCandidate() {
-    if (plannerConfig.selectedObject.name == "penal") return;
-    const side = plannerConfig.selectedObject.side;
-    const level = plannerConfig.selectedObject.level;
-
-    const movingBox = new THREE.Box3().setFromObject(
-      plannerConfig.selectedObject.raycasterBox
-    );
-
-    let modelsArray;
-    if (level == 1) {
-      modelsArray =
-        side == "direct"
-          ? plannerConfig.modelsDirect
-          : plannerConfig.modelsLeft;
-    }
-
-    if (level == 2) {
-      modelsArray =
-        side == "direct"
-          ? plannerConfig.modelsDirect2L
-          : plannerConfig.modelsLeft2L;
-    }
-
-    for (let model of modelsArray) {
-      if (model.root.uuid === plannerConfig.selectedObject.root.uuid) continue;
-
-      const staticBox = new THREE.Box3().setFromObject(model.raycasterBox);
-
-      let overlap, staticSize;
-
-      if (side === "direct") {
-        overlap =
-          Math.min(movingBox.max.x, staticBox.max.x) -
-          Math.max(movingBox.min.x, staticBox.min.x);
-        staticSize = staticBox.max.x - staticBox.min.x;
-      } else if (side === "left" || side === "right") {
-        overlap =
-          Math.min(movingBox.max.z, staticBox.max.z) -
-          Math.max(movingBox.min.z, staticBox.min.z);
-        staticSize = staticBox.max.z - staticBox.min.z;
-      } else {
-        console.warn("checkSwapCandidate: Unknown kitchenType", side);
-        continue;
-      }
-
-      const movingSize =
-        side === "direct"
-          ? movingBox.max.x - movingBox.min.x
-          : movingBox.max.z - movingBox.min.z;
-
-      const minSize = Math.min(staticSize, movingSize);
-
-      // допустим, 40% перекрытия считается достаточным
-      const overlapThreshold = minSize * 0.5;
-
-      if (overlap > overlapThreshold) {
-        return model;
-      }
-
-      // if (overlap > staticSize / 2) {
-      //   return model;
-      // }
-    }
-
-    return null;
-  }
-
-  moveSelectedAfterSwap() {
-    if (plannerConfig.selectedObject.name == "penal") return;
-
-    const side = plannerConfig.selectedObject.side;
-    const isLeft = side === "left";
-
-    //  console.log("movefterPos", newPos);
-    gsap.to(plannerConfig.selectedObject.root.position, {
-      x: isLeft ? plannerConfig.selectedObject.root.position.x : this.newPosA,
-      z: isLeft ? this.newPosA : plannerConfig.selectedObject.root.position.z,
-
-      duration: 0.3,
-      ease: "power2.out",
-      onUpdate: () => {
-        this.sceneSetup.requestRender();
-      },
-      onComplete: () => {
-        this.swapSelected = false;
-
-        this.tableTop.create(); // создаём общую столешницу
-        plannerConfig.modelsDirect.forEach((item) => {
-          if (item.name == "penal") return;
-          item.tabletop.visible = false;
-        }); // отключам столешницу у модулей
-
-        plannerConfig.modelsLeft.forEach((item) => {
-          if (item.name == "penal") return;
-
-          item.tabletop.visible = false;
-        }); // отключам столешницу у модулей
-
-        this.sceneSetup.requestRender();
-        // console.log('end')
-      },
-    });
-
-    this.sceneSetup.requestRender();
-  }
-
-  moveAfterSwapInSectror() {
-    gsap.to(plannerConfig.selectedInSector.root.position, {
-      y: this.newPosA,
-
-      duration: 0.3,
-      ease: "power2.out",
-      onUpdate: () => {
-        this.sceneSetup.requestRender();
-      },
-      onComplete: () => {
-        this.swapSelectedInSector = false;
-      },
-    });
-
-    this.sceneSetup.requestRender();
-  }
-
-  checkSwapCandidateInSector() {
-    const movingBox = new THREE.Box3().setFromObject(
-      plannerConfig.selectedInSector.raycasterBox
-    );
-
-    let modelsArray = plannerConfig.selectedSector.modules;
-
-    for (let model of modelsArray) {
-      if (model.root.uuid === plannerConfig.selectedInSector.root.uuid)
-        continue;
-
-      const staticBox = new THREE.Box3().setFromObject(model.raycasterBox);
-
-      let overlap, staticSize;
-
-      overlap =
-        Math.min(movingBox.max.y, staticBox.max.y) -
-        Math.max(movingBox.min.y, staticBox.min.y);
-      staticSize = staticBox.max.y - staticBox.min.y;
-
-      //  console.log('overlap', overlap)
-
-      if (overlap > staticSize / 2) {
-        console.log("есть");
-        return model;
-      }
-    }
-
-    return null;
+    //  console.log('posX', posX)
   }
 
   moveBack(isSwap) {
-    console.log("isSwap", isSwap);
-    console.log("first", this.lastCollision);
+ //   console.log("isSwap", isSwap);
+  //  console.log("first", this.lastCollision);
 
     const selected = plannerConfig.selectedObject;
     const level = selected.level;
@@ -550,14 +387,14 @@ export class SwapController {
         centerB = isLeft ? this.newPos : this.newPos;
       }
 
-      console.log("newposBack", this.newPos);
+  //    console.log("newposBack", this.newPos);
 
       const movingRight = centerB > centerA;
 
       if (movingRight) {
-        console.log("moveright");
+     //   console.log("moveright");
         newPos = centerB - widthA / 2 - widthB / 2;
-        console.log("notMoveRight");
+      //  console.log("notMoveRight");
       } else {
         newPos = centerB + widthA / 2 + widthB / 2;
       }
@@ -580,85 +417,6 @@ export class SwapController {
     }
 
     //  console.log('posX', posX)
-  }
-
-  checkCollision(testInstance) {
-    const modelsArray = plannerConfig.models;
-    const selectedBox = new THREE.Box3().setFromObject(testInstance.root);
-    const gap = 0.01;
-
-    selectedBox.expandByScalar(-gap); // уменьшаем объём коллизии
-
-    const side = plannerConfig.selectedObject.side; // определим сторону
-
-    //  console.log('side', side)
-
-    for (let model of modelsArray) {
-      if (model.root.uuid === testInstance.root.uuid) continue;
-
-      const otherBox = new THREE.Box3().setFromObject(model.root);
-
-      if (selectedBox.intersectsBox(otherBox)) {
-        console.log("collis");
-        plannerConfig.isCollision = true;
-
-        const selectedCenter = new THREE.Vector3();
-        selectedBox.getCenter(selectedCenter);
-
-        const otherCenter = new THREE.Vector3();
-        otherBox.getCenter(otherCenter);
-        let movingRight, selectedX;
-
-        // рассчёт первой коллизиии и зопоминаем позицию в момент коллизии
-
-        if (side === "left") {
-          //рассчёт по z
-          console.log("z");
-          movingRight = selectedCenter.z > otherCenter.z;
-
-          console.log("movRig", movingRight);
-
-          selectedX = movingRight
-            ? otherBox.max.z + testInstance.objectSize.x / 2
-            : otherBox.min.z - testInstance.objectSize.x / 2;
-        } else {
-          // расчёт по X
-          movingRight = selectedCenter.x > otherCenter.x;
-
-          //    console.log('movingRight', movingRight)
-          //   console.log('otherBox', otherBox)
-          //    console.log('testInstance', testInstance.objectSize.x/2)
-
-          selectedX = movingRight
-            ? otherBox.max.x + testInstance.objectSize.x / 2
-            : otherBox.min.x - testInstance.objectSize.x / 2;
-        }
-
-        const isNewTarget =
-          !this.firstCollision ||
-          this.firstCollision.target.root.uuid !== model.root.uuid;
-
-        if (isNewTarget) {
-          this.firstCollision = {
-            //   selected: otherBox.min.x - testInstance.objectSize.x / 2,
-            selected: selectedX,
-
-            other: model.root.position.clone(),
-            target: model,
-          };
-          //  console.log("обновил первое столкновение:", this.firstCollision);
-        }
-
-        return {
-          isCollision: true,
-          target: model,
-        };
-      } else {
-        plannerConfig.isCollision = false;
-      }
-    }
-
-    return false;
   }
 
   checkSimpleCollision(testInstance) {
@@ -687,50 +445,29 @@ export class SwapController {
   }
 
   checkCollisionInSector(testInstance) {
-    let modelsArray = plannerConfig.selectedSector.modules;
-    const selectedBox = new THREE.Box3().setFromObject(testInstance.root);
-    const gap = 0.01;
+    const gap = 0.005;
 
-    selectedBox.expandByScalar(-gap); // уменьшаем объём коллизии
+    const models = plannerConfig.selectedSector.modules;
 
-    for (let model of modelsArray) {
-      if (model.root.uuid === testInstance.root.uuid) continue;
+    const selectedBox = new THREE.Box3().setFromObject(testInstance.raycasterBox);
+    selectedBox.expandByScalar(-gap); // уменьшаем на зазор
 
-      const otherBox = new THREE.Box3().setFromObject(model.root);
+   // console.log("selected", selectedBox);
+
+    for (let model of models) {
+       if (model.root.uuid === testInstance.root.uuid) continue;
+      const otherBox = new THREE.Box3().setFromObject(model.raycasterBox);
+      //  otherBox.expandByScalar(gap); // увеличиваем на зазор
 
       if (selectedBox.intersectsBox(otherBox)) {
-        const selectedCenter = new THREE.Vector3();
-        selectedBox.getCenter(selectedCenter);
+        this.collissionModule = model;
 
-        const otherCenter = new THREE.Vector3();
-        otherBox.getCenter(otherCenter);
-        let selectedY;
-        const movingUp = testInstance.root.position.y < model.root.position.y;
-
-        console.log("movingUpInCollis", movingUp);
-
-        selectedY = movingUp
-          ? model.root.position.y - testInstance.objectSize.y
-          : model.root.position.y + model.objectSize.y;
-
-        const isNewTarget =
-          !this.firstCollisionInSector ||
-          this.firstCollisionInSector.target.root.uuid !== model.root.uuid;
-
-        if (isNewTarget) {
-          this.firstCollisionInSector = {
-            //   selected: otherBox.min.x - testInstance.objectSize.x / 2,
-            selected: selectedY,
-
-            other: model.root.position.clone(),
-            target: model,
-          };
-          console.log(
-            "обновил первое столкновение:",
-            this.firstCollisionInSector
-          );
-        }
+        return true;
+      } else {
+        this.collissionModule = null;
       }
     }
+
+    return false;
   }
 }
