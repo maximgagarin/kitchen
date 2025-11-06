@@ -348,7 +348,8 @@ export class SwapController {
           this.movedBack = false;
           plannerConfig.moveBack.otherBox = null;
           plannerConfig.isCollision = false;
-          this.tableTop.create();
+          this.sceneSetup.requestRender()
+        
         },
       });
     }

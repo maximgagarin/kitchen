@@ -341,6 +341,11 @@ export class UtilsManager {
       // }
     });
 
+    if(plannerConfig.selectedInSector){
+      const parent = plannerConfig.selectedInSector.root.parent
+      parent.remove(plannerConfig.selectedInSector.root)
+    }
+
     // Удаление из массива models
 
     const index = plannerConfig.models.findIndex((m) => m.root.uuid === obj.root.uuid);

@@ -113,8 +113,8 @@ export class MoveInSector {
   }
 
   snapToNearby(selectedObject, models) {
-    const snapThreshold = 0.06;
-    const unsnapDistance = 0.06;
+    const snapThreshold = 0.04;
+    const unsnapDistance = 0.04;
 
     const selected = selectedObject;
     if (!selected) return;

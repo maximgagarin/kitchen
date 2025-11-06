@@ -899,11 +899,15 @@ export class PlannerManager {
     if (!this.swapController.swapSelected) {
       plannerConfig.modelsDirect.forEach((item) => {
         if (['penal', 'fridge'].includes(item.name)) return;
-        item.tabletop.visible = false;
-      });
+          if(item.tabletop){
+            item.tabletop.visible = false;
+           }
+        });
       plannerConfig.modelsLeft.forEach((item) => {
         if (['penal', 'fridge'].includes(item.name)) return;
-        item.tabletop.visible = false;
+          if(item.tabletop){
+            item.tabletop.visible = false;
+          }
       }); // отключам столешницу у модулей
     }
 

@@ -541,6 +541,7 @@ export class EmptyManager2L {
 
   addGapBoxInSectror(startY, endY, side, referenceBox, posY) {
     const icon = this.loaderModels.get("icon");
+    icon.scale.set(0.7, 0.7, 0.7);
     icon.visible = true;
 
     const gap = endY - startY;
