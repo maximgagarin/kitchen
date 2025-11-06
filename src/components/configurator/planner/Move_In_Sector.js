@@ -47,14 +47,17 @@ export class MoveInSector {
 
      // console.log('maxY', maxY)
 
-      const worldPoint = intersects[0].point.clone().add(this.offset);
+      const worldPoint = intersects[0].point.clone();
     //  worldPoint.x = THREE.MathUtils.clamp(worldPoint.x, minX, maxX);
       worldPoint.y = THREE.MathUtils.clamp(worldPoint.y, minY, maxY);
       worldPoint.z = 0.15;
 
-      const localPoint = worldToLocal(worldPoint);
+      const loc = new THREE.Vector3()
 
-      plannerConfig.selectedInSector.root.position.y = localPoint.y
+      const localPoint = plannerConfig.selectedInSector.root.worldToLocal(loc);
+      plannerConfig.selectedInSector.root.clone(localPoint)
+
+      plannerConfig.selectedInSector.root.position.y = intersects
 
       this.snapToNearby(plannerConfig.selectedInSector, plannerConfig.selectedObject.modules);
 
