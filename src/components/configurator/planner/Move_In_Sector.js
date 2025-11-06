@@ -54,10 +54,10 @@ export class MoveInSector {
 
       const loc = new THREE.Vector3()
 
-      const localPoint = plannerConfig.selectedInSector.root.worldToLocal(loc);
+      const localPoint = plannerConfig.selectedInSector.parent.root.worldToLocal(worldPoint);
       plannerConfig.selectedInSector.root.clone(localPoint)
 
-      plannerConfig.selectedInSector.root.position.y = intersects
+      plannerConfig.selectedInSector.root.position.y = localPoint.y
 
       this.snapToNearby(plannerConfig.selectedInSector, plannerConfig.selectedObject.modules);
 
