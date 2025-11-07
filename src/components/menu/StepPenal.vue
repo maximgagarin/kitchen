@@ -3,24 +3,24 @@
 
 
     <!-- Блок превью -->
-  <div
-    class="fixed top-20 right-[450px] w-[300px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-100"
-    :style="{
-      
-      opacity: hoveredItem ? 1 : 0,
-      transform: hoveredItem ? 'scale(1)' : 'scale(0.95)',
-    }"
-  >
-    <transition name="fade" mode="out-in">
+<div
+  class="fixed top-20 right-[450px] w-[300px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-100"
+  :style="{
+    opacity: hoveredItem ? 1 : 0,
+    transform: hoveredItem ? 'scale(1)' : 'scale(0.95)',
+  }"
+>
+  <transition name="fade" mode="out-in">
+    <div v-if="hoveredItem" :key="hoveredItem.src" class="w-full h-full flex flex-col items-center p-4">
       <img
-        v-if="hoveredItem"
-        :key="hoveredItem.src"
         :src="hoveredItem.src"
         alt="Модуль"
-        class="w-full h-full object-contain p-4"
+        class="w-full h-full object-contain flex-1"
       />
-    </transition>
-  </div>
+      <p class="text-gray-600 text-center mt-2">{{ hoveredItem.title }}</p>
+    </div>
+  </transition>
+</div>
 
   <div  class="max-w-4xl mx-auto p-1">
  
@@ -225,12 +225,12 @@ import { useAlgorithmStore } from "../../pinia/Algorithm";
 import { plannerConfig } from "../configurator/planner/planerConfig";
 
 const penalOptions = [
-  { value: "1", label: "1" , src:"/img/penals/penal1.png"},
-  { value: "2", label: "2" , src:"/img/penals/penal2.png" },
-  { value: "3", label: "3" , src:"/img/penals/penal3.png" },
-  { value: "4", label: "4" , src:"/img/penals/penal1.png" },
-  { value: "10", label: "т" , src:"/img/penals/penal2.png" },
-  { value: "6", label: "5" , src:"/img/penals/penal3.png"},
+  { value: "1", label: "1" , src:"/img/penals/penal2.png", title:'встроенная духовка'},
+  { value: "2", label: "2" , src:"/img/penals/penal2.png" , title:'встроенная духовка и 2 ящ'},
+  { value: "3", label: "3" , src:"/img/penals/penal3.png" , title:'встроенная духовка и свч' },
+  { value: "4", label: "4" , src:"/img/penals/penal2.png" , title:'2 ящика' },
+  { value: "10", label: "т" , src:"/img/penals/penal2.png" ,  title:'торцевой' },
+
   // { value: "7", label: "Встроенный холодильник" },
   // { value: "8", label: "2 пенала со встроенным хол. и мор." },
 ];
