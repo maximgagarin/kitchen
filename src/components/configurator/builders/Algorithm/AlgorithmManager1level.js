@@ -15,6 +15,7 @@ import { useAlgorithmStore } from "../../../../pinia/Algorithm";
 import { addOutline } from "../../addOutline";
 
 import { Service } from '../../Service/Service';
+import { reverse } from 'lodash';
 
 
 
@@ -271,12 +272,22 @@ export class AlgorithmManager1level {
 
     return rulesCopy
   }
+
+  cleanIndexObj(){
+    
+    this.algStore.indexObj.oven.direct = [];
+    this.algStore.indexObj.oven.left = [];
+    this.algStore.indexObj.dishWasher.direct = [];
+    this.algStore.indexObj.dishWasher.left = [];
+    this.algStore.indexObj.ovenDish.left = [];
+    this.algStore.indexObj.ovenDish.direct = [];
+  }
   
 
   // добавить к вариантам строну и тип
   correction(rule){
       rule.variants.forEach(item => {
-      console.log(item)
+
       item.forEach(variant=>{
         if (variant.modules.length === 2){
           variant.type = 'ovenDish'
@@ -296,25 +307,83 @@ export class AlgorithmManager1level {
 
   }
 
+  // реверс правил excel
+  doReverseRules(){
+    
+    const sink = this.kitchenSizesStore.sink
+
+    if(this.kitchenSizesStore.type === 'direct'){
+      if(sink.location === 'directCorner' || sink.location === 'directStart')  this.directRules[0].reverse = true
+      if(sink.location ==='directMiddle'){
+        if (['dishWasher', 'ovenDish'].includes(this.directRules[1].ruleEng))  this.directRules[1].reverse = true
+      }
+    }
+    if(this.kitchenSizesStore.type === 'left'){
+      if(sink.location === 'directCorner' || sink.location === 'directStart') {
+        console.log('2')
+         this.directRules[0].reverse = true
+         if (['dishWasher', 'ovenDish'].includes(this.leftRules[0].ruleEng))  this.leftRules[0].reverse = true
+      }
+      if(sink.location === 'leftCorner' || sink.location === 'leftStart') {
+        console.log('3')
+         this.leftRules[0].reverse = true
+         //if (['dishWasher', 'ovenDish'].includes(this.leftRules[0].ruleEng))  this.leftRules[0].reverse = true
+      }
+      if( sink.location === 'leftStart') {
+        console.log('3-1')
+         this.leftRules[0].reverse = true
+         if (['dishWasher', 'ovenDish'].includes(this.directRules[0].ruleEng))  this.directRules[0].reverse = true
+      }
+      if(sink.location === 'directMiddle') {
+        console.log('4')
+         this.leftRules[0].reverse = true
+         if (['dishWasher', 'ovenDish'].includes(this.directRules[1].ruleEng))  this.directRules[1].reverse = true
+      }
+      if(sink.location === 'directEnd') {
+        console.log('5')
+         //this.leftRules[0].reverse = true
+         if (['dishWasher', 'ovenDish'].includes(this.leftRules[0].ruleEng))  this.leftRules[0].reverse = true
+      }
+      if(sink.location === 'leftMiddle') {
+        console.log('7')
+         this.directRules[0].reverse = true
+         if (['dishWasher', 'ovenDish'].includes(this.leftRules[1].ruleEng))  this.leftRules[1].reverse = true
+      }
+      if(sink.location === 'leftEnd') {
+        console.log('5')
+         //this.leftRules[0].reverse = true
+         if (['dishWasher', 'ovenDish'].includes(this.directRules[0].ruleEng))  this.directRules[0].reverse = true
+      }
+    }
+  }
+
+  //сортировка вариантов чтобы пм была на стороне раковины
+  sorted(rule){
+    const side = this.kitchenSizesStore.sink.side === 'direct' ? 'direct' : 'left'
+    const sortedVariants = rule.variants.sort((a, b) => {
+    const hasDishA = a.some(o => o.type === 'dishWasher' && o.side === side);
+    const hasDishB = b.some(o => o.type === 'dishWasher' && o.side === side);
+
+    // true > false, поэтому сортируем обратным знаком
+    return hasDishB - hasDishA;
+    });
+
+    return sortedVariants
+  }
+
   new(value = 0){
     this.clear()
     const rule = this.kitchenSizesStore.filtredRulesTotal[0]
 
     this.correction(rule)
+    this.cleanIndexObj()
 
 
-    this.algStore.indexObj.oven.direct = [];
-    this.algStore.indexObj.oven.left = [];
-    this.algStore.indexObj.dishWasher.direct = [];
-    this.algStore.indexObj.dishWasher.left = [];
-    this.algStore.indexObj.ovenDish.left = [];
-    this.algStore.indexObj.ovenDish.direct = [];
+    const sortedVariants = this.sorted(rule)
 
     
-
-
     // Заполняем объект индексами
-    rule.variants.forEach((arr, index) => {
+    sortedVariants.forEach((arr, index) => {
       arr.forEach(obj => {
         if (obj.type === 'oven' || obj.type === 'dishWasher' || obj.type === 'ovenDish') {
           if (obj.side === 'direct') {
@@ -343,35 +412,47 @@ export class AlgorithmManager1level {
         const module1size = variant.modules[0].size 
         const module2size = variant.modules[1].size 
         const totalSize = module1size + module2size
-         newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width , moduleSize:totalSize, P:true, D:true})
+         newRules.push({side:variant.name, rule: this.rules['ovenDish'] , length:variant.width , moduleSize:totalSize,
+           P:true, D:true, ruleEng:'ovenDish', reverse:false})
       }
         
-      if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width , P:false, D:false })
+      if(variant.modules.length === 0) newRules.push({side:variant.name, rule: this.rules['clean'] , length:variant.width ,
+         P:false, D:false, ruleEng:'clean', reverse:false })
       if(variant.modules.length === 1) {
         const moduleName = variant.modules[0].name 
         const moduleSize = variant.modules[0].size 
         newRules.push({side:variant.name, rule:this.rules[moduleName] , length:variant.width , moduleSize:moduleSize ,
-           P: moduleName === 'dishWasher' ? true : false , D: moduleName === 'oven' ? true : false})
+           P: moduleName === 'dishWasher' ? true : false , D: moduleName === 'oven' ? true : false, ruleEng:moduleName, reverse:false})
       }
     })
 
-     this.restoreOriginalPositions()
+    this.restoreOriginalPositions()
 
     const rulesCopy = this.currectSizes(newRules)
 
+ 
 
 
-    const leftRules = rulesCopy.filter(rule => rule.side === "C1" || rule.side === "C2");
-    const directRules = rulesCopy.filter(rule => rule.side === "A1" || rule.side === "A2");
+
+    this.leftRules = rulesCopy.filter(rule => rule.side === "C1" || rule.side === "C2");
+    this.directRules = rulesCopy.filter(rule => rule.side === "A1" || rule.side === "A2");
+
+
+    this.doReverseRules()
+
+
+
+
+
 
     this.algStore.rulesName = newRules
 
  
-  if(this.kitchenSizesStore.type === 'direct')  this.buildSideRowDirect(directRules)
+  if(this.kitchenSizesStore.type === 'direct')  this.buildSideRowDirect(this.directRules)
   
   if(this.kitchenSizesStore.type === 'left'){
-    this.buildSideRowDirect(directRules)
-    this.buildSideRowLeft(leftRules)
+    this.buildSideRowDirect(this.directRules)
+    this.buildSideRowLeft( this.leftRules)
   }
     
 
@@ -416,7 +497,7 @@ export class AlgorithmManager1level {
    
    
     algorithmConfig.resultDirect.forEach(elem=>{
-      console.log('elem value', elem.value)
+   
       if(typeof elem.value !== 'number') return
       const width = Number((elem.value).toFixed(2));
       const type = typesMap[elem.key] || elem.key;
@@ -452,6 +533,7 @@ export class AlgorithmManager1level {
       this.startPosLeft = algorithmConfig.rowStart.left 
 
       algorithmConfig.resultLeft.forEach(elem=>{
+      if(typeof elem.value !== 'number') return
       
       const width = Number((elem.value).toFixed(2));
       const type = typesMap[elem.key] || elem.key;
@@ -491,6 +573,7 @@ export class AlgorithmManager1level {
       this.startPosRight = algorithmConfig.rowStart.left 
 
       algorithmConfig.resultRight.forEach(elem=>{
+      if(typeof elem.value !== 'number') return
       const width = Number((elem.value).toFixed(2));
       const type = typesMap[elem.key] || elem.key;
          let name;
@@ -733,7 +816,8 @@ export class AlgorithmManager1level {
    
  
     if(rule){
-      let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
+      let result = Object.entries(rule).map(([key, value]) => ({ key, value })); 
+           if (this.leftRules[0].reverse) result.reverse() // перевернуть правила 
       algorithmConfig.resultLeft.splice(1, 0, ...result)
     } else {
     //  this.plannerStore.showError();
@@ -753,6 +837,8 @@ export class AlgorithmManager1level {
        algorithmConfig.resultLeft.push({ key: 'm', value: 0.6 });
        if(rule2){
           let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));
+           if (this.leftRules[1].reverse) result2.reverse() // перевернуть правила 
+
           algorithmConfig.resultLeft.push(...result2);
        } else {
         //  this.plannerStore.showError();
@@ -894,6 +980,7 @@ export class AlgorithmManager1level {
  
     if(rule){
        let result = Object.entries(rule).map(([key, value]) => ({ key, value }));  
+       if (this.directRules[0].reverse) result.reverse() // перевернуть правила
 
        if(suSide === 'direct'){
          algorithmConfig.resultDirect.push(...result);
@@ -903,23 +990,17 @@ export class AlgorithmManager1level {
             algorithmConfig.resultDirect.push(...result)
          } else {
            algorithmConfig.resultDirect.unshift(...result);
-         }
-         
+         }        
        }
-
-
     } else {
   //    this.plannerStore.showError();
       console.log('нет правил')
     }
 
-
-
-
-
     if(direct2parts){
        if(rule2){
           let result2 = Object.entries(rule2).map(([key, value]) => ({ key, value }));    
+            if (this.directRules[1].reverse) result2.reverse() // перевернуть правила
           algorithmConfig.resultDirect.push(...result2);
        } else {
      //     this.plannerStore.showError();

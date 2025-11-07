@@ -5,6 +5,7 @@
   <Menu2level />
   <Menu1levelChange />
   <MenuSector />
+  <Rules />
 
 
   <!-- <AccordionMenu @select="handleSelectModule" /> -->
@@ -96,6 +97,7 @@ import Menu2level from "./Planner/Menu2level.vue";
 import Menu1levelChange from "./Planner/Menu1levelChange.vue";
 import Menu1level from "./Planner/Menu1level.vue";
 import MenuSector from "./Planner/MenuSector.vue";
+import Rules from "./Planner/Rules.vue";
 
 
 

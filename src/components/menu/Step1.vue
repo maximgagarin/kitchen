@@ -133,6 +133,8 @@ function updateConfig() {
     cabinetBuilder.value.executeConfig("direct");
     const lineLeft = config.lines.find(item => item.name === "lineLeft");
     const lineRight = config.lines.find(item => item.name === "lineRight");
+    cabinetBuilder.value.sceneSetup.controls.minAzimuthAngle =  THREE.MathUtils.degToRad(-80);
+
 
 
     lineLeft.visibleOff()
@@ -146,6 +148,7 @@ function updateConfig() {
     cabinetBuilder.value.executeConfig("left");
       const lineLeft = config.lines.find(item => item.name === "lineLeft");
     const lineRight = config.lines.find(item => item.name === "lineRight");
+    cabinetBuilder.value.sceneSetup.controls.minAzimuthAngle =  THREE.MathUtils.degToRad(-10);
 
     lineLeft.visibleOn()
     lineRight.visibleOff()

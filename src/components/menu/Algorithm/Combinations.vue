@@ -22,7 +22,7 @@
 
   <div class="grid grid-column">
     <!-- Духовка и её положение -->
-    <div>
+    <!-- <div>
       <div>
         <label
           for="selectedOven"
@@ -39,12 +39,12 @@
           <option value="direct">справа</option>
         </select>
       </div>
-    </div>
+    </div> -->
 
 
     <!-- Посудомойка -->
 
-    <div>
+    <!-- <div>
       <div>
         <label
           for="selectedOven"
@@ -61,7 +61,7 @@
           <option value="direct">справа</option>
         </select>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup>

@@ -337,8 +337,6 @@ export class EmptyManager {
 
 
 
-
-
     plannerConfig.namesToDelete.push(cabinetName);
     cabinet.visible = true;
 
