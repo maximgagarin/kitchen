@@ -1,13 +1,11 @@
 <template>
-      <div v-if="plannerStore.showControlTitle"
-    class="fixed w-[35px] h-[35px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden"
+      <div v-if="plannerStore.controls.show"
+    class="fixed p-1 bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden"
     :style="{
-      top: (plannerStore.controlTitlePosition.y + 15) + 'px',
-      left: (plannerStore.controlTitlePosition.x + 30) + 'px',
-      opacity: hoveredItem ? 1 : 0,
-      transform: hoveredItem ? 'scale(1)' : 'scale(0.95)',
+      top: (plannerStore.controls.position.y - 65) + 'px',
+      left: (plannerStore.controls.position.x  - 15) + 'px',
     }"
-    > <p>text</p> </div>
+    > <p class="text-gray-600">{{plannerStore.controls.title}}</p> </div>
     
 </template>
 

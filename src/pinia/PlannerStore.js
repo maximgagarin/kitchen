@@ -11,9 +11,9 @@ export const usePlannerStore = defineStore("plannerStore", () => {
   const c = ref([0.15, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8]);
 
   const emptyPosition = ref({
-    x:0,
-    y:0
-  })
+    x: 0,
+    y: 0,
+  });
 
   const modelsList = ref({
     cd: [0.15, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8],
@@ -23,106 +23,98 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     p: [0.45, 0.6],
     d: [0.45, 0.6],
     ms: [0.5, 0.6, 0.8],
-    su:[1,1.05],
-    penal:[
-        {
-          name:'1',
-          description:'дух + 1ящик',
-          sizes:[0.45,0.6],
-        }
-     ,       
-        {
-          name:'2',
-          description:'дух + 2ящ',
-          sizes:[0.45,0.6],
-        }
-     ,     
-        {
-          name:'3',
-          description:'дух и свч',
-          sizes:[0.45,0.6],
-        }
-      ,   
-        {
-          name:'4',
-          description:'полки и ящ.',
-          sizes:[0.4,0.45,0.6],
-        },
-                {
-          name:'10',
-          description:'торцевой',
-          sizes:[0.18],
-        }
-        
-     ,
-      
-    ]
-    
+    su: [1, 1.05],
+    penal: [
+      {
+        name: "1",
+        description: "дух + 1ящик",
+        sizes: [0.45, 0.6],
+      },
+      {
+        name: "2",
+        description: "дух + 2ящ",
+        sizes: [0.45, 0.6],
+      },
+      {
+        name: "3",
+        description: "дух и свч",
+        sizes: [0.45, 0.6],
+      },
+      {
+        name: "4",
+        description: "полки и ящ.",
+        sizes: [0.4, 0.45, 0.6],
+      },
+      {
+        name: "10",
+        description: "торцевой",
+        sizes: [0.18],
+      },
+    ],
   });
 
   const modelsListL2 = ref({
-    ВП:[ 0.15, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8],
-    ВПС:[  0.3,  0.4, , 0.6, 0.7, 0.8],
-    ВПГ:[ 0.35, 0.5, 0.6, 0.8],
-    ВПГС:[ 0.5, 0.6,  0.8],
-    ПЛД:[ 0.5, 0.6,  0.8],
+    ВП: [0.15, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8],
+    ВПС: [0.3, 0.4, , 0.6, 0.7, 0.8],
+    ВПГ: [0.35, 0.5, 0.6, 0.8],
+    ВПГС: [0.5, 0.6, 0.8],
+    ПЛД: [0.5, 0.6, 0.8],
 
+    ОПМ: [0.4, 0.6],
+    ПГС: [0.8],
+    ПЛВ: [0.4],
+    ОПМГ: [0.6],
+    ПГ: [0.35, 0.5, 0.6, 0.8],
+  });
 
+  const sectorWidth = ref(0.4);
+  const sectorReady = ref(false);
+  const empty2levelHeight = ref(false);
 
-    ОПМ:[0.4, 0.6],
-    ПГС:[0.8],
-    ПЛВ:[0.4],
-    ОПМГ:[0.6],
-    ПГ:[0.35, 0.5, 0.6, 0.8],
+  const objectMenu = ref(false);
+  const objectMenuL2 = ref(false);
+  const changeMenu = ref(false);
+  const sectorMenu = ref(false);
 
-
-  })
-
-  const sectorWidth = ref(0.4)
-  const sectorReady = ref(false)
-  const empty2levelHeight = ref(false)
-
-
-  const objectMenu = ref(false)
-  const objectMenuL2 = ref(false)
-  const changeMenu = ref(false)
-  const sectorMenu = ref(false)
-
-  const selectedType = ref(null)
-  const selectedWidth = ref(null)
-
-
-
+  const selectedType = ref(null);
+  const selectedWidth = ref(null);
 
   //только пенал в меню
-  const onlyPenal = ref(false)
+  const onlyPenal = ref(false);
 
   //любой модуль в меню
-  const anyModule = ref(false)
+  const anyModule = ref(false);
 
+  const movedBack = ref(false);
 
-  const movedBack = ref(false)
+  const hasCollision = ref(false);
 
-  const hasCollision = ref(false)
+  const hoveredModuleID = ref(null);
 
-  const hoveredModuleID = ref(null)
+  // подсказа кноки управления модулем
+  const controls = ref({
+    show: false,
+    position: {
+      x: 0,
+      y: 0,
+    },
+    title: "",
+  });
 
-  const showControlTitle = ref(false)
+  const showControlTitle = ref(false);
 
   const controlTitlePosition = ref({
-    x:0,
-    y:0
-  })
+    x: 0,
+    y: 0,
+  });
 
   function showError(message) {
-    hasCollision.value = true
+    hasCollision.value = true;
 
-    
-     setTimeout(() => {
-      hasCollision.value = false
-    }, 2000)
+    setTimeout(() => {
+      hasCollision.value = false;
+    }, 2000);
   }
-
 
   return {
     modelsListL2,
@@ -144,7 +136,6 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     sectorMenu,
     empty2levelHeight,
     hoveredModuleID,
-    showControlTitle,
-    controlTitlePosition
+    controls,
   };
 });

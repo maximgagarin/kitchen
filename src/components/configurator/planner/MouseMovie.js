@@ -5,62 +5,97 @@ import { useMouseStore } from "../../../pinia/mouseStore";
 import { usePlannerStore } from "../../../pinia/PlannerStore";
 
 export class MouseMove {
-  constructor(camera) {
-    this.camera = camera;
+  constructor(sceneSetup) {
+    this.sceneSetup = sceneSetup;
+    this.camera = sceneSetup.camera;
     this.raycaster = new THREE.Raycaster();
     this.mouseStore = useMouseStore();
     this.mouse = new THREE.Vector2();
     this.moduleID;
-    this.plannerStore = usePlannerStore()
+    this.plannerStore = usePlannerStore();
   }
 
-showControls() {
+  showControls() {
     // Set the raycaster based on the mouse position
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     // Find the objects that the raycaster intersects
     const intersectsModules = this.raycaster.intersectObjects(
-        plannerConfig.models.map((m) => m.raycasterBox),
-        false
+      plannerConfig.models.map((m) => m.raycasterBox),
+      false
     );
 
     if (intersectsModules.length > 0) {
-        // Get the ID of the module the mouse is hovering over
-        const id = intersectsModules[0].object.userData.id;
+      // Get the ID of the module the mouse is hovering over
+      const id = intersectsModules[0].object.userData.id;
 
-        // If the module ID is different, hide controls of the previous module
-        if (this.plannerStore.hoveredModuleID) {
-            if (this.plannerStore.hoveredModuleID !== id) {
-                const lastModule = plannerConfig.models.find((m) => m.id === this.plannerStore.hoveredModuleID);
-                lastModule.controls.forEach((item) => {
-                    item.visible = false;
-                });
-            }
+      // If the module ID is different, hide controls of the previous module
+      if (this.plannerStore.hoveredModuleID) {
+        if (this.plannerStore.hoveredModuleID !== id) {
+          const lastModule = plannerConfig.models.find(
+            (m) => m.id === this.plannerStore.hoveredModuleID
+          );
+          lastModule.controls.forEach((item) => {
+            item.visible = false;
+          });
         }
+      }
 
-        // Set the new module ID
-        this.plannerStore.hoveredModuleID = id;
-        console.log("id", id);
+      // Set the new module ID
+      this.plannerStore.hoveredModuleID = id;
+      //  console.log("id", id);
 
-        // Find the module by its ID and show its controls
-        const module = plannerConfig.models.find((m) => m.id === id);
-        console.log("module", module);
+      // Find the module by its ID and show its controls
+      const module = plannerConfig.models.find((m) => m.id === id);
+      //   console.log("module", module);
 
-        module.controls.forEach((item) => {
-            item.visible = true;
-        });
+      module.controls.forEach((item) => {
+        item.visible = true;
+      });
+
+      const intersectsControls = this.raycaster.intersectObjects(
+        module.controls,
+        false
+      );
+
+      // пересечение с кнопоками управления
+      if (intersectsControls.length > 0) {
+        const intersect = intersectsControls[0].object;
+
+        const title = intersect.userData.name 
+        const worldPos = new THREE.Vector3();
+        intersect.getWorldPosition(worldPos);
+
+        const screenPos = worldPos.clone().project(this.camera);
+        const canvas = this.sceneSetup.renderer.domElement;
+
+        const x = (screenPos.x * 0.5 + 0.5) * canvas.clientWidth;
+        const y = (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight;
+
+        this.sceneSetup.renderer.domElement.style.cursor = "pointer";
+        this.plannerStore.controls.position.x = Math.round(x);
+        this.plannerStore.controls.position.y = Math.round(y);
+        this.plannerStore.controls.title = title;
+        this.plannerStore.controls.show = true;
+      } else {
+        document.body.style.cursor = "default";
+        this.plannerStore.controls.show = false;
+      }
     } else {
-        // If no module is being intersected, hide the controls of the previous module
-        if (this.plannerStore.hoveredModuleID) {
-            const module = plannerConfig.models.find((m) => m.id === this.plannerStore.hoveredModuleID);
-            module.controls.forEach((item) => {
-                item.visible = false; // Hide controls when mouse leaves
-            });
+      // If no module is being intersected, hide the controls of the previous module
+      if (this.plannerStore.hoveredModuleID) {
+        const module = plannerConfig.models.find(
+          (m) => m.id === this.plannerStore.hoveredModuleID
+        );
+        module.controls.forEach((item) => {
+          item.visible = false; // Hide controls when mouse leaves
+        });
 
-            this.plannerStore.hoveredModuleID = null; // Clear the stored module ID
-        }
+        this.plannerStore.hoveredModuleID = null; // Clear the stored module ID
+        this.plannerStore.controls.show = false;
+      }
     }
-}
+  }
 
   epmtyBoxesMouseOver() {
     this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);

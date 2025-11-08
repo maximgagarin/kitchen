@@ -105,6 +105,7 @@ export class ModelInstanse {
     this.leftControl.position.set(-(this.objectSize.x)/2+0.05, 0.5, (this.objectSize.z/2))
     this.leftControl.name = 'leftControl'
     this.leftControl.visible = false
+    this.leftControl.userData.name = 'изменить размер'
     // this.leftControl.rotation.z = Math.PI/2
      
 
@@ -113,6 +114,8 @@ export class ModelInstanse {
     this.root.add(this.rightControl)
     this.rightControl.position.set((this.objectSize.x)/2-0.05, 0.5, (this.objectSize.z/2))
     this.rightControl.name = 'rightControl'
+    this.rightControl.userData.name = 'изменить размер'
+
     this.rightControl.visible = false
 
 
@@ -122,6 +125,8 @@ export class ModelInstanse {
     this.centerControl.position.set(0, 0.45, this.objectSize.z/2)
     this.centerControl.rotation.x = Math.PI/2
     this.centerControl.name = 'centerControl'
+    this.centerControl.userData.name = 'двигать'
+
     this.centerControl.visible = false
 
 
@@ -132,6 +137,8 @@ export class ModelInstanse {
     this.menuControl.position.set(0, 0.7, this.objectSize.z/2)
     this.menuControl.rotation.x = Math.PI/2
     this.menuControl.name = 'menuControl'
+    this.menuControl.userData.name = 'меню'
+
     this.menuControl.visible = false
 
     this.copyControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
@@ -140,6 +147,8 @@ export class ModelInstanse {
     this.copyControl.position.set(0, 0.2,this.objectSize.z/2)
     this.copyControl.rotation.x = Math.PI/2
     this.copyControl.name = 'copyControl'
+    this.copyControl.userData.name = 'копировать'
+
     this.copyControl.visible = false
 
     this.controls.push(this.leftControl, this.rightControl, this.centerControl, this.menuControl, this.copyControl)

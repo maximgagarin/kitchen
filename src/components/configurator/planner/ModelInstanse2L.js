@@ -166,6 +166,8 @@ export class ModelInstanse2L {
     this.centerControl.position.set(0, 0.45, this.objectSize.z/2)
     this.centerControl.rotation.x = Math.PI/2
     this.centerControl.name = 'centerControl'
+    this.centerControl.userData.name = 'двигать'
+
     this.centerControl.visible = false
 
 
@@ -175,6 +177,8 @@ export class ModelInstanse2L {
     this.copyControl.position.set(0, 0.1,this.objectSize.z/2)
     this.copyControl.rotation.x = Math.PI/2
     this.copyControl.name = 'copyControl'
+    this.copyControl.userData.name = 'копировать'
+
     this.copyControl.visible = false
 
 

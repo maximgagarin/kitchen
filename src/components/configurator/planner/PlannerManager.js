@@ -80,7 +80,7 @@ export class PlannerManager {
     this.moveInSector = new MoveInSector(this.sceneSetup);
     this.utils = new UtilsManager(this.sceneSetup, this.loaderModels);
     this.menuController = new MenuController(  this.sceneSetup,   this.loaderModels  );
-    this.mouseMove = new MouseMove(this.sceneSetup.camera)
+    this.mouseMove = new MouseMove(this.sceneSetup)
 
     this.roomBounds = null;
   }
@@ -545,6 +545,7 @@ export class PlannerManager {
 
     //движение модулей
     if (this.isMoving && !this.isDragging) {
+      this.plannerStore.controls.show = false
       if (plannerConfig.selectedObject.level == 1) {
         //   this.checkMoveBack()
         //   this.moveController.freeMove()
@@ -590,27 +591,8 @@ export class PlannerManager {
     }
 
     // обработка кнопок на модуле
-    if (plannerConfig.selectedObject) {
-      const intersectControls = this.raycaster.intersectObjects(
-        plannerConfig.selectedObject.controls,
-        false
-      );
-      //   console.log('123')
+  
 
-      if (intersectControls.length > 0) {
-        // Обрабатываем клик по кнопке
-        //    console.log("Нажата кнопка:", intersectControls[0].object.name);
-        if (plannerConfig.selectedObject.level == 1) {
-          this.controlsIntersected(intersectControls[0].object, event);
-        }
-        if (plannerConfig.selectedObject.level == 2) {
-          this.controlsIntersectedL2(intersectControls[0].object, event);
-        }
-        this.controls.enabled = false;
-
-        return;
-      }
-    }
 
     this.utils.clearSettings();
 
@@ -662,6 +644,33 @@ export class PlannerManager {
         //  this.moveController2L.bounds2level()
         this.setLevel2Setttings();
       }
+
+
+
+       const intersectControls = this.raycaster.intersectObjects(
+        plannerConfig.selectedObject.controls,
+        false
+      );
+      //   console.log('123')
+
+      if (intersectControls.length > 0) {
+        // Обрабатываем клик по кнопке
+        //    console.log("Нажата кнопка:", intersectControls[0].object.name);
+        if (plannerConfig.selectedObject.level == 1) {
+          this.controlsIntersected(intersectControls[0].object, event);
+        }
+        if (plannerConfig.selectedObject.level == 2) {
+          this.controlsIntersectedL2(intersectControls[0].object, event);
+        }
+        this.controls.enabled = false;
+
+        
+      }
+    
+
+
+
+
     }
     this.sceneSetup.requestRender();
   };
