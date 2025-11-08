@@ -69,7 +69,7 @@ export class SceneSetup {
     this.stats.dom.style.top = "0px";
     this.stats.dom.style.transform = "scale(1.5)";
     this.stats.dom.style.transformOrigin = "left top"
- //   document.body.appendChild(this.stats.dom);
+    document.body.appendChild(this.stats.dom);
     // --------------------------------------
 
     this.needsRender = true;
@@ -87,14 +87,14 @@ export class SceneSetup {
 
   startRenderLoop() {
     const loop = () => {
-   //   this.stats.begin(); // 🔹 Начало замера FPS
+      this.stats.begin(); // 🔹 Начало замера FPS
       if (this.needsRender) {
         this.render();
         this.needsRender = false;
       }
       this.needMouseEvent = true
 
-    //  this.stats.end(); // 🔹 Конец замера FPS
+      this.stats.end(); // 🔹 Конец замера FPS
       requestAnimationFrame(loop);
     };
     loop();

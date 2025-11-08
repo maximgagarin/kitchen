@@ -8,7 +8,7 @@ import { createPlanesForRaycaster } from "./utils/planes";
 import { RotationController } from "./RotationController";
 import { CopyController } from "./CopyController";
 
-import { gsap } from "gsap";
+
 import { ResizableModule } from "./ResizableModule";
 import { plannerConfig } from "./planerConfig";
 
@@ -18,15 +18,14 @@ import { MoveController2L } from "./MoveController2L";
 import { ChangeController } from "./ChangeController";
 import { SwapController } from "./SwapController";
 
-import { algorithmConfig } from "../builders/Algorithm/algorithmConfig";
-import { deletePlane } from "./utils/deletePlane";
-import { TableTop } from "../builders/Algorithm/TableTop";
 
+import { TableTop } from "../builders/Algorithm/TableTop";
 import { EmptyManager2L } from "./EmptyManager2L";
 import { CombinationController } from "./CombinationController";
 import { MoveInSector } from "./Move_In_Sector";
 import { UtilsManager } from "./UtilsManager";
 import { MenuController } from "./MenuController";
+import { MouseMove } from "./MouseMovie";
 
 export class PlannerManager {
   constructor(scene, loaderModels) {
@@ -73,27 +72,15 @@ export class PlannerManager {
     this.emptyManager = new EmptyManager(this.sceneSetup, this.loaderModels);
     this.moveController = new MoveController(this.sceneSetup);
     this.moveController2L = new MoveController2L(this.sceneSetup);
-    this.changeController = new ChangeController(
-      this.sceneSetup,
-      this.loaderModels,
-      this.emptyManager
-    );
-    this.copyController = new CopyController(
-      this.sceneSetup,
-      this.loaderModels
-    );
-    this.emptyManager2L = new EmptyManager2L(
-      this.sceneSetup,
-      this.loaderModels
-    );
+    this.changeController = new ChangeController( this.sceneSetup,    this.loaderModels,    this.emptyManager  );
+    this.copyController = new CopyController(  this.sceneSetup,   this.loaderModels );
+    this.emptyManager2L = new EmptyManager2L(  this.sceneSetup,   this.loaderModels  );
     this.combinationController = new CombinationController(this.sceneSetup);
     this.swapController = new SwapController(this.sceneSetup);
     this.moveInSector = new MoveInSector(this.sceneSetup);
     this.utils = new UtilsManager(this.sceneSetup, this.loaderModels);
-    this.menuController = new MenuController(
-      this.sceneSetup,
-      this.loaderModels
-    );
+    this.menuController = new MenuController(  this.sceneSetup,   this.loaderModels  );
+    this.mouseMove = new MouseMove(this.sceneSetup.camera)
 
     this.roomBounds = null;
   }
@@ -133,204 +120,10 @@ export class PlannerManager {
     }
   }
 
-  showPointer() {
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsControls = this.raycaster.intersectObjects(
-      plannerConfig.selectedObject.controls,
-      false
-    );
-
-    if (intersectsControls.length > 0) {
-      document.body.style.cursor = "pointer"; //  "pointer" как на кнопках
-    } else {
-      document.body.style.cursor = "default";
-    }
-  }
-
-  showPointerPenal() {
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-
-    const intersectsControls = this.raycaster.intersectObject(
-      this.selectedPenal.raycasterControl[0],
-      false
-    );
-
-    if (intersectsControls.length > 0) {
-      document.body.style.cursor = "pointer"; //  "pointer" как на кнопках
-    } else {
-      document.body.style.cursor = "default";
-    }
-  }
-
-  epmtyBoxesMouseOver() {
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsControls = this.raycaster.intersectObjects(
-      plannerConfig.iconsArray1L,
-      true
-    );
-
-    if (intersectsControls.length > 0) {
-      document.body.style.cursor = "pointer"; //  "pointer" как на кнопках
-    } else {
-      document.body.style.cursor = "default";
-    }
-  }
-
-  // epmtyBoxesMouseOver() {
-
-  //   this.raycaster.setFromCamera(this.mouse, this.camera);
-  //   const intersectsControls = this.raycaster.intersectObjects(
-  //      [...plannerConfig.boxesArrayDirect, ...plannerConfig.boxesArrayLeft],
-  //     false
-  //   );
-
-  //   let found = false;
-  //     if (intersectsControls.length > 0) {
-  //         const obj = intersectsControls[0].object;
-  //        // console.log(obj)
-  //         if (this.hoveredObject1level !== obj) {
-  //             if (this.hoveredObject1level) {
-  //                 this.hoveredObject1level.material.opacity = 0.0;
-  //                 this.hoveredObject1level.material.color.set(0x00ff00);
-  //                 this.hoveredObject1level.children[0].visible = false
-
-  //             }
-  //             this.hoveredObject1level = obj;
-  //             this.hoveredObject1level.material.opacity = 0.5;
-  //             this.hoveredObject1level.material.color.set(0xffff00);
-  //             this.hoveredObject1level.children[0].visible = true
-
-  //         }
-  //         found = true;
-  //     }
-
-  //     if (!found && this.hoveredObject1level) {
-  //       this.hoveredObject1level.children[0].visible = false
-
-  //         this.hoveredObject1level.material.opacity = 0.0;
-  //         this.hoveredObject1level.material.color.set(0x00ff00);
-  //         this.hoveredObject1level = null;
-
-  //     }
-  // }
-
-  epmtyBoxesMouseOver2() {
-    // console.log('nen')
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsControls = this.raycaster.intersectObjects(
-      plannerConfig.iconsArray2L,
-      true
-    );
-
-    if (intersectsControls.length > 0) {
-      document.body.style.cursor = "pointer"; //  "pointer" как на кнопках
-    } else {
-      document.body.style.cursor = "default";
-    }
-  }
-
-  // epmtyBoxesMouseOver2() {
-  //   this.raycaster.setFromCamera(this.mouse, this.camera);
-  //   const intersectsEmpties2L = this.raycaster.intersectObjects(
-  //   [...plannerConfig.empties2levelDirect, ...plannerConfig.empties2levelLeft],
-  //   false
-  // );
-
-  // let found = false;
-  //     if (intersectsEmpties2L.length > 0) {
-  //         const obj = intersectsEmpties2L[0].object;
-  //         if (this.hoveredObject !== obj) {
-  //             if (this.hoveredObject) {
-  //                 this.hoveredObject.material.opacity = 0.0;
-  //                 this.hoveredObject.material.color.set(0x00ff00);
-  //                 this.hoveredObject.children[0].visible = false
-  //             }
-  //             this.hoveredObject = obj;
-  //             this.hoveredObject.material.opacity = 0.5;
-  //             this.hoveredObject.material.color.set(0xffff00);
-  //             this.hoveredObject.children[0].visible = true
-
-  //         }
-  //         found = true;
-  //     }
-
-  //     if (!found && this.hoveredObject) {
-  //       this.hoveredObject.children[0].visible = false
-  //         this.hoveredObject.material.opacity = 0.0;
-  //         this.hoveredObject.material.color.set(0x00ff00);
-  //         this.hoveredObject = null;
-
-  //     }
-  // }
-
-  epmtySectorOver() {
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsEmpties2L = this.raycaster.intersectObjects(
-      plannerConfig.selectedObject.empties,
-      false
-    );
-
-    let found = false;
-    if (intersectsEmpties2L.length > 0) {
-      const obj = intersectsEmpties2L[0].object;
-      if (this.hoveredObject !== obj) {
-        if (this.hoveredObject) {
-          this.hoveredObject.material.opacity = 0.0;
-          this.hoveredObject.material.color.set(0x00ff00);
-          this.hoveredObject.children[0].visible = false;
-        }
-        this.hoveredObject = obj;
-        this.hoveredObject.material.opacity = 0.5;
-        this.hoveredObject.material.color.set(0xffff00);
-        this.hoveredObject.children[0].visible = true;
-      }
-      found = true;
-    }
-
-    if (!found && this.hoveredObject) {
-      this.hoveredObject.children[0].visible = false;
-      this.hoveredObject.material.opacity = 0.0;
-      this.hoveredObject.material.color.set(0x00ff00);
-      this.hoveredObject = null;
-    }
-  }
-
-  clearSettings() {
-    //невидимость для кнопок
-    if (plannerConfig.selectedObject) {
-      plannerConfig.selectedObject.controls.forEach((model) => {
-        model.visible = false;
-      });
-      plannerConfig.selectedObject.boxHelper.visible = false;
-    }
-
-    if (plannerConfig.selectedInSector) { 
-   
-      plannerConfig.selectedInSector.boxHelper.visible = false;
-      plannerConfig.selectedInSector = false;
-    }
-
-    //  удлить из стора если кликаем в пустоту
-    plannerConfig.selectedObject = false;
-    this.selectedPenal = null;
-    this.plannerStore.selectedObject.isSelect = false;
-    this.plannerStore.selectedObject.name = "";
-    plannerConfig.selectedEmpty = false;
-    //this.selectedEmpty = intersect
-    this.allowedWidths = null;
-    this.currentIndex = null;
-    plannerConfig.objectControls.length = 0;
-    this.plannerStore.objectMenu = false;
-    this.plannerStore.objectMenuL2 = false;
-    plannerConfig.selectedEmpty2L = false;
-       this.plannerStore.selectedType = null
-    this.plannerStore.selectedWidth = null
-      this.plannerStore.changeMenu = false;
-      this.plannerStore.sectorMenu = false;
 
 
-    this.sceneSetup.requestRender();
-  }
+
+
 
   setSelectObjectSettings(controller) {
     console.log(plannerConfig.selectedObject);
@@ -567,15 +360,7 @@ export class PlannerManager {
   //  console.log(this.emptyPosition);
   }
 
-  // emptiesIntersetsClick(intersect) {
-  // //  plannerConfig.selectedEmptyUUID = intersect.uuid
-  //   this.emptyManager.calcEmtyForPenal(intersect)
-  //   this.plannerStore.objectMenu = true;
-  //   plannerConfig.selectedEmpty = intersect
-  //  // this.selectedEmpty = intersect;
-  // //  console.log(plannerConfig.selectedEmpty.uuid);
-  //   //console.log(plannerConfig.boxesArrayDirect[0].uuid)
-  // }
+ 
 
   controlsIntersected(intersect, event) {
     const side = plannerConfig.selectedObject.side;
@@ -709,25 +494,7 @@ export class PlannerManager {
     }
   }
 
-  copySettings() {
-    console.log(plannerConfig.selectedObject.name);
 
-    if (plannerConfig.selectedObject.name == "sector") {
-      this.copyController.setSector();
-    } else {
-      this.copyController.set();
-    }
-
-    if (this.copyController.setToRow) {
-      this.copyController.moving = false;
-      plannerConfig.copyObject = null;
-      plannerConfig.copyObjectName = "";
-      plannerConfig.copyObjectFullName = "";
-    } else {
-      // this.copyController.moveNearWallsOnly()
-    }
-  //  console.log(this.scene);
-  }
 
   handleClickEmpties2L(box) {
     while (box && !box.userData.side && box.parent) {
@@ -748,11 +515,18 @@ export class PlannerManager {
     this.sceneSetup.needMouseEvent = false;
   };
 
+
+
+
   onMouseMove() {
+
+    this.mouseMove.showControls()
+
+
     //пустые боксы
     if (!this.isMoving && !this.copyController.moving) {
-      this.epmtyBoxesMouseOver2();
-      this.epmtyBoxesMouseOver();
+      this.mouseMove.epmtyBoxesMouseOver2();
+      this.mouseMove.epmtyBoxesMouseOver();
     }
 
     if ( this.moveInSector.isMoving && !this.isMoving) {
@@ -762,7 +536,7 @@ export class PlannerManager {
 
     if (plannerConfig.selectedObject) {
       plannerConfig.selectedObject.root.updateMatrixWorld(true, true);
-      this.showPointer();
+      this.mouseMove.showPointer();
     }
     if (this.isDragging) {
       plannerConfig.selectedObject.root.updateMatrixWorld(true, true);
@@ -838,7 +612,7 @@ export class PlannerManager {
       }
     }
 
-    this.clearSettings();
+    this.utils.clearSettings();
 
     const intersectsModules = this.raycaster.intersectObjects(
       plannerConfig.models.map((m) => m.raycasterBox),
@@ -936,7 +710,7 @@ export class PlannerManager {
 
     if (plannerConfig.copyObject) {
    //   console.log("plannerConfig.copyObject");
-      this.copySettings();
+      this.copyController.copySettings();
     }
 
     //пересчёт пустых промежутков
@@ -978,37 +752,6 @@ export class PlannerManager {
     this.controls.enabled = true;
   };
 
-  showControls() {
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-
-    const intersectsModules = this.raycaster.intersectObjects(
-      plannerConfig.models.map((m) => m.raycasterBox),
-      false
-    );
-    if (intersectsModules.length > 0) {
-   //   console.log("intersectModule", intersectsModules[0].object);
-      if (
-        this.object &&
-        intersectsModules[0].object.userData.controller.root.uuid !==
-          this.object.root.uuid
-      ) {
-        this.object.controls.forEach((elem) => (elem.visible = false));
-        this.object = intersectsModules[0].object.userData.controller;
-        this.object.controls.forEach((elem) => (elem.visible = true));
-      }
-      this.object = intersectsModules[0].object.userData.controller;
-      this.object.controls.forEach((elem) => (elem.visible = true));
-      plannerConfig.selectedObject = this.object;
-      this.setSelectObjectSettings(this.object);
-    } else {
-      if (this.object) {
-        this.object.controls.forEach((elem) => (elem.visible = false));
-        this.clearSettings();
-      }
-    }
-
-    this.sceneSetup.requestRender();
-  }
 
   createRaycasterPlanes() {
     this.resizableModule.init(plannerConfig.models);

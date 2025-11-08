@@ -105,6 +105,15 @@ export const usePlannerStore = defineStore("plannerStore", () => {
 
   const hasCollision = ref(false)
 
+  const hoveredModuleID = ref(null)
+
+  const showControlTitle = ref(false)
+
+  const controlTitlePosition = ref({
+    x:0,
+    y:0
+  })
+
   function showError(message) {
     hasCollision.value = true
 
@@ -133,6 +142,9 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     selectedWidth,
     changeMenu,
     sectorMenu,
-    empty2levelHeight
+    empty2levelHeight,
+    hoveredModuleID,
+    showControlTitle,
+    controlTitlePosition
   };
 });

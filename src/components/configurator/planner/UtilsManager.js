@@ -319,6 +319,8 @@ export class UtilsManager {
     const side = plannerConfig.selectedObject.side;
   //  console.log(side);
 
+  this.plannerStore.hoveredModuleID = null
+
     if (!obj || !obj.root) return;
 
     // Удаление из сцены
@@ -426,6 +428,43 @@ export class UtilsManager {
         });
       }
     });
+  }
+
+  clearSettings() {
+    //невидимость для кнопок
+    if (plannerConfig.selectedObject) {
+      plannerConfig.selectedObject.controls.forEach((model) => {
+        model.visible = false;
+      });
+      plannerConfig.selectedObject.boxHelper.visible = false;
+    }
+
+    if (plannerConfig.selectedInSector) { 
+   
+      plannerConfig.selectedInSector.boxHelper.visible = false;
+      plannerConfig.selectedInSector = false;
+    }
+
+    //  удлить из стора если кликаем в пустоту
+    plannerConfig.selectedObject = false;
+    this.selectedPenal = null;
+    this.plannerStore.selectedObject.isSelect = false;
+    this.plannerStore.selectedObject.name = "";
+    plannerConfig.selectedEmpty = false;
+    //this.selectedEmpty = intersect
+    this.allowedWidths = null;
+    this.currentIndex = null;
+    plannerConfig.objectControls.length = 0;
+    this.plannerStore.objectMenu = false;
+    this.plannerStore.objectMenuL2 = false;
+    plannerConfig.selectedEmpty2L = false;
+       this.plannerStore.selectedType = null
+    this.plannerStore.selectedWidth = null
+      this.plannerStore.changeMenu = false;
+      this.plannerStore.sectorMenu = false;
+
+
+    this.sceneSetup.requestRender();
   }
 
 

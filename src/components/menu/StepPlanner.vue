@@ -7,6 +7,7 @@
   <MenuSector />
   <Rules />
   <Materials />
+  <ControlTitle />
 
 
   <!-- <AccordionMenu @select="handleSelectModule" /> -->
@@ -100,6 +101,7 @@ import Menu1level from "./Planner/Menu1level.vue";
 import MenuSector from "./Planner/MenuSector.vue";
 import Rules from "./Planner/Rules.vue";
 import Materials from "./Planner/Materials.vue";
+import ControlTitle from "./Planner/ControlTitle.vue";
 
 
 

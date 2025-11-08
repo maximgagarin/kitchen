@@ -300,6 +300,26 @@ export class CopyController {
     console.log("models", plannerConfig.models);
   }
 
+  copySettings() {
+    console.log(plannerConfig.selectedObject.name);
+
+    if (plannerConfig.selectedObject.name == "sector") {
+      this.setSector();
+    } else {
+      this.set();
+    }
+
+    if (this.setToRow) {
+      this.moving = false;
+      plannerConfig.copyObject = null;
+      plannerConfig.copyObjectName = "";
+      plannerConfig.copyObjectFullName = "";
+    } else {
+      // this.copyController.moveNearWallsOnly()
+    }
+  //  console.log(this.scene);
+  }
+
   setObjectPosition(model, point, level, side) {
     const cfg = this.levelConfig[level] || this.levelConfig[1];
 
