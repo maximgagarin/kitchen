@@ -420,8 +420,8 @@ export class UtilsManager {
       if (!excludedNames.includes(model.name)) {
         model.root.traverse((child) => {
           if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
+          //  child.castShadow = true;
+          //  child.receiveShadow = true;
           }
         });
       }

@@ -2,15 +2,16 @@ import * as THREE from "three";
 import { tableTopMaterial } from "../../materials";
 import { plannerConfig } from "../../planner/planerConfig";
 import { CSG } from "three-csg-ts";
-import { MaterialManager } from "../../MaterialManager";
+import { materialManager } from "../../MaterialManager";
 
 export class TableTop {
   constructor(sceneSetup, loaderModels) {
     this.sceneSetup = sceneSetup;
     this.scene = this.sceneSetup.scene;
     this.loaderModels = loaderModels;
-    this.materialManager = new MaterialManager();
-    this.materialManager.start();
+   // this.materialManager = new MaterialManager();
+    //this.materialManager.start();
+
   }
 
   groupModulesForCountertops() {
@@ -117,7 +118,7 @@ export class TableTop {
       const depth = groupBox.max.z - groupBox.min.z;
       //    console.log('width', width)
 
-      const atlas = this.materialManager.setTexture(width, "x");
+      const atlas = materialManager.setTexture(width, "x");
 
       const geometry = new THREE.BoxGeometry(
         width,
@@ -125,6 +126,13 @@ export class TableTop {
         countertopDepth
       );
       const tabletop = new THREE.Mesh(geometry, atlas);
+
+      tabletop.userData.width = width
+      tabletop.userData.side = 'x'
+
+
+      tabletop.castShadow = false
+      tabletop.receiveShadow = false
 
       tabletop.position.set(
         groupBox.min.x + width / 2,
@@ -178,7 +186,7 @@ export class TableTop {
       //   console.log('width', width)
       //   console.log('depth', depth)
 
-      const atlas = this.materialManager.setTexture(depth, "z");
+      const atlas = materialManager.setTexture(depth, "z");
 
       const geometry = new THREE.BoxGeometry(
         countertopDepth,
@@ -186,6 +194,8 @@ export class TableTop {
         depth
       );
       const tabletop = new THREE.Mesh(geometry, atlas);
+      tabletop.userData.width = width
+      tabletop.userData.side = 'z'
 
       tabletop.position.set(0.3, 0.835, groupBox.min.z + depth / 2);
 
@@ -227,8 +237,8 @@ export class TableTop {
 
   castShadow(){
     plannerConfig.tabletops.forEach((item) => {
-      item.castShadow = true;
-      item.receiveShadow = true;
+//      item.castShadow = true;
+   //   item.receiveShadow = true;
     });
   }
 

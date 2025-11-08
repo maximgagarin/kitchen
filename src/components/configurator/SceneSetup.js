@@ -50,13 +50,13 @@ export class SceneSetup {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.minDistance = 2;
     this.controls.maxDistance = 7;
-    this.controls.minPolarAngle = THREE.MathUtils.degToRad(30);
-    this.controls.maxPolarAngle = THREE.MathUtils.degToRad(90);
+   // this.controls.minPolarAngle = THREE.MathUtils.degToRad(30);
+   // this.controls.maxPolarAngle = THREE.MathUtils.degToRad(90);
 
     // Ограничение горизонтального поворота (в радианах)
     // Например, от -45° до 45° вокруг целевой точки
-    this.controls.minAzimuthAngle =  THREE.MathUtils.degToRad(-80);
-    this.controls.maxAzimuthAngle = THREE.MathUtils.degToRad(85);
+   // this.controls.minAzimuthAngle =  THREE.MathUtils.degToRad(-80);
+  //  this.controls.maxAzimuthAngle = THREE.MathUtils.degToRad(85);
     this.controls.enablePan = true
     this.controls.target.copy(this.targetPosition);
     this.controls.update();

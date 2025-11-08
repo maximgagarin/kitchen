@@ -1039,7 +1039,12 @@ export class PlannerManager {
     this.utils.calcCornerModules();
     this.utils.calcCornerModules2L();
     //   this.utils.roomBoundsPenal()
+    //this.utils.shadow()
 
+
+    this.scene.traverse(o => {
+      if (o.castShadow) console.log('Отбрасывает тень:', o.name || o)
+    })
 
 
 

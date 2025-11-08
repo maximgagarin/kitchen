@@ -34,12 +34,12 @@ export class Room {
     this.wallLeft = new THREE.Mesh(this.wallLeftGeometry, basicMaterial);
     this.wallRight = new THREE.Mesh(this.wallRightGeometry, basicMaterial);
 
-    this.wall.receiveShadow = true;
-    this.wall.castShadow = true;
+    this.wall.receiveShadow = false;
+    this.wall.castShadow = false;
     this.floor.receiveShadow = true;
-    this.floor.castShadow = true;
-    this.wallLeft.receiveShadow =true
-    this.wallLeft.castShadow =true
+    this.floor.castShadow = false;
+    this.wallLeft.receiveShadow =false
+    this.wallLeft.castShadow =false
 
 
     this.wall.position.set(0, this.height / 2, -0.005);

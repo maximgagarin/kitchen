@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export class MaterialManager {
+ class MaterialManager {
   constructor() {
     this.textureLoader = new THREE.TextureLoader();
     this.cubeTextureloader = new THREE.CubeTextureLoader();
@@ -64,9 +64,9 @@ export class MaterialManager {
   }
 
   // текстура длиной 3 * 0.6
-    setTexture(width , axis) {
-      const texture = this.mramorLong2.clone();
-   //   const texture = this.woodLong.clone();
+  setTexture(width , axis) {
+   //   const texture = this.mramorLong2.clone();
+      const texture = this.woodLong.clone();
 
 
     texture.center.set(0.5, 0.5);
@@ -81,6 +81,7 @@ export class MaterialManager {
       texture.repeat.set(repeatX, 1);
 
       const atlasMaterial = new THREE.MeshPhysicalMaterial({
+    //    color:'red',
         map: texture,
     //   envMap: this.envMap,
     //   envMapIntensity: 0.5,
@@ -88,8 +89,11 @@ export class MaterialManager {
       // clearcoat: 1.0, // добавляет слой лака
       });
 
+      const material =  new THREE.MeshBasicMaterial({ color: 0x808080 })
+
       return atlasMaterial;
-    }
+      
+  }
 
   // текстура квадрат
   setTexture2(width , axis) {
@@ -120,3 +124,6 @@ export class MaterialManager {
     return atlasMaterial;
   }
 }
+
+
+export const materialManager =  new MaterialManager()

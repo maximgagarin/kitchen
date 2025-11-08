@@ -16,8 +16,8 @@ export class TableTop extends THREE.Mesh {
     super(geometry, material);
 
     // Дополнительно: включаем тени, если нужно
-    this.castShadow = true;
-    this.receiveShadow = true;
+  //  this.castShadow = true;
+   // this.receiveShadow = true;
 
     // При необходимости можно добавить имя
    

@@ -6,7 +6,7 @@ export class Light {
     this.ambientLight = new THREE.AmbientLight("white", 1);
 
     this.directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-    this.directionalLight.castShadow = true;
+   // this.directionalLight.castShadow = true;
     this.directionalLight.shadow.camera.left = -5;
     this.directionalLight.shadow.camera.right = 5;
     this.directionalLight.shadow.camera.top = 5;
