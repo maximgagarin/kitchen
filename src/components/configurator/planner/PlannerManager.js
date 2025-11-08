@@ -402,6 +402,7 @@ export class PlannerManager {
           .sub(planeHit.point);
       }
       this.isMoving = true;
+      this.plannerStore.movingModule = true
       if (plannerConfig.selectedObject.side == "direct") {
         plannerConfig.tabletops.forEach((item) => {
           item.visible = false;
@@ -728,6 +729,7 @@ export class PlannerManager {
 
     this.swapController.lastSwapCandidate = null;
     this.isMoving = false;
+    this.plannerStore.movingModule = false
 
     if (plannerConfig.selectedObject) {
       if (!this.swapController.swapSelected && plannerConfig.isCollision) {

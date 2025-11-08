@@ -8,13 +8,15 @@ export class ModelInstanse {
   constructor(modelScene, sceneSetup) {
     this.sceneSetup = sceneSetup
     this.root = modelScene
+    
+    this.initTextures()
    
     this.doorLeft = this.root.getObjectByName('doorLeft')
     this.doorRight = this.root.getObjectByName('doorRight')
     this.tabletop = this.root.getObjectByName('tabletop')
 
   //  this.name = this.findObjectName(this.root, "modelName");
-     this.id = 0
+    this.id = 0
     this.name = ''
     this.fullname = ''
     this.width = null
@@ -58,11 +60,48 @@ export class ModelInstanse {
 
     algorithmConfig.lines.push(this.lineHotizontal, this.lineLeft, this.lineRight)
 
-    
+  
 
 
   }
 
+
+  initTextures() {
+    const loader = new THREE.TextureLoader();
+
+    this.controlTextures = {
+      leftControl: {
+        normal: loader.load('textures/controls/leftControl.jpg'),
+        hover: loader.load('textures/controls/leftControlHover.jpg'),
+      },
+      rightControl: {
+        normal: loader.load('textures/controls/rightControl.jpg'),
+        hover: loader.load('textures/controls/rightControlHover.jpg'),
+      },
+      centerControl: {
+        normal: loader.load('textures/controls/centerControl.jpg'),
+        hover: loader.load('textures/controls/centerControlHover.jpg'),
+      },
+      menuControl: {
+        normal: loader.load('textures/controls/menuControl.jpg'),
+        hover: loader.load('textures/controls/menuControl.jpg'),
+      },
+      copyControl: {
+        normal: loader.load('textures/controls/menuControl.jpg'),
+        hover: loader.load('textures/controls/menuControl.jpg'),
+      },
+    };
+
+    Object.values(this.controlTextures).forEach(stateSet => {
+      Object.values(stateSet).forEach(tex => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.transparent = true;
+        
+      });
+    });
+
+    console.log(this.controlTextures)
+  }
 
   createBox(){
     const box = new THREE.Box3().setFromObject(this.root);
@@ -99,40 +138,94 @@ export class ModelInstanse {
   }
 
   createControls(){
-    this.leftControl = new THREE.Mesh( new THREE.BoxGeometry(0.03, 0.3, 0.03),
-    new THREE.MeshStandardMaterial({  color:0x60fa39 }));
+
+  
+
+   const material = new THREE.MeshStandardMaterial({
+      map: this.controlTextures.leftControl.normal,
+      transparent: true,
+      depthWrite: false
+   });
+
+  
+
+    this.leftControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.005, 32),
+      material,  // верх
+  );
+  
+    this.leftControl.rotation.x = Math.PI/2
+    this.leftControl.rotation.y = Math.PI/2
+
+    if(this.width < 0.3){
+      this.leftControl.position.set( 0 , 0.57, (this.objectSize.z/2))
+    } else {
+      this.leftControl.position.set( -this.objectSize.x/4, 0.45, (this.objectSize.z/2))
+    }
     this.root.add(this.leftControl)
-    this.leftControl.position.set(-(this.objectSize.x)/2+0.05, 0.5, (this.objectSize.z/2))
+
     this.leftControl.name = 'leftControl'
     this.leftControl.visible = false
     this.leftControl.userData.name = 'изменить размер'
+    this.leftControl.userData.state = 'normal'
     // this.leftControl.rotation.z = Math.PI/2
      
 
-    this.rightControl = new THREE.Mesh( new THREE.BoxGeometry(0.03, 0.3, 0.03),
-    new THREE.MeshStandardMaterial({  color:0x60fa39 }));
+    
+    const material2 = new THREE.MeshStandardMaterial({
+      map: this.controlTextures.rightControl.normal,
+      transparent: true,
+      depthWrite: false
+    });
+
+    this.rightControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.01, 32),
+    material2);
+ 
+    this.rightControl.rotation.x = Math.PI/2
+    this.rightControl.rotation.y = Math.PI/2
+
+  
+    if(this.width < 0.3){
+      this.rightControl.position.set( 0 , 0.325, (this.objectSize.z/2))
+    } else {
+      this.rightControl.position.set( this.objectSize.x/4, 0.45, (this.objectSize.z/2))
+    }
     this.root.add(this.rightControl)
-    this.rightControl.position.set((this.objectSize.x)/2-0.05, 0.5, (this.objectSize.z/2))
+    
     this.rightControl.name = 'rightControl'
     this.rightControl.userData.name = 'изменить размер'
-
     this.rightControl.visible = false
 
 
-    this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:0x696969  }));
+    const material3 = new THREE.MeshStandardMaterial({
+      map: this.controlTextures.centerControl.normal,
+      transparent: true,
+      depthWrite: false
+    });
+    
+
+
+    this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.06, 0.06, 0.01, 32),
+    material3);
     this.root.add(this.centerControl)
     this.centerControl.position.set(0, 0.45, this.objectSize.z/2)
     this.centerControl.rotation.x = Math.PI/2
+    this.centerControl.rotation.y = Math.PI/2
+
     this.centerControl.name = 'centerControl'
     this.centerControl.userData.name = 'двигать'
 
     this.centerControl.visible = false
 
 
+
+    const material4 = new THREE.MeshStandardMaterial({
+      map: this.controlTextures.menuControl.normal,
+      transparent: true,
+      depthWrite: false
+    });
     
     this.menuControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:0xD2691E  }));
+    material4);
     this.root.add(this.menuControl)
     this.menuControl.position.set(0, 0.7, this.objectSize.z/2)
     this.menuControl.rotation.x = Math.PI/2
@@ -141,8 +234,15 @@ export class ModelInstanse {
 
     this.menuControl.visible = false
 
+
+    const material5 = new THREE.MeshStandardMaterial({
+      map: this.controlTextures.copyControl.normal,
+      transparent: true,
+      depthWrite: false
+    });
+
     this.copyControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:'red'  }));
+    material5);
     this.root.add(this.copyControl)
     this.copyControl.position.set(0, 0.2,this.objectSize.z/2)
     this.copyControl.rotation.x = Math.PI/2

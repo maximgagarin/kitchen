@@ -91,6 +91,8 @@ export const usePlannerStore = defineStore("plannerStore", () => {
 
   const hoveredModuleID = ref(null);
 
+  const movingModule = ref(false)
+
   // подсказа кноки управления модулем
   const controls = ref({
     show: false,
@@ -137,5 +139,6 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     empty2levelHeight,
     hoveredModuleID,
     controls,
+    movingModule,
   };
 });

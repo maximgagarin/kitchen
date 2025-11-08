@@ -23,7 +23,7 @@ export class CabinetBuilder {
 
     this.start();
 
-    //   this.test2()
+  //     this.test3()
 
     this.height = config.kitchen_size.height;
     this.tableTopAll = [];
@@ -52,6 +52,31 @@ export class CabinetBuilder {
       this.getObjectTexturesSize(model);
       this.sceneSetup.requestRender();
     }, 12000);
+  }
+
+  test3(){
+    const geometry = new THREE.CylinderGeometry(1, 1, 0.4, 64);
+
+    const loader = new THREE.TextureLoader();
+    const wheelTexture = loader.load('textures/controls/1.png');
+    wheelTexture.colorSpace = THREE.SRGBColorSpace;
+
+    const materialSide = new THREE.MeshStandardMaterial({ color: 0x333333 });
+    const materialCap = new THREE.MeshStandardMaterial({
+      map: wheelTexture,
+      transparent: true,
+      depthWrite: false
+    });
+
+    const wheel = new THREE.Mesh(geometry, [
+      materialSide, // бок
+      materialCap,  // верх
+      materialCap   // низ
+    ]);
+
+    wheel.rotation.z = Math.PI / 2;
+    this.scene.add(wheel);
+    
   }
 
   getObjectTexturesSize(obj) {

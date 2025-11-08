@@ -16,6 +16,8 @@ export class MouseMove {
   }
 
   showControls() {
+    if(this.plannerStore.movingModule) return
+    
     // Set the raycaster based on the mouse position
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -59,28 +61,57 @@ export class MouseMove {
       );
 
       // пересечение с кнопоками управления
-      if (intersectsControls.length > 0) {
-        const intersect = intersectsControls[0].object;
+   if (intersectsControls.length > 0) {
+  const btn = intersectsControls[0].object;
+  const name = btn.name;
 
-        const title = intersect.userData.name 
-        const worldPos = new THREE.Vector3();
-        intersect.getWorldPosition(worldPos);
+  // Позиция подсказки
+  const worldPos = new THREE.Vector3();
+  btn.getWorldPosition(worldPos);
+  const screenPos = worldPos.clone().project(this.camera);
+  const canvas = this.sceneSetup.renderer.domElement;
 
-        const screenPos = worldPos.clone().project(this.camera);
-        const canvas = this.sceneSetup.renderer.domElement;
+  this.plannerStore.controls.position.x = Math.round((screenPos.x * 0.5 + 0.5) * canvas.clientWidth);
+  this.plannerStore.controls.position.y = Math.round((-screenPos.y * 0.5 + 0.5) * canvas.clientHeight);
+  this.plannerStore.controls.title = btn.userData.name;
+  this.plannerStore.controls.show = true;
 
-        const x = (screenPos.x * 0.5 + 0.5) * canvas.clientWidth;
-        const y = (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight;
+  this.sceneSetup.renderer.domElement.style.cursor = "pointer";
 
-        this.sceneSetup.renderer.domElement.style.cursor = "pointer";
-        this.plannerStore.controls.position.x = Math.round(x);
-        this.plannerStore.controls.position.y = Math.round(y);
-        this.plannerStore.controls.title = title;
-        this.plannerStore.controls.show = true;
-      } else {
-        document.body.style.cursor = "default";
-        this.plannerStore.controls.show = false;
+  // Hover
+  module.controls.forEach(b => {
+    const bName = b.name;
+    if (b === btn) {
+      if (b.userData.state !== "hover") {
+        b.material.map = module.controlTextures[bName].hover;
+        b.material.needsUpdate = true;
+        b.userData.state = "hover";
       }
+    } else {
+      // Все остальные кнопки возвращаем в normal
+      if (b.userData.state !== "normal") {
+        b.material.map = module.controlTextures[bName].normal;
+        b.material.needsUpdate = true;
+        b.userData.state = "normal";
+      }
+    }
+  });
+
+} else {
+  // Мышь не над кнопками → сброс всех кнопок в normal
+  this.sceneSetup.renderer.domElement.style.cursor = "default";
+  this.plannerStore.controls.show = false;
+
+  module.controls.forEach(btn => {
+    const name = btn.name;
+    if (btn.userData.state !== "normal") {
+      btn.material.map = module.controlTextures[name].normal;
+      btn.material.needsUpdate = true;
+      btn.userData.state = "normal";
+    }
+  });
+}
+
     } else {
       // If no module is being intersected, hide the controls of the previous module
       if (this.plannerStore.hoveredModuleID) {
