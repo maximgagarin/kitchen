@@ -97,8 +97,8 @@ import * as THREE from "three";
 
   // текстура квадрат
   setTexture2(width , axis) {
-   // const texture = this.mramor.clone();
-    const texture = this.mramor2.clone();
+    const texture = this.mramor.clone();
+ //   const texture = this.mramor2.clone();
 
      texture.center.set(0.5, 0.5);
 
@@ -114,9 +114,9 @@ import * as THREE from "three";
 
     const atlasMaterial = new THREE.MeshPhysicalMaterial({
       map: texture,
-      //   envMap: this.envMap,
-       //  envMapIntensity: 0.2,
-      //  metalness: 0.1, // почти не металл
+        envMap: this.envMap,
+        envMapIntensity: 0.2,
+       metalness: 0.1, // почти не металл
       roughness: 0.2, // почти гладкий
         clearcoat: 1.0, // добавляет слой лака
     });

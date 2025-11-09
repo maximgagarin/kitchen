@@ -118,7 +118,7 @@ export class TableTop {
       const depth = groupBox.max.z - groupBox.min.z;
       //    console.log('width', width)
 
-      const atlas = materialManager.setTexture(width, "x");
+      const atlas = materialManager.setTexture2(width, "x");
 
       const geometry = new THREE.BoxGeometry(
         width,
@@ -186,7 +186,7 @@ export class TableTop {
       //   console.log('width', width)
       //   console.log('depth', depth)
 
-      const atlas = materialManager.setTexture(depth, "z");
+      const atlas = materialManager.setTexture2(depth, "z");
 
       const geometry = new THREE.BoxGeometry(
         countertopDepth,

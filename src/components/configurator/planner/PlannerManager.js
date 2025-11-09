@@ -93,13 +93,32 @@ export class PlannerManager {
     this.sceneSetup.requestRender();
   }
 
+  createTableTop(){    
+        this.tableTop.create();
+
+          if (!this.swapController.swapSelected) {
+      plannerConfig.modelsDirect.forEach((item) => {
+        if (['penal', 'fridge'].includes(item.name)) return;
+          if(item.tabletop){
+            item.tabletop.visible = false;
+           }
+        });
+      plannerConfig.modelsLeft.forEach((item) => {
+        if (['penal', 'fridge'].includes(item.name)) return;
+          if(item.tabletop){
+            item.tabletop.visible = false;
+          }
+      }); // отключам столешницу у модулей
+    }
+  }
+
   // если выбран модуль  меняем размер или пустой бокс добавляем модуль
   addModule(type, width, penal) {
     if (plannerConfig.selectedObject.level == 1) {
       console.log("changeSelected");
       this.changeController.changeSelected(type, width);
       this.emptyManager.calculateEmpties();
-      this.tableTop.create();
+      this.createTableTop()
       this.sceneSetup.requestRender();
       
     } else if (plannerConfig.selectedEmpty) {
@@ -107,7 +126,10 @@ export class PlannerManager {
 
       this.emptyManager.addToEmpty(type, width, penal);
       this.emptyManager.calculateEmpties();
-      this.tableTop.create();
+      this.createTableTop()
+
+   
+    
       this.sceneSetup.requestRender();
     } else if (plannerConfig.selectedEmpty2L.name) {
       console.log("addToEmpty2");
@@ -470,6 +492,7 @@ export class PlannerManager {
         }
 
         this.isMoving = true;
+        this.plannerStore.movingModule = true
       }
       if (intersectControls[0].object.name == "ungroupCombo") {
     //    console.log("ungroupCombo");
