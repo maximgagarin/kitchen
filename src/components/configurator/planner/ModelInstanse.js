@@ -41,6 +41,8 @@ export class ModelInstanse {
     
 
     this.raycasterBox = null
+    this.frontBox = null
+
     this.objectSize = new THREE.Vector3();
     this.boxHelper = null
     this.createBox()
@@ -83,9 +85,19 @@ export class ModelInstanse {
     new THREE.BoxGeometry(size.x, size.y, size.z),
     new THREE.MeshBasicMaterial({  visible:false })
     );
+
     helper.position.copy(center);
     helper.name = 'boxHelper'
    // helper.userData.controller = this;
+
+
+    const frontBox = new THREE.Mesh(
+    new THREE.BoxGeometry(size.x, size.y, 0.05),
+    new THREE.MeshBasicMaterial({  color:'red' })
+    );
+
+    frontBox.position.set(0, this.objectSize.y/2, (this.objectSize.z/2)-0.05)
+   // this.frontBox = frontBox
     
 
     this.raycasterBox = helper; // сохраняем для Raycaster
@@ -95,6 +107,7 @@ export class ModelInstanse {
 
     const boxHelper = new THREE.BoxHelper( this.root, 0xffff00 );
     this.root.add(boxHelper)
+   // this.root.add(frontBox)
     this.boxHelper = boxHelper
     this.boxHelper.visible = false
     

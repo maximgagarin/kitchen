@@ -55,10 +55,10 @@ export class Room {
     this.wallLeft.rotation.y = Math.PI / 2;
     this.wallRight.rotation.y = -Math.PI / 2;
 
-    this.scene.add(this.floor);
-    this.scene.add(this.wall);
-    this.scene.add(this.wallLeft);
-    this.scene.add(this.wallRight);
+   this.scene.add(this.floor);
+   this.scene.add(this.wall);
+   this.scene.add(this.wallLeft);
+   this.scene.add(this.wallRight);
 
 
       

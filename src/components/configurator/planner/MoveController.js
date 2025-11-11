@@ -28,14 +28,17 @@ export class MoveController {
 
     intersects = this.raycaster.intersectObject(plannerConfig.directPlane1level );
 
-    console.log('1')
+  
 
   
 
     if (intersects.length > 0) {
       const point = intersects[0].point.clone().add(this.offset);
-      plannerConfig.point =  point
-  //    console.log(plannerConfig.point)
+     
+      console.log('point', point)
+
+
+  
 
       const currentPos = plannerConfig.selectedObject.root.position.clone();
 
@@ -75,6 +78,7 @@ export class MoveController {
   
 
       if (this.kitchenStore.type == "direct") {
+        console.log(finalPos.x)
         plannerConfig.selectedObject.root.position.x = finalPos.x;
       }
 

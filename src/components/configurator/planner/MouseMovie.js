@@ -15,6 +15,7 @@ export class MouseMove {
     this.moduleID;
     this.plannerStore = usePlannerStore();
     this.emptyBox = null
+       this.emptyBox2L = null;
     this.emptyBoxInSector = null
   }
 
@@ -193,10 +194,7 @@ export class MouseMove {
     this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsControls = this.raycaster.intersectObjects(
-      plannerConfig.iconsArray1L,
-      true
-    );
+    const intersectsControls = this.raycaster.intersectObjects(  plannerConfig.iconsArray1L,  true );
 
     if (intersectsControls.length > 0) {
       document.body.style.cursor = "pointer"; //  "pointer" как на кнопках
@@ -205,56 +203,9 @@ export class MouseMove {
     }
   }
 
-  epmtyBoxesMouseOver2() {
-    this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
+ 
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsControls = this.raycaster.intersectObjects(
-      plannerConfig.iconsArray2L,
-      true
-    );
-
-    if (intersectsControls.length > 0) {
-      document.body.style.cursor = "pointer"; //  "pointer" как на кнопках
-    } else {
-      document.body.style.cursor = "default";
-    }
-  }
-
-  epmtySectorOver() {
-    this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
-
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsEmpties2L = this.raycaster.intersectObjects(
-      plannerConfig.selectedObject.empties,
-      false
-    );
-
-    let found = false;
-    if (intersectsEmpties2L.length > 0) {
-      const obj = intersectsEmpties2L[0].object;
-      if (this.hoveredObject !== obj) {
-        if (this.hoveredObject) {
-          this.hoveredObject.material.opacity = 0.0;
-          this.hoveredObject.material.color.set(0x00ff00);
-          this.hoveredObject.children[0].visible = false;
-        }
-        this.hoveredObject = obj;
-        this.hoveredObject.material.opacity = 0.5;
-        this.hoveredObject.material.color.set(0xffff00);
-        this.hoveredObject.children[0].visible = true;
-      }
-      found = true;
-    }
-
-    if (!found && this.hoveredObject) {
-      this.hoveredObject.children[0].visible = false;
-      this.hoveredObject.material.opacity = 0.0;
-      this.hoveredObject.material.color.set(0x00ff00);
-      this.hoveredObject = null;
-    }
-  }
-
+ 
   showPointer() {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersectsControls = this.raycaster.intersectObjects(
@@ -359,18 +310,18 @@ export class MouseMove {
       const obj = intersects[0].object;
 
       // если навели на другой бокс — сбросить прошлый
-      if (this.emptyBox && this.emptyBox !== obj) {
-        this.emptyBox.material.opacity = 0;
+      if (this.emptyBox2L && this.emptyBox2L !== obj) {
+        this.emptyBox2L.material.opacity = 0;
           this.plannerStore.controls.show = false;
 
 
       }
 
-      this.emptyBox = obj;
-      this.emptyBox.material.opacity = 0.2;
+      this.emptyBox2L = obj;
+      this.emptyBox2L.material.opacity = 0.2;
 
       const worldPos = new THREE.Vector3();
-      this.emptyBox.getWorldPosition(worldPos);
+      this.emptyBox2L.getWorldPosition(worldPos);
 
 
       const screenPos = worldPos.clone().project(this.camera);
@@ -386,13 +337,13 @@ export class MouseMove {
       this.plannerStore.controls.show = true;
 
 
-    } else if (this.emptyBox) {
+    } else if (this.emptyBox2L) {
       // если ушли со всех боксов — вернуть норму
-      this.emptyBox.material.opacity = 0;
+      this.emptyBox2L.material.opacity = 0;
           this.plannerStore.controls.show = false;
 
 
-      this.emptyBox = null;
+      this.emptyBox2L = null;
     }
   }
 
@@ -444,88 +395,6 @@ export class MouseMove {
   }
 
 
-  boxesInSectorOver2(model) {
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersects = this.raycaster.intersectObjects(model.empties, false);
-   
-
-    if (intersects.length > 0) {
-      const obj = intersects[0].object;
-
-      // если навели на другой бокс — сбросить прошлый
-      if (this.emptyBoxInSector && this.emptyBoxInSector !== obj) {
-        this.emptyBoxInSector.material.opacity = 0;
-          this.plannerStore.controls.show = false;
-
-
-      }
-
-      this.emptyBoxInSector = obj;
-      this.emptyBoxInSector.material.opacity = 0.2;
-
-      const worldPos = new THREE.Vector3();
-      this.emptyBoxInSector.getWorldPosition(worldPos);
-
-
-      const screenPos = worldPos.clone().project(this.camera);
-      const canvas = this.sceneSetup.renderer.domElement;
-
-      this.plannerStore.controls.position.x = Math.round(
-        (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
-      );
-      this.plannerStore.controls.position.y = Math.round(
-        (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
-      );
-      this.plannerStore.controls.title = 'вставить модуль';
-      this.plannerStore.controls.show = true;
-
-
-    } else if (this.emptyBoxInSector) {
-      // если ушли со всех боксов — вернуть норму
-      this.emptyBoxInSector.material.opacity = 0;
-          this.plannerStore.controls.show = false;
-
-
-      this.emptyBoxInSector = null;
-    }
-  }
-
-  // epmtyBoxesMouseOver() {
-
-  //   this.raycaster.setFromCamera(this.mouse, this.camera);
-  //   const intersectsControls = this.raycaster.intersectObjects(
-  //      [...plannerConfig.boxesArrayDirect, ...plannerConfig.boxesArrayLeft],
-  //     false
-  //   );
-
-  //   let found = false;
-  //     if (intersectsControls.length > 0) {
-  //         const obj = intersectsControls[0].object;
-  //        // console.log(obj)
-  //         if (this.hoveredObject1level !== obj) {
-  //             if (this.hoveredObject1level) {
-  //                 this.hoveredObject1level.material.opacity = 0.0;
-  //                 this.hoveredObject1level.material.color.set(0x00ff00);
-  //                 this.hoveredObject1level.children[0].visible = false
-
-  //             }
-  //             this.hoveredObject1level = obj;
-  //             this.hoveredObject1level.material.opacity = 0.5;
-  //             this.hoveredObject1level.material.color.set(0xffff00);
-  //             this.hoveredObject1level.children[0].visible = true
-
-  //         }
-  //         found = true;
-  //     }
-
-  //     if (!found && this.hoveredObject1level) {
-  //       this.hoveredObject1level.children[0].visible = false
-
-  //         this.hoveredObject1level.material.opacity = 0.0;
-  //         this.hoveredObject1level.material.color.set(0x00ff00);
-  //         this.hoveredObject1level = null;
-
-  //     }
-  // }
+  
 }

@@ -253,20 +253,20 @@ export class EmptyManager2L {
   }
 
   calculateEmpties() {
- //   this.removeObjectsByName("gapBoxDirect");
- //   this.removeObjectsByName("gapBoxLeft");
+   this.removeObjectsByName("gapBoxDirect");
+   this.removeObjectsByName("gapBoxLeft");
 
- //   plannerConfig.empties2level.length = 0;
+   plannerConfig.empties2level.length = 0;
    
 
     if (plannerConfig.modelsDirect2L.length >= 0) {
-  //    this.createGapBoxes();
+      this.createGapBoxes();
     }
     if (
       this.kitchenStore.type === "left" &&
       plannerConfig.modelsLeft2L.length >= 0
     ) {
-    //  this.createGapBoxesLeft();
+      this.createGapBoxesLeft();
     }
   }
 

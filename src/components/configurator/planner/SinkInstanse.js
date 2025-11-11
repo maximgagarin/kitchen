@@ -12,6 +12,9 @@ export class SinkInstanse {
     this.root = modelScene
   this.id = 0
 
+    this.frontBox = null
+
+
 
 
    
@@ -94,7 +97,18 @@ export class SinkInstanse {
     helper.position.copy(center);
     helper.name = 'boxHelper'
   //  helper.userData.controller = this;
-    
+
+
+      const frontBox = new THREE.Mesh(
+      new THREE.BoxGeometry(size.x, size.y, 0.05),
+      new THREE.MeshBasicMaterial({  color:'red' })
+      );
+  
+      frontBox.position.set(0, this.objectSize.y/2, (this.objectSize.z/2)-0.05)
+     
+
+     // this.root.add(frontBox)
+    // this.frontBox = frontBox
 
     this.raycasterBox = helper; // сохраняем для Raycaster
     this.root.add(this.raycasterBox)

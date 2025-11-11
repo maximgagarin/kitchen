@@ -65,14 +65,7 @@ export class EmptyManager {
       if (firstBox.min.x > 0.15 + leftOffset) {
         //    console.log(' plannerConfig.isAngleRow2L',  plannerConfig.isAngleRow)
 
-        this.addGapBox(
-          0 + leftOffset,
-          firstBox.min.x,
-          firstBox,
-          posY,
-          side,
-          leftOffset
-        );
+        this.addGapBox(   0 + leftOffset,    firstBox.min.x,  firstBox,   posY,   side,      leftOffset    );
       }
 
       // Правый край
@@ -154,11 +147,11 @@ export class EmptyManager {
     const gap = endX - startX;
     if (gap <= 0) return;
 
-    const geometry = new THREE.BoxGeometry(gap, 0.7, 0.3);
+    const geometry = new THREE.BoxGeometry(gap, 0.85, 0.6);
     const material = new THREE.MeshStandardMaterial({
       color: 'yellow',
-      // transparent: true,
-      // opacity: 0,
+      transparent: true,
+      opacity: 0,
   
     });
     const gapBox = new THREE.Mesh(geometry, material);
@@ -179,7 +172,7 @@ export class EmptyManager {
     if (side === "left") gapBox.rotation.y = Math.PI / 2;
 
     // позиция
-    if (side === "direct") gapBox.position.set(startX + gap / 2, 0.45, 0.15);
+    if (side === "direct") gapBox.position.set(startX + gap / 2, 0.45, 0.3);
 
     this.scene.add(gapBox);
   }
@@ -189,7 +182,7 @@ export class EmptyManager {
     const gap = endX - startX;
     if (gap <= 0) return;
 
-    const geometry = new THREE.BoxGeometry(gap, 0.7, 0.3);
+    const geometry = new THREE.BoxGeometry(gap, 0.85, 0.6);
     const material = new THREE.MeshStandardMaterial({
       color: 'yellow',
       transparent: true,
@@ -213,28 +206,30 @@ export class EmptyManager {
     gapBox.userData.side = "left";
 
   
-    if (side === "left") gapBox.position.set(0.15, 0.45, startX + gap / 2);
+    if (side === "left") gapBox.position.set(0.3, 0.45, startX + gap / 2);
 
     this.scene.add(gapBox);
   }
 
   calculateEmpties() {
 
+    
 
- //   this.removeObjectsByName("gapBoxDirectL1");
- //   this.removeObjectsByName("gapBoxLeftL1");
-//
- //    plannerConfig.empties1level.length = 0;
+
+   this.removeObjectsByName("gapBoxDirectL1");
+   this.removeObjectsByName("gapBoxLeftL1");
+
+    plannerConfig.empties1level.length = 0;
 
 
     if (plannerConfig.modelsDirect.length >= 0) {
-  //   this.createGapBoxes();
+     this.createGapBoxes();
     }
     if (
       this.kitchenStore.type === "left" &&
       plannerConfig.modelsLeft.length >= 0
     ) {
-   //   this.createGapBoxesLeft();
+      this.createGapBoxesLeft();
     }
   }
 

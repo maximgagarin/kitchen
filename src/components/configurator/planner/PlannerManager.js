@@ -145,19 +145,8 @@ export class PlannerManager {
 
 
 
-
-
-  setSelectObjectSettings(controller) {
-    console.log(plannerConfig.selectedObject);
-    // plannerConfig.selectedObject.tabletop.visible = true
-    // console.log(plannerConfig.selectedObject.tabletop.visible)
-
-   
-
-    this.plannerStore.selectedType = plannerConfig.selectedObject.name
-    this.plannerStore.selectedWidth = Number(plannerConfig.selectedObject.width.toFixed(1))
-
-    //создание массива для проверки коллизии
+  createArrays(){
+      //создание массива для проверки коллизии
     plannerConfig.arraysToCheck.length = 0;
     const side = plannerConfig.selectedObject.side;
     const level = plannerConfig.selectedObject.level;
@@ -188,60 +177,43 @@ export class PlannerManager {
     } else {
       plannerConfig.arraysToCheck.push(...plannerConfig.penalsArray);
     }
+  }
 
-    // габариты
-    const objectSize = new THREE.Vector3();
 
-    this.box = new THREE.Box3().setFromObject(
-      plannerConfig.selectedObject.raycasterBox
-    );
-    this.box.getSize(this.objectSize);
-    this.box.getSize(objectSize);
 
-    this.box.getSize(this.moveController.objectSize);
-    plannerConfig.copyObjectSize = objectSize;
+    
+  
 
-    // this.oldPosition = plannerConfig.selectedObject.root.position.clone();
-    const planeHit =
-      plannerConfig.selectedObject.level == 1
-        ? this.raycaster.intersectObject(plannerConfig.directPlane1level)[0]
-        : this.raycaster.intersectObject(plannerConfig.directPlane2level)[0];
 
-    console.log('planeHit', planeHit)
+  setSelectObjectSettings(controller) {
+    console.log(plannerConfig.selectedObject);
 
-    if (planeHit) {
-      // 2. Вычисляем offset: позиция объекта - точка пересечения
-      this.offset.copy(controller.root.position).sub(planeHit.point);
-      console.log('rootPos', controller.root.position)
-      console.log('planehitPoint', planeHit.point)
 
-      this.moveController.offset.copy(controller.root.position).sub(planeHit.point);
+    this.plannerStore.selectedType = plannerConfig.selectedObject.name
+    this.plannerStore.selectedWidth = Number(plannerConfig.selectedObject.width.toFixed(1))
+    this.createArrays()
+   
 
-    }
+  
+
     this.plannerStore.selectedObject.isSelect = true;
     this.plannerStore.selectedObject.name = controller.root.name;
 
     //невидимость для кнопок
-    plannerConfig.selectedObject.controls.forEach((model) => {
-      //   console.log('2222222')
-      model.visible = true;
-    });
+    plannerConfig.selectedObject.controls.forEach((model) => { model.visible = true;});
 
     plannerConfig.selectedObject.boxHelper.visible = true;
 
-    //сторона
-    plannerConfig.sideOfSelected = plannerConfig.selectedObject.side;
+   
 
     const intersectControls = this.raycaster.intersectObjects(plannerConfig.selectedObject.controls, false);
 
     if (intersectControls.length > 0 ) {
      this.controlsIntersected(intersectControls[0].object, event);
     }
+
     // //массив доступной ширины текущего объекта
     this.resizableModule.set();
-    //  this.controls.enabled = false;
-
-    // console.log('selectedObject',plannerConfig.selectedObject);
   }
 
   setLevel2Setttings() {
@@ -375,22 +347,14 @@ export class PlannerManager {
   }
 
   emptiesIntersetsClick(intersect) {
-    // while (intersect && !intersect.userData.side && intersect.parent) {
-    //   intersect = intersect.parent;
-    // }
-
-    // if (intersect && intersect.userData.side) {
-    //   console.log("Нашли userData:", intersect.userData);
-    // }
-    //   this.emptyManager.calcEmtyForPenal(intersect)
-  //  console.log(intersect);
     this.plannerStore.objectMenu = true;
     plannerConfig.selectedEmpty = intersect;
-    // this.selectedEmpty = intersect;
-  //  console.log(this.emptyPosition);
   }
 
  
+  hideTableTops(){
+
+  }
 
   controlsIntersected(intersect, event) {
     const side = plannerConfig.selectedObject.side;
@@ -408,27 +372,23 @@ export class PlannerManager {
 
     const rule = rules[side];
 
-   // console.log("rule", rule);
+ 
 
     const modelsArray = plannerConfig[rule.array];
 
-  //  console.log("array", modelsArray);
-
-    //   console.log(intersect);
+ 
     if (intersect.name == "centerControl") {
       // свиг чтобы не было рывка
-      const planeHit = this.raycaster.intersectObject(
-        plannerConfig.directPlane1level
-      )[0];
+      const planeHit = this.raycaster.intersectObject(  plannerConfig.directPlane1level )[0];
       if (planeHit) {
-        // 2. Вычисляем offset: позиция объекта - точка пересечения
+     
         this.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
-   //     console.log("rootPos", plannerConfig.selectedObject.root.position);
-    //    console.log("planehitPoint", planeHit.point);
+  
         this.moveController.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
       }
       this.isMoving = true;
       this.plannerStore.movingModule = true
+
       if (plannerConfig.selectedObject.side == "direct") {
         plannerConfig.tabletops.forEach((item) => {
           item.visible = false;
@@ -447,10 +407,8 @@ export class PlannerManager {
         });
       }
       this.sceneSetup.requestRender();
-    } else if (
-      intersect.name == "leftControl" ||
-      intersect.name == "rightControl"
-    ) {
+
+    } else if ( intersect.name == "leftControl" ||  intersect.name == "rightControl" ) {
       plannerConfig.tabletops.forEach((item) => {
         item.visible = false;
       });
@@ -545,6 +503,12 @@ export class PlannerManager {
 
 
 
+  setMouse(event){
+        this.mouse.set( (event.clientX / window.innerWidth) * 2 - 1,  -(event.clientY / window.innerHeight) * 2 + 1 );
+    this.plannerStore.emptyPosition.x = event.clientX + 50;
+    this.plannerStore.emptyPosition.y = event.clientY - 100;
+
+  }
 
   onMouseMove() {
 
@@ -558,6 +522,7 @@ export class PlannerManager {
     
  
       this.mouseMove.epmtyBoxesOver2()
+      this.mouseMove.epmtyBoxesOver()
 
 
       if(plannerConfig.selectedObject.name === 'sector'){
@@ -608,15 +573,8 @@ export class PlannerManager {
     if (event.button !== 0) return;
     this.plannerStore.sectorReady = false;
 
-    this.mouse.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1
-    );
+    this.setMouse(event)
 
-  //  console.log("mmouse", this.mouse);
-
-    this.plannerStore.emptyPosition.x = event.clientX + 50;
-    this.plannerStore.emptyPosition.y = event.clientY - 100;
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
     this.moveController.raycaster.setFromCamera(this.mouse, this.camera);
@@ -635,7 +593,7 @@ export class PlannerManager {
     this.utils.clearSettings();
 
     const intersectsModules = this.raycaster.intersectObjects( plannerConfig.models.map((m) => m.raycasterBox),  false );
-    const intersectsEmpties = this.raycaster.intersectObjects(plannerConfig.empties1level,true  );
+    const intersectsEmpties = this.raycaster.intersectObjects(plannerConfig.empties1level, false  );
 
 
     if (intersectsEmpties.length > 0) {
