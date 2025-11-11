@@ -28,6 +28,8 @@ export class MoveController {
 
     intersects = this.raycaster.intersectObject(plannerConfig.directPlane1level );
 
+    console.log('1')
+
   
 
     if (intersects.length > 0) {

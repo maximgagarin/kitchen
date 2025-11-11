@@ -22,6 +22,8 @@ export class MouseMove {
 
 
   showControls() {
+    this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
+
     if (this.plannerStore.movingModule) return; // если движение модуля — выход
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -32,7 +34,7 @@ export class MouseMove {
       false
     );
 
-    console.log('mouse', this.mouse)
+  
 
 
 
@@ -442,7 +444,7 @@ export class MouseMove {
   }
 
 
-    boxesInSectorOver2(model) {
+  boxesInSectorOver2(model) {
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(model.empties, false);

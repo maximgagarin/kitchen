@@ -207,17 +207,17 @@ export class PlannerManager {
         ? this.raycaster.intersectObject(plannerConfig.directPlane1level)[0]
         : this.raycaster.intersectObject(plannerConfig.directPlane2level)[0];
 
-    //console.log('planeHit', planeHit)
+    console.log('planeHit', planeHit)
 
-    // if (planeHit) {
-    //   // 2. Вычисляем offset: позиция объекта - точка пересечения
-    //   this.offset.copy(controller.root.position).sub(planeHit.point);
-    //   console.log('rootPos', controller.root.position)
-    //   console.log('planehitPoint', planeHit.point)
+    if (planeHit) {
+      // 2. Вычисляем offset: позиция объекта - точка пересечения
+      this.offset.copy(controller.root.position).sub(planeHit.point);
+      console.log('rootPos', controller.root.position)
+      console.log('planehitPoint', planeHit.point)
 
-    //   this.moveController.offset.copy(controller.root.position).sub(planeHit.point);
+      this.moveController.offset.copy(controller.root.position).sub(planeHit.point);
 
-    // }
+    }
     this.plannerStore.selectedObject.isSelect = true;
     this.plannerStore.selectedObject.name = controller.root.name;
 
@@ -232,11 +232,11 @@ export class PlannerManager {
     //сторона
     plannerConfig.sideOfSelected = plannerConfig.selectedObject.side;
 
-    // const intersectControls = this.raycaster.intersectObjects(plannerConfig.selectedObject.controls, false);
+    const intersectControls = this.raycaster.intersectObjects(plannerConfig.selectedObject.controls, false);
 
-    // if (intersectControls.length > 0 ) {
-    //  this.controlsIntersected(intersectControls[0].object, event);
-    // }
+    if (intersectControls.length > 0 ) {
+     this.controlsIntersected(intersectControls[0].object, event);
+    }
     // //массив доступной ширины текущего объекта
     this.resizableModule.set();
     //  this.controls.enabled = false;
@@ -422,14 +422,10 @@ export class PlannerManager {
       )[0];
       if (planeHit) {
         // 2. Вычисляем offset: позиция объекта - точка пересечения
-        this.offset
-          .copy(plannerConfig.selectedObject.root.position)
-          .sub(planeHit.point);
+        this.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
    //     console.log("rootPos", plannerConfig.selectedObject.root.position);
     //    console.log("planehitPoint", planeHit.point);
-        this.moveController.offset
-          .copy(plannerConfig.selectedObject.root.position)
-          .sub(planeHit.point);
+        this.moveController.offset.copy(plannerConfig.selectedObject.root.position).sub(planeHit.point);
       }
       this.isMoving = true;
       this.plannerStore.movingModule = true
@@ -528,14 +524,6 @@ export class PlannerManager {
 
 
 
-  // handleClickEmpties2L(box) {
-  //   while (box && !box.userData.side && box.parent) {
-  //     box = box.parent;
-  //   }
-  //   this.plannerStore.objectMenuL2 = true;
-
-  //   plannerConfig.selectedEmpty2L = box;
-  // }
 
   handleClickEmpties2L(box) {
 
@@ -560,21 +548,22 @@ export class PlannerManager {
 
   onMouseMove() {
 
+    
+
     this.mouseMove.showControls()
 
 
     //пустые боксы
     if (!this.isMoving && !this.copyController.moving) {
     
-      //this.mouseMove.epmtyBoxesMouseOver2();
-     // this.mouseMove.epmtyBoxesMouseOver();
-    //  this.mouseMove.epmtyBoxesOver2()
+ 
+      this.mouseMove.epmtyBoxesOver2()
 
 
-      // if(plannerConfig.selectedObject.name === 'sector'){
+      if(plannerConfig.selectedObject.name === 'sector'){
     
-      //   this.mouseMove.boxesInSectorOver()
-      // }
+        this.mouseMove.boxesInSectorOver()
+      }
 
     
     }
@@ -586,7 +575,7 @@ export class PlannerManager {
 
     if (plannerConfig.selectedObject) {
       plannerConfig.selectedObject.root.updateMatrixWorld(true, true);
-  //    this.mouseMove.showPointer();
+       this.mouseMove.showPointer();
     }
     if (this.isDragging) {
       plannerConfig.selectedObject.root.updateMatrixWorld(true, true);
@@ -597,8 +586,7 @@ export class PlannerManager {
     if (this.isMoving && !this.isDragging) {
       this.plannerStore.controls.show = false
       if (plannerConfig.selectedObject.level == 1) {
-        //   this.checkMoveBack()
-        //   this.moveController.freeMove()
+  
 
         this.moveController.moveNearWallsOnly();
         this.swapController.doSwap();
@@ -651,68 +639,68 @@ export class PlannerManager {
 
 
     if (intersectsEmpties.length > 0) {
-    //  console.log(intersectsEmpties[0].object);
-     // this.emptiesIntersetsClick(intersectsEmpties[0].object);
+     console.log(intersectsEmpties[0].object);
+     this.emptiesIntersetsClick(intersectsEmpties[0].object);
     }
 
     const intersectsEmpties2L = this.raycaster.intersectObjects( plannerConfig.empties2level,  false );
 
 
 
-    // if (intersectsEmpties.length > 0) {
-    //   this.emptiesIntersetsClick(intersectsEmpties[0].object);
-    // }
+    if (intersectsEmpties.length > 0) {
+      this.emptiesIntersetsClick(intersectsEmpties[0].object);
+    }
 
-    // if (intersectsEmpties2L.length > 0) {
+    if (intersectsEmpties2L.length > 0) {
  
-    //   this.handleClickEmpties2L(intersectsEmpties2L[0].object);
-    // }
+      this.handleClickEmpties2L(intersectsEmpties2L[0].object);
+    }
 
-    // if (intersectsModules.length > 0 && !this.copyController.moving) {
-    //   const id = intersectsModules[0].object.userData.id;
-    //   console.log("id", id);
-    //   const module = plannerConfig.models.find((m) => m.id === id);
-    //   console.log('module', module)
+    if (intersectsModules.length > 0 && !this.copyController.moving) {
+      const id = intersectsModules[0].object.userData.id;
+      console.log("id", id);
+      const module = plannerConfig.models.find((m) => m.id === id);
+      console.log('module', module)
 
-    //   if (module.level == 1) {
-    //     plannerConfig.selectedObject = module;
-    //     this.setSelectObjectSettings(module);
-    //   }
+      if (module.level == 1) {
+        plannerConfig.selectedObject = module;
+        this.setSelectObjectSettings(module);
+      }
 
-    //   if (module.level == 2) {
-    //     plannerConfig.selectedObject = module;
-    //     console.log(plannerConfig.selectedObject);
-    //     //  this.moveController2L.bounds2level()
-    //     this.setLevel2Setttings();
-    //   }
+      if (module.level == 2) {
+        plannerConfig.selectedObject = module;
+        console.log(plannerConfig.selectedObject);
+     
+        this.setLevel2Setttings();
+      }
 
 
 
-    //    const intersectControls = this.raycaster.intersectObjects(
-    //     plannerConfig.selectedObject.controls,
-    //     false
-    //   );
-    //   //   console.log('123')
+       const intersectControls = this.raycaster.intersectObjects(
+        plannerConfig.selectedObject.controls,
+        false
+      );
+      //   console.log('123')
 
-    //   if (intersectControls.length > 0) {
-    //     // Обрабатываем клик по кнопке
-    //     //    console.log("Нажата кнопка:", intersectControls[0].object.name);
-    //     if (plannerConfig.selectedObject.level == 1) {
-    //       this.controlsIntersected(intersectControls[0].object, event);
-    //     }
-    //     if (plannerConfig.selectedObject.level == 2) {
-    //       this.controlsIntersectedL2(intersectControls[0].object, event);
-    //     }
-    //     this.controls.enabled = false;
+      if (intersectControls.length > 0) {
+        // Обрабатываем клик по кнопке
+        //    console.log("Нажата кнопка:", intersectControls[0].object.name);
+        if (plannerConfig.selectedObject.level == 1) {
+          this.controlsIntersected(intersectControls[0].object, event);
+        }
+        if (plannerConfig.selectedObject.level == 2) {
+          this.controlsIntersectedL2(intersectControls[0].object, event);
+        }
+        this.controls.enabled = false;
 
         
-    //   }
+      }
     
 
 
 
 
-    // }
+    }
     this.sceneSetup.requestRender();
   };
 
