@@ -73,6 +73,7 @@ export class SectorInstanse {
     this.objectSize = new THREE.Vector3();
     this.boxHelper = null
     this.center = new THREE.Vector3()
+     this.initTextures()
     
     this.createBox()
    
@@ -105,6 +106,44 @@ export class SectorInstanse {
     this.root.add(this.lineRight.group)
   }
 
+
+    initTextures() {
+        const loader = new THREE.TextureLoader();
+    
+        this.controlTextures = {
+          leftControl: {
+            normal: loader.load('textures/controls/leftControl.jpg'),
+            hover: loader.load('textures/controls/leftControlHover.jpg'),
+          },
+          rightControl: {
+            normal: loader.load('textures/controls/rightControl.jpg'),
+            hover: loader.load('textures/controls/rightControlHover.jpg'),
+          },
+          centerControl: {
+            normal: loader.load('textures/controls/centerControl.jpg'),
+            hover: loader.load('textures/controls/centerControlHover.jpg'),
+          },
+          menuControl: {
+            normal: loader.load('textures/controls/menuControl.jpg'),
+            hover: loader.load('textures/controls/menuControl.jpg'),
+          },
+          copyControl: {
+            normal: loader.load('textures/controls/menuControl.jpg'),
+            hover: loader.load('textures/controls/menuControl.jpg'),
+          },
+        };
+    
+        Object.values(this.controlTextures).forEach(stateSet => {
+          Object.values(stateSet).forEach(tex => {
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.transparent = true;
+            
+          });
+        });
+    
+        console.log(this.controlTextures)
+      }
+  
 
   // createNewBoxHelper(){
   //   const namesToRemove = ["boxHelper", "boxHelperYellow"];
@@ -262,14 +301,24 @@ export class SectorInstanse {
     this.rightControl.visible = false
 
 
-    this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:0x696969  }));
-    this.root.add(this.centerControl)
-    this.centerControl.position.set(0, 0.1, this.objectSize.z/2)
-    this.centerControl.rotation.x = Math.PI/2
-    
 
+
+    const material3 = new THREE.MeshStandardMaterial({
+      map: this.controlTextures.centerControl.normal,
+      transparent: true,
+      depthWrite: false
+    });
+
+
+    this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
+    material3);
+    this.root.add(this.centerControl)
+    this.centerControl.position.set(0, this.objectSize.y/2, this.objectSize.z/2)
+    this.centerControl.rotation.x = Math.PI/2
+    this.centerControl.rotation.y = Math.PI/2
     this.centerControl.name = 'centerControl'
+    this.centerControl.userData.name = 'двигать'
+
     this.centerControl.visible = false
 
 
@@ -282,13 +331,22 @@ export class SectorInstanse {
     this.menuControl.name = 'menuControl'
     this.menuControl.visible = false
 
-    this.clone = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:'red'  }));
-    this.root.add(this.clone)
-    this.clone.position.set(0, 0.3, this.objectSize.z/2)
-    this.clone.rotation.x = Math.PI/2
-    this.clone.name = 'clone'
-    this.clone.visible = false
+        const material5 = new THREE.MeshStandardMaterial({
+          map: this.controlTextures.copyControl.normal,
+          transparent: true,
+          depthWrite: false
+        });
+
+
+    this.copyControl = new THREE.Mesh( new THREE.CylinderGeometry(0.04, 0.04, 0.02, 32),
+    material5);
+    this.root.add(this.copyControl)
+    this.copyControl.position.set(0, 0.1,this.objectSize.z/2)
+    this.copyControl.rotation.x = Math.PI/2
+    this.copyControl.name = 'clone'
+    this.copyControl.userData.name = 'копировать'
+
+    this.copyControl.visible = false
 
     this.ungroup = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
     new THREE.MeshStandardMaterial({  color:'blue'  }));

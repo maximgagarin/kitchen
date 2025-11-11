@@ -73,7 +73,42 @@ export class Model_In_Sector {
     this.root.add(this.lineRight.group)
   }
 
-
+  initTextures() {
+      const loader = new THREE.TextureLoader();
+  
+      this.controlTextures = {
+        leftControl: {
+          normal: loader.load('textures/controls/leftControl.jpg'),
+          hover: loader.load('textures/controls/leftControlHover.jpg'),
+        },
+        rightControl: {
+          normal: loader.load('textures/controls/rightControl.jpg'),
+          hover: loader.load('textures/controls/rightControlHover.jpg'),
+        },
+        centerControl: {
+          normal: loader.load('textures/controls/centerControl.jpg'),
+          hover: loader.load('textures/controls/centerControlHover.jpg'),
+        },
+        menuControl: {
+          normal: loader.load('textures/controls/menuControl.jpg'),
+          hover: loader.load('textures/controls/menuControl.jpg'),
+        },
+        copyControl: {
+          normal: loader.load('textures/controls/menuControl.jpg'),
+          hover: loader.load('textures/controls/menuControl.jpg'),
+        },
+      };
+  
+      Object.values(this.controlTextures).forEach(stateSet => {
+        Object.values(stateSet).forEach(tex => {
+          tex.colorSpace = THREE.SRGBColorSpace;
+          tex.transparent = true;
+          
+        });
+      });
+  
+      console.log(this.controlTextures)
+    }
 
   createBox(){
     const box = new THREE.Box3().setFromObject(this.root);
@@ -158,17 +193,23 @@ export class Model_In_Sector {
     this.rightControl.name = 'rightControl'
     this.rightControl.visible = false
 
+    const material3 = new THREE.MeshStandardMaterial({
+      map: this.controlTextures.centerControl.normal,
+      transparent: true,
+      depthWrite: false
+    });
+
 
     this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:0x696969  }));
+    material3);
     this.root.add(this.centerControl)
-    this.centerControl.position.set(-0.05, 0.1, this.objectSize.z/2)
+    this.centerControl.position.set(0, this.objectSize.y/2, this.objectSize.z/2)
     this.centerControl.rotation.x = Math.PI/2
-    
-
+    this.centerControl.rotation.y = Math.PI/2
     this.centerControl.name = 'centerControl'
-    this.centerControl.visible = false
+    this.centerControl.userData.name = 'двигать'
 
+    this.centerControl.visible = false
 
     
     this.menuControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),

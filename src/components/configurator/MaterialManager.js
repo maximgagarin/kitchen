@@ -65,8 +65,8 @@ import * as THREE from "three";
 
   // текстура длиной 3 * 0.6
   setTexture(width , axis) {
-   //   const texture = this.mramorLong2.clone();
-      const texture = this.woodLong.clone();
+      const texture = this.mramorLong2.clone();
+    //  const texture = this.woodLong.clone();
 
 
     texture.center.set(0.5, 0.5);

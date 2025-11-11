@@ -46,7 +46,8 @@
       <label
         v-for="option in typeOptions"
         :key="option.value"
-        class="cursor-pointer border rounded-lg px-2 py-1 flex items-center text-xs transition hover:bg-gray-100 hover:shadow-sm border-gray-300"
+        class="cursor-pointer border  border-2 rounded-lg px-2 py-1 flex items-center text-xs 
+        transition hover:bg-gray-100 hover:shadow-sm border-gray-300 hover:border-brand"
         :class="{
           'bg-blue-100 border-blue-500 text-blue-700':
             selectedType === option.value,

@@ -111,6 +111,7 @@ const kitchenStore = useKitchenSizesStore();
 
 setTimeout(() => {
   plannerManager.value.start();
+  console.log(plannerManager.value.sceneSetup.scene)
   console.log("planner start");
 }, 500);
 
