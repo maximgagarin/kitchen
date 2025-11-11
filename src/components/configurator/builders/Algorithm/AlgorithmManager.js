@@ -8,6 +8,8 @@ import { Algorithm2level900 } from "./Algorithm2level900";
 import { TableTop } from "./TableTop";
 
 
+
+
 export class AlgorithmManager {
   constructor(sceneSetup, loaderModels, cabinetBuilder) {
     this.sceneSetup = sceneSetup;
@@ -26,5 +28,6 @@ export class AlgorithmManager {
     this.algorithm2level.run();
     this.tableTop.create() 
     this.tableTop.setMaterial()
+  
   }
 }

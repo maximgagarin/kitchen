@@ -316,6 +316,8 @@ export class PlannerManager {
         true
       );
 
+  
+
       //пустые в секторе
       if (intersectsEmpties.length > 0) {
       //  console.log("empty");
@@ -354,11 +356,23 @@ export class PlannerManager {
         const model = plannerConfig.selectedObject.modules.find(
           (m) => m.id == id
         );
-        // console.log(controller)
+         console.log('модуль', model)
  
         plannerConfig.selectedInSector = model;
 
+        const intersectsControls = this.raycaster.intersectObjects(
+        plannerConfig.selectedInSector.controls,
+        true );
+
+       
+
+
         this.moveInSector.set(intersectsModules[0])
+
+         if (intersectsControls.length > 0) {
+          console.log(intersectsControls[0])
+          this.moveInSector.isMoving = true
+        }
 
 
        

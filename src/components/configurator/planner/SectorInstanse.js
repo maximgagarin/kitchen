@@ -3,6 +3,8 @@ import { Line } from './Line'
 import { LineWithouText } from './LineWithoutText'
 import { Model_In_Sector } from './Model_In_Sector'
 import { useKitchenSizesStore } from '../../../pinia/kitchenSizes'
+import { controlsTextures } from './controlsTextures'
+
 
 
 
@@ -73,7 +75,7 @@ export class SectorInstanse {
     this.objectSize = new THREE.Vector3();
     this.boxHelper = null
     this.center = new THREE.Vector3()
-     this.initTextures()
+    
     
     this.createBox()
    
@@ -107,43 +109,7 @@ export class SectorInstanse {
   }
 
 
-    initTextures() {
-        const loader = new THREE.TextureLoader();
-    
-        this.controlTextures = {
-          leftControl: {
-            normal: loader.load('textures/controls/leftControl.jpg'),
-            hover: loader.load('textures/controls/leftControlHover.jpg'),
-          },
-          rightControl: {
-            normal: loader.load('textures/controls/rightControl.jpg'),
-            hover: loader.load('textures/controls/rightControlHover.jpg'),
-          },
-          centerControl: {
-            normal: loader.load('textures/controls/centerControl.jpg'),
-            hover: loader.load('textures/controls/centerControlHover.jpg'),
-          },
-          menuControl: {
-            normal: loader.load('textures/controls/menuControl.jpg'),
-            hover: loader.load('textures/controls/menuControl.jpg'),
-          },
-          copyControl: {
-            normal: loader.load('textures/controls/menuControl.jpg'),
-            hover: loader.load('textures/controls/menuControl.jpg'),
-          },
-        };
-    
-        Object.values(this.controlTextures).forEach(stateSet => {
-          Object.values(stateSet).forEach(tex => {
-            tex.colorSpace = THREE.SRGBColorSpace;
-            tex.transparent = true;
-            
-          });
-        });
-    
-        console.log(this.controlTextures)
-      }
-  
+ 
 
   // createNewBoxHelper(){
   //   const namesToRemove = ["boxHelper", "boxHelperYellow"];
@@ -304,7 +270,7 @@ export class SectorInstanse {
 
 
     const material3 = new THREE.MeshStandardMaterial({
-      map: this.controlTextures.centerControl.normal,
+      map: controlsTextures.centerControl.normal,
       transparent: true,
       depthWrite: false
     });
@@ -332,7 +298,7 @@ export class SectorInstanse {
     this.menuControl.visible = false
 
         const material5 = new THREE.MeshStandardMaterial({
-          map: this.controlTextures.copyControl.normal,
+          map: controlsTextures.copyControl.normal,
           transparent: true,
           depthWrite: false
         });
@@ -367,7 +333,7 @@ export class SectorInstanse {
    
 
    // this.controls.push(this.leftControl, this.rightControl, this.centerControl, this.menuControl, this.ungroupCombo)
-    this.controls.push( this.centerControl, this.clone)   
+    this.controls.push( this.centerControl, this.copyControl)   
   }
 
 

@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import { Line } from './Line'
 import { LineWithouText } from './LineWithoutText'
-import { LoaderModels2 } from '../LoaderModels2'
+
+import { controlsTextures } from './controlsTextures'
+
 //const loaderModels = new LoaderModels2()
 
 
@@ -107,33 +109,26 @@ export class PenalInstanse {
     // this.rightControl.name = 'rightControl'
     // this.rightControl.visible = false
 
-
-  this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:0x696969  }));
-    this.root.add(this.centerControl)
-    this.centerControl.position.set(0, 0.2, this.objectSize.z/2)
-    this.centerControl.rotation.x = Math.PI/2
-    this.centerControl.name = 'centerControl'
-    this.centerControl.visible = false
-
-    this.deleteControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:0x696969  }));
-    this.root.add(this.deleteControl)
-    this.deleteControl.position.set(0, 0.2,this.objectSize.x/2+0.1)
-    this.deleteControl.rotation.x = Math.PI/2
-    this.deleteControl.name = 'deleteControl'
-    this.deleteControl.visible = false
-    this.raycasterControl.push(this.deleteControl)
-
-
-    
-    this.menuControl = new THREE.Mesh( new THREE.CylinderGeometry(0.05, 0.05, 0.02, 32),
-    new THREE.MeshStandardMaterial({  color:0xD2691E  }));
-    this.root.add(this.menuControl)
-    this.menuControl.position.set((this.objectSize.x)/2, 0.7, 0)
-    this.menuControl.rotation.z = Math.PI/2
-    this.menuControl.name = 'menuControl'
-    this.menuControl.visible = false
+     const material3 = new THREE.MeshStandardMaterial({
+       map: controlsTextures.centerControl.normal,
+       transparent: true,
+       depthWrite: false
+     });
+     
+ 
+ 
+     this.centerControl = new THREE.Mesh( new THREE.CylinderGeometry(0.06, 0.06, 0.01, 32),
+     material3);
+     this.root.add(this.centerControl)
+     this.centerControl.position.set(0, 0.3, this.objectSize.z/2)
+     this.centerControl.rotation.x = Math.PI/2
+     this.centerControl.rotation.y = Math.PI/2
+ 
+     this.centerControl.name = 'centerControl'
+     this.centerControl.userData.name = 'двигать'
+ 
+     this.centerControl.visible = false
+ 
 
      this.controls.push(  this.centerControl)
 

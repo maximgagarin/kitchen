@@ -375,6 +375,8 @@ export class CopyController {
     const side = plannerConfig.selectedObject.side;
     const width = plannerConfig.selectedObject.width;
 
+
+
     if (!modelsGroup) {
       console.warn("modelsGroup не найден!");
       return;
@@ -401,6 +403,9 @@ export class CopyController {
     plannerConfig.namesToDeleteDirect2L.push("SectorTest");
 
     clonedGroup.children.forEach((model, i) => {
+
+      this.removeControlsFromGroup(model)
+
       const modelClone = model.clone(true); // полностью клонируем
       modelClone.name = "test";
       plannerConfig.namesToDeleteDirect2L.push("test");
@@ -416,6 +421,33 @@ export class CopyController {
     plannerConfig.copyObject = this.instance.root;
     this.moving = true;
     plannerConfig.copyObjectSide = side;
+  }
+
+    removeControlsFromGroup(group) {
+    const toRemove = [];
+    const namesToRemove = ["centerControl"];
+
+    group.traverse((child) => {
+      if (namesToRemove.includes(child.name)) {
+        toRemove.push(child);
+      }
+    });
+
+    // Теперь удаляем — вне traverse
+    toRemove.forEach((child) => {
+      if (child.parent) {
+        child.parent.remove(child);
+      }
+
+      // Очистка ресурсов
+      if (child.geometry) child.geometry.dispose?.();
+      if (child.material) {
+        const materials = Array.isArray(child.material)
+          ? child.material
+          : [child.material];
+        materials.forEach((mat) => mat.dispose?.());
+      }
+    });
   }
 
   removeHelpersFromGroup(group) {

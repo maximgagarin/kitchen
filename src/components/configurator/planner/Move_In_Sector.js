@@ -19,9 +19,9 @@ export class MoveInSector {
   }
 
   set(intersect) {
-        this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
+    this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    this.isMoving = true;
+   // this.isMoving = true;
     
     const worldPos = new THREE.Vector3();
     plannerConfig.selectedInSector.root.getWorldPosition(worldPos);
@@ -44,7 +44,7 @@ export class MoveInSector {
     this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
-    console.log("this.offset", this.offset);
+ //   console.log("this.offset", this.offset);
 
     let intersects;
     if (plannerConfig.selectedSector.side === "direct") {

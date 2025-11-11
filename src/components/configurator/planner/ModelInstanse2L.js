@@ -3,6 +3,8 @@ import { Line } from './Line'
 import { LineWithouText } from './LineWithoutText'
 import { useKitchenSizesStore } from '../../../pinia/kitchenSizes'
 import { algorithmConfig } from '../builders/Algorithm/algorithmConfig'
+import { controlsTextures } from './controlsTextures'
+
 
 
 export class ModelInstanse2L {
@@ -29,7 +31,7 @@ export class ModelInstanse2L {
 
      this.axis = new THREE.AxesHelper(5)
 
-     this.initTextures()
+     
     
 
 
@@ -201,7 +203,7 @@ export class ModelInstanse2L {
 
 
     const material3 = new THREE.MeshStandardMaterial({
-      map: this.controlTextures.centerControl.normal,
+      map: controlsTextures.centerControl.normal,
       transparent: true,
       depthWrite: false
     });
@@ -220,7 +222,7 @@ export class ModelInstanse2L {
 
 
         const material5 = new THREE.MeshStandardMaterial({
-          map: this.controlTextures.copyControl.normal,
+          map: controlsTextures.copyControl.normal,
           transparent: true,
           depthWrite: false
         });

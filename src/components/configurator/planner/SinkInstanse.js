@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { Line } from './Line'
 import { LineWithouText } from './LineWithoutText'
 import { algorithmConfig } from '../builders/Algorithm/algorithmConfig'
-import { LoaderModels2 } from '../LoaderModels2'
-//const loaderModels = new LoaderModels2()
+import { controlsTextures } from './controlsTextures'
+
 
 
 export class SinkInstanse {
@@ -13,7 +13,6 @@ export class SinkInstanse {
   this.id = 0
 
 
-  this.initTextures()
 
    
     this.doorLeft = this.root.getObjectByName('doorLeft')
@@ -75,42 +74,7 @@ export class SinkInstanse {
 
   }
 
-    initTextures() {
-      const loader = new THREE.TextureLoader();
   
-      this.controlTextures = {
-        leftControl: {
-          normal: loader.load('textures/controls/leftControl.jpg'),
-          hover: loader.load('textures/controls/leftControlHover.jpg'),
-        },
-        rightControl: {
-          normal: loader.load('textures/controls/rightControl.jpg'),
-          hover: loader.load('textures/controls/rightControlHover.jpg'),
-        },
-        centerControl: {
-          normal: loader.load('textures/controls/centerControl.jpg'),
-          hover: loader.load('textures/controls/centerControlHover.jpg'),
-        },
-        menuControl: {
-          normal: loader.load('textures/controls/menuControl.jpg'),
-          hover: loader.load('textures/controls/menuControl.jpg'),
-        },
-        copyControl: {
-          normal: loader.load('textures/controls/menuControl.jpg'),
-          hover: loader.load('textures/controls/menuControl.jpg'),
-        },
-      };
-  
-      Object.values(this.controlTextures).forEach(stateSet => {
-        Object.values(stateSet).forEach(tex => {
-          tex.colorSpace = THREE.SRGBColorSpace;
-          tex.transparent = true;
-          
-        });
-      });
-  
-      console.log(this.controlTextures)
-    }
 
 
   createBox(){
@@ -147,7 +111,7 @@ export class SinkInstanse {
    
  
     const material = new THREE.MeshStandardMaterial({
-       map: this.controlTextures.leftControl.normal,
+       map: controlsTextures.leftControl.normal,
        transparent: true,
        depthWrite: false
     });
@@ -177,7 +141,7 @@ export class SinkInstanse {
  
      
      const material2 = new THREE.MeshStandardMaterial({
-       map: this.controlTextures.rightControl.normal,
+       map: controlsTextures.rightControl.normal,
        transparent: true,
        depthWrite: false
      });
@@ -202,7 +166,7 @@ export class SinkInstanse {
  
  
      const material3 = new THREE.MeshStandardMaterial({
-       map: this.controlTextures.centerControl.normal,
+       map: controlsTextures.centerControl.normal,
        transparent: true,
        depthWrite: false
      });
@@ -224,7 +188,7 @@ export class SinkInstanse {
  
  
      const material4 = new THREE.MeshStandardMaterial({
-       map: this.controlTextures.menuControl.normal,
+       map: controlsTextures.menuControl.normal,
        transparent: true,
        depthWrite: false
      });
@@ -241,7 +205,7 @@ export class SinkInstanse {
  
  
      const material5 = new THREE.MeshStandardMaterial({
-       map: this.controlTextures.copyControl.normal,
+       map: controlsTextures.copyControl.normal,
        transparent: true,
        depthWrite: false
      });
