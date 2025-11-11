@@ -2,9 +2,10 @@
   export function  createPlanesForRaycaster(x,z){
            const transparentMaterial = new THREE.MeshBasicMaterial({
               color: 0x00ff00,
-              side: THREE.DoubleSide,
+          
                transparent: true,
                opacity: 0,
+                 depthWrite: false, // <=== вот это важно!
             });
             const directPlane = new THREE.Mesh(
               new THREE.PlaneGeometry(10, 10 ),
@@ -32,7 +33,7 @@
 
             directPlane2level.name = "directPlane2level";
            // directPlane2level.rotation.x = Math.PI/2
-            directPlane2level.position.set(2,1.5,0.3)
+            directPlane2level.position.set(2,1.5,0.29)
 
             wallPlane.position.set(2,0.5,0)
            

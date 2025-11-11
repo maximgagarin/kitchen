@@ -64,6 +64,9 @@ export const plannerConfig = {
     empties2levelDirect:[],
     empties2levelLeft:[],
 
+    empties2level:[],
+    empties1level:[],
+
     empty2level:{
         position:0,
         side:''

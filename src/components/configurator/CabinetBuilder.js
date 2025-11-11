@@ -23,7 +23,7 @@ export class CabinetBuilder {
 
     this.start();
 
-  //     this.test3()
+  //     this.test1()
 
     this.height = config.kitchen_size.height;
     this.tableTopAll = [];
@@ -34,12 +34,17 @@ export class CabinetBuilder {
   }
 
   test1() {
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(1.5, 0.038, 0.6),
-      atlasMaterial
-    );
-    box.position.set(2, 1, 1);
-    this.scene.add(box);
+    const geometry = new THREE.BoxGeometry(0.5, 0.7, 0.3);
+    const material = new THREE.MeshStandardMaterial({
+      color: 'red',
+      transparent: true,
+      opacity: 0.3,
+  
+    });
+
+    const gapBox = new THREE.Mesh(geometry, material);
+    gapBox.position.set(1,1,1)
+    this.scene.add(gapBox)
   }
 
   test2() {

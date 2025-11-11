@@ -24,12 +24,18 @@ export class EmptyManager2L {
     const posY = 1.76;
     let totalWidth = this.kitchenStore.sideSizes.side_a;
 
+    
+
+  
+
+   plannerConfig.empties2level = plannerConfig.empties2level.filter(item=> item.name === 'gapBoxLeft')
+
     const filtedDirect = plannerConfig.modelsDirect.filter(
-      (model) => model.side == "direct" && model.name === "penal"
+      (model) => model.side === "direct" && model.name === "penal"
     );
-    plannerConfig.iconsArray2L = plannerConfig.iconsArray2L.filter(
-      (icon) => icon.name == "left"
-    );
+    // plannerConfig.iconsArray2L = plannerConfig.iconsArray2L.filter(
+    //   (icon) => icon.name == "left"
+    // );
 
     // времменно добавляем пеналы
     const models = plannerConfig.modelsDirect2L.map((p) => ({ ...p }));
@@ -37,8 +43,7 @@ export class EmptyManager2L {
     models.push(...filtedDirect);
     models.sort((a, b) => a.root.position.x - b.root.position.x);
 
-    //   console.log('models', models)
-
+      
     // Добавление промежутков
     for (let i = 0; i < models.length - 1; i++) {
       const current = models[i];
@@ -53,6 +58,7 @@ export class EmptyManager2L {
       const leftEdgeNext = box2.min.x;
 
       if (leftEdgeNext - rightEdge > 0.15) {
+       
         this.addGapBox(rightEdge, leftEdgeNext, box1, 1.5, side);
       }
     }
@@ -64,14 +70,9 @@ export class EmptyManager2L {
       // Левый край
       const firstBox = new THREE.Box3().setFromObject(models[0].raycasterBox);
       if (firstBox.min.x > 0.15 + leftOffset) {
-        this.addGapBox(
-          0 + leftOffset,
-          firstBox.min.x,
-          firstBox,
-          posY,
-          side,
-          leftOffset
-        );
+       
+
+        this.addGapBox( 0 + leftOffset, firstBox.min.x,  firstBox,  posY,   side,  leftOffset );
       }
 
       // Правый край
@@ -79,10 +80,12 @@ export class EmptyManager2L {
         models[models.length - 1].raycasterBox
       );
       if (totalWidth - lastBox.max.x > 0.15) {
+      
+
         this.addGapBox(lastBox.max.x, totalWidth, lastBox, 1.5, side);
       }
     } else {
-      //          console.log('empty')
+            
       this.addGapBox(leftOffset, totalWidth, 1, 1.5, side);
     }
 
@@ -101,9 +104,12 @@ export class EmptyManager2L {
     const filtedLeft = plannerConfig.modelsLeft.filter(
       (model) => model.side == "left" && model.name === "penal"
     );
-    plannerConfig.iconsArray2L = plannerConfig.iconsArray2L.filter(
-      (icon) => icon.name == "direct"
-    );
+    // plannerConfig.iconsArray2L = plannerConfig.iconsArray2L.filter(
+    //   (icon) => icon.name == "direct"
+    // );
+
+    plannerConfig.empties2level = plannerConfig.empties2level.filter(item=> item.name === 'gapBoxDirect')
+
 
     // const models = plannerConfig.modelsLeft2L;
     const models = plannerConfig.modelsLeft2L.map((p) => ({ ...p }));
@@ -158,23 +164,25 @@ export class EmptyManager2L {
   }
 
   addGapBox(startX, endX, referenceBox, posY, side, leftOffset) {
-    const icon = this.loaderModels.get("icon");
-    icon.visible = true;
-    icon.name = "direct";
+    // const icon = this.loaderModels.get("icon");
+    // icon.visible = true;
+    // icon.name = "direct";
 
-    plannerConfig.iconsArray2L.push(icon);
+ //   plannerConfig.iconsArray2L.push(icon);
 
     const gap = endX - startX;
     if (gap <= 0) return;
 
     const geometry = new THREE.BoxGeometry(gap, 0.7, 0.3);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      opacity: 0,
+    const material = new THREE.MeshStandardMaterial({
+      color: 'yellow',
       transparent: true,
+      opacity: 0,
+  
     });
+
     const gapBox = new THREE.Mesh(geometry, material);
-    gapBox.name = "gapBox";
+    gapBox.name = "gapBoxDirect";
 
     const lineHotizontal = new Line(
       this.sceneSetup,
@@ -186,11 +194,11 @@ export class EmptyManager2L {
     gapBox.add(lineHotizontal.group);
     gapBox.userData.side = "direct";
 
-    plannerConfig.empties2levelDirect.push(gapBox);
+    plannerConfig.empties2level.push(gapBox);
 
     // plannerConfig.iconsArray2L.push(icon)
 
-    gapBox.add(icon);
+    //gapBox.add(icon);
     // icon.position.set(0,1,0)
 
     if (side === "left") gapBox.rotation.y = Math.PI / 2;
@@ -203,19 +211,20 @@ export class EmptyManager2L {
   }
 
   addGapBoxLeft(startX, endX, referenceBox, posY, side) {
-    const icon = this.loaderModels.get("icon");
-    icon.visible = true;
-    icon.name = "left";
-    plannerConfig.iconsArray2L.push(icon);
+    // const icon = this.loaderModels.get("icon");
+    // icon.visible = true;
+    // icon.name = "left";
+    // plannerConfig.iconsArray2L.push(icon);
 
     const gap = endX - startX;
     if (gap <= 0) return;
 
     const geometry = new THREE.BoxGeometry(gap, 0.7, 0.3);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      opacity: 0,
+    const material = new THREE.MeshStandardMaterial({
+      color: 'yellow',
       transparent: true,
+      opacity: 0,
+  
     });
     const gapBox = new THREE.Mesh(geometry, material);
     gapBox.name = "gapBoxLeft";
@@ -229,15 +238,14 @@ export class EmptyManager2L {
     );
     gapBox.add(lineHotizontal.group);
 
-    plannerConfig.empties2levelLeft.push(gapBox);
+    plannerConfig.empties2level.push(gapBox);
 
-    gapBox.add(icon);
 
     gapBox.rotation.y = Math.PI / 2;
 
     gapBox.userData.side = "left";
 
-    // позиция
+   
 
     if (side === "left") gapBox.position.set(0.15, 1.76, startX + gap / 2);
 
@@ -245,20 +253,20 @@ export class EmptyManager2L {
   }
 
   calculateEmpties() {
-    this.removeObjectsByName("gapBox");
-    this.removeObjectsByName("gapBoxLeft");
+ //   this.removeObjectsByName("gapBoxDirect");
+ //   this.removeObjectsByName("gapBoxLeft");
 
-    plannerConfig.empties2levelDirect.length = 0;
-    plannerConfig.empties2levelLeft.length = 0;
+ //   plannerConfig.empties2level.length = 0;
+   
 
     if (plannerConfig.modelsDirect2L.length >= 0) {
-      this.createGapBoxes();
+  //    this.createGapBoxes();
     }
     if (
       this.kitchenStore.type === "left" &&
       plannerConfig.modelsLeft2L.length >= 0
     ) {
-      this.createGapBoxesLeft();
+    //  this.createGapBoxesLeft();
     }
   }
 
@@ -277,6 +285,8 @@ export class EmptyManager2L {
       if (object.parent) {
         object.parent.remove(object);
       }
+
+      this.scene.remove(object)
 
       // Очистка ресурсов
       if (object.geometry) object.geometry.dispose();
@@ -301,9 +311,11 @@ export class EmptyManager2L {
 
     const box = plannerConfig.selectedEmpty2L;
 
+    console.log('box', box)
+
     let side;
     if (box.name == "gapBoxLeft") side = "left";
-    if (box.name == "gapBox") side = "direct";
+    if (box.name == "gapBoxDirect") side = "direct";
 
     const cabinetName = `${type}-${width * 1000}`;
 
@@ -311,6 +323,8 @@ export class EmptyManager2L {
 
     //console.log(box);
     const position = box.position.clone();
+
+    console.log('pos', position)
     let model;
 
     model = this.loaderModels.get(cabinetName);
@@ -452,7 +466,7 @@ export class EmptyManager2L {
 
     let modelsArray;
     if (box.name == "gapBoxLeft") modelsArray = plannerConfig.modelsLeft2L;
-    if (box.name == "gapBox") modelsArray = plannerConfig.modelsDirect2L;
+    if (box.name == "gapBoxDirect") modelsArray = plannerConfig.modelsDirect2L;
 
     const gap = 0.01;
 
@@ -553,15 +567,16 @@ export class EmptyManager2L {
       gap,
       0.3
     );
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      opacity: 0,
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x00ffff,
       transparent: true,
+      opacity: 0,
+  
     });
     const gapBox = new THREE.Mesh(geometry, material);
     gapBox.name = "gapBoxSector";
 
-    gapBox.add(icon);
+ 
 
     gapBox.userData.height = gap
 
@@ -590,7 +605,7 @@ export class EmptyManager2L {
 
     // this.scene.add(gapBox)
     plannerConfig.selectedObject.emptiesGroup.attach(gapBox);
-    plannerConfig.selectedObject.empties.push(icon);
+    plannerConfig.selectedObject.empties.push(gapBox);
   }
 
   checkCollisionInSector(testInstance) {

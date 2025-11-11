@@ -307,14 +307,8 @@ export class PlannerManager {
 
       this.emptyManager2L.calcEmptyInSector();
 
-      const intersectsModules = this.raycaster.intersectObjects(
-        plannerConfig.selectedObject.modules.map((m) => m.raycasterBox),
-        false
-      );
-      const intersectsEmpties = this.raycaster.intersectObjects(
-        plannerConfig.selectedObject.empties,
-        true
-      );
+      const intersectsModules = this.raycaster.intersectObjects( plannerConfig.selectedObject.modules.map((m) => m.raycasterBox),  false  );
+      const intersectsEmpties = this.raycaster.intersectObjects( plannerConfig.selectedObject.empties, true );
 
   
 
@@ -324,9 +318,9 @@ export class PlannerManager {
 
         let empty = intersectsEmpties[0].object;
 
-        while (empty && !empty.userData.side && empty.parent) {
-          empty = empty.parent;
-        }
+    
+
+     
 
         plannerConfig.selectedEmptyInSector = empty;
 
@@ -381,13 +375,13 @@ export class PlannerManager {
   }
 
   emptiesIntersetsClick(intersect) {
-    while (intersect && !intersect.userData.side && intersect.parent) {
-      intersect = intersect.parent;
-    }
+    // while (intersect && !intersect.userData.side && intersect.parent) {
+    //   intersect = intersect.parent;
+    // }
 
-    if (intersect && intersect.userData.side) {
-      console.log("Нашли userData:", intersect.userData);
-    }
+    // if (intersect && intersect.userData.side) {
+    //   console.log("Нашли userData:", intersect.userData);
+    // }
     //   this.emptyManager.calcEmtyForPenal(intersect)
   //  console.log(intersect);
     this.plannerStore.objectMenu = true;
@@ -534,13 +528,21 @@ export class PlannerManager {
 
 
 
+  // handleClickEmpties2L(box) {
+  //   while (box && !box.userData.side && box.parent) {
+  //     box = box.parent;
+  //   }
+  //   this.plannerStore.objectMenuL2 = true;
+
+  //   plannerConfig.selectedEmpty2L = box;
+  // }
+
   handleClickEmpties2L(box) {
-    while (box && !box.userData.side && box.parent) {
-      box = box.parent;
-    }
-    this.plannerStore.objectMenuL2 = true;
+
+    this.plannerStore.objectMenuL2 = true; // включаем меню
 
     plannerConfig.selectedEmpty2L = box;
+  
   }
 
   //синхронизация с частотой requestAnimationFrame
@@ -563,8 +565,17 @@ export class PlannerManager {
 
     //пустые боксы
     if (!this.isMoving && !this.copyController.moving) {
-      this.mouseMove.epmtyBoxesMouseOver2();
-      this.mouseMove.epmtyBoxesMouseOver();
+    
+      //this.mouseMove.epmtyBoxesMouseOver2();
+     // this.mouseMove.epmtyBoxesMouseOver();
+    //  this.mouseMove.epmtyBoxesOver2()
+
+
+      // if(plannerConfig.selectedObject.name === 'sector'){
+    
+      //   this.mouseMove.boxesInSectorOver()
+      // }
+
     
     }
 
@@ -575,7 +586,7 @@ export class PlannerManager {
 
     if (plannerConfig.selectedObject) {
       plannerConfig.selectedObject.root.updateMatrixWorld(true, true);
-      this.mouseMove.showPointer();
+  //    this.mouseMove.showPointer();
     }
     if (this.isDragging) {
       plannerConfig.selectedObject.root.updateMatrixWorld(true, true);
@@ -635,82 +646,73 @@ export class PlannerManager {
 
     this.utils.clearSettings();
 
-    const intersectsModules = this.raycaster.intersectObjects(
-      plannerConfig.models.map((m) => m.raycasterBox),
-      false
-    );
-    const intersectsEmpties = this.raycaster.intersectObjects(
-      plannerConfig.iconsArray1L,
-      true
-    );
+    const intersectsModules = this.raycaster.intersectObjects( plannerConfig.models.map((m) => m.raycasterBox),  false );
+    const intersectsEmpties = this.raycaster.intersectObjects(plannerConfig.empties1level,true  );
 
 
     if (intersectsEmpties.length > 0) {
     //  console.log(intersectsEmpties[0].object);
-      this.emptiesIntersetsClick(intersectsEmpties[0].object);
+     // this.emptiesIntersetsClick(intersectsEmpties[0].object);
     }
 
-    const intersectsEmpties2L = this.raycaster.intersectObjects(
-      plannerConfig.iconsArray2L,
-      true
-    );
+    const intersectsEmpties2L = this.raycaster.intersectObjects( plannerConfig.empties2level,  false );
 
 
 
-    if (intersectsEmpties.length > 0) {
-      this.emptiesIntersetsClick(intersectsEmpties[0].object);
-    }
+    // if (intersectsEmpties.length > 0) {
+    //   this.emptiesIntersetsClick(intersectsEmpties[0].object);
+    // }
 
-    if (intersectsEmpties2L.length > 0) {
+    // if (intersectsEmpties2L.length > 0) {
  
-      this.handleClickEmpties2L(intersectsEmpties2L[0].object);
-    }
+    //   this.handleClickEmpties2L(intersectsEmpties2L[0].object);
+    // }
 
-    if (intersectsModules.length > 0 && !this.copyController.moving) {
-      const id = intersectsModules[0].object.userData.id;
-      console.log("id", id);
-      const module = plannerConfig.models.find((m) => m.id === id);
-      console.log('module', module)
+    // if (intersectsModules.length > 0 && !this.copyController.moving) {
+    //   const id = intersectsModules[0].object.userData.id;
+    //   console.log("id", id);
+    //   const module = plannerConfig.models.find((m) => m.id === id);
+    //   console.log('module', module)
 
-      if (module.level == 1) {
-        plannerConfig.selectedObject = module;
-        this.setSelectObjectSettings(module);
-      }
+    //   if (module.level == 1) {
+    //     plannerConfig.selectedObject = module;
+    //     this.setSelectObjectSettings(module);
+    //   }
 
-      if (module.level == 2) {
-        plannerConfig.selectedObject = module;
-        console.log(plannerConfig.selectedObject);
-        //  this.moveController2L.bounds2level()
-        this.setLevel2Setttings();
-      }
+    //   if (module.level == 2) {
+    //     plannerConfig.selectedObject = module;
+    //     console.log(plannerConfig.selectedObject);
+    //     //  this.moveController2L.bounds2level()
+    //     this.setLevel2Setttings();
+    //   }
 
 
 
-       const intersectControls = this.raycaster.intersectObjects(
-        plannerConfig.selectedObject.controls,
-        false
-      );
-      //   console.log('123')
+    //    const intersectControls = this.raycaster.intersectObjects(
+    //     plannerConfig.selectedObject.controls,
+    //     false
+    //   );
+    //   //   console.log('123')
 
-      if (intersectControls.length > 0) {
-        // Обрабатываем клик по кнопке
-        //    console.log("Нажата кнопка:", intersectControls[0].object.name);
-        if (plannerConfig.selectedObject.level == 1) {
-          this.controlsIntersected(intersectControls[0].object, event);
-        }
-        if (plannerConfig.selectedObject.level == 2) {
-          this.controlsIntersectedL2(intersectControls[0].object, event);
-        }
-        this.controls.enabled = false;
+    //   if (intersectControls.length > 0) {
+    //     // Обрабатываем клик по кнопке
+    //     //    console.log("Нажата кнопка:", intersectControls[0].object.name);
+    //     if (plannerConfig.selectedObject.level == 1) {
+    //       this.controlsIntersected(intersectControls[0].object, event);
+    //     }
+    //     if (plannerConfig.selectedObject.level == 2) {
+    //       this.controlsIntersectedL2(intersectControls[0].object, event);
+    //     }
+    //     this.controls.enabled = false;
 
         
-      }
+    //   }
     
 
 
 
 
-    }
+    // }
     this.sceneSetup.requestRender();
   };
 
@@ -834,9 +836,9 @@ export class PlannerManager {
     //this.utils.shadow()
 
 
-    this.scene.traverse(o => {
-      if (o.castShadow) console.log('Отбрасывает тень:', o.name || o)
-    })
+    // this.scene.traverse(o => {
+    //   if (o.castShadow) console.log('Отбрасывает тень:', o.name || o)
+    // })
 
 
 
@@ -865,7 +867,7 @@ export class PlannerManager {
     }
 
     if (event.key === "Escape") {
-      this.clearSettings();
+      this.utils.clearSettings();
       plannerConfig.selectedObject = false;
       this.plannerStore.selectedObject.isSelect = false;
       this.copyController.moving = false;

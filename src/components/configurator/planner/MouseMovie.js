@@ -14,6 +14,8 @@ export class MouseMove {
     this.mouse = new THREE.Vector2();
     this.moduleID;
     this.plannerStore = usePlannerStore();
+    this.emptyBox = null
+    this.emptyBoxInSector = null
   }
 
 
@@ -30,14 +32,15 @@ export class MouseMove {
       false
     );
 
+    console.log('mouse', this.mouse)
+
+
+
     if (intersectsModules.length > 0) {
       const id = intersectsModules[0].object.userData.id;
 
       // Если навели на другой модуль — сбрасываем предыдущий
-      if (
-        this.plannerStore.hoveredModuleID &&
-        this.plannerStore.hoveredModuleID !== id
-      ) {
+      if (this.plannerStore.hoveredModuleID &&  this.plannerStore.hoveredModuleID !== id   ) {
         const lastModule = plannerConfig.models.find(
           (m) => m.id === this.plannerStore.hoveredModuleID
         );
@@ -59,6 +62,8 @@ export class MouseMove {
       // ====== Обработка SECTOR ======
       if (module.name === "sector") {
 
+        // this.boxesInSectorOver2(module)
+
         module.modules.forEach(item=>{
           item.centerControl.visible = true
         })
@@ -74,14 +79,14 @@ export class MouseMove {
 
          //  model.centerControl.visible = true
 
-          console.log('model', model)
+      //    console.log('model', model)
 
 
           // пересечение с кнопкой centerControl
           const intersectControls = this.raycaster.intersectObject(model.centerControl,   false  );
           if(intersectControls.length > 0){
             const control = intersectControls[0].object
-            console.log('Пересечение с centerControl:', intersectControls[0].object);
+
             if (control.userData.state !== "hover") {
               control.material.map = controlsTextures.inSector.hover;
               control.material.needsUpdate = true;
@@ -97,6 +102,8 @@ export class MouseMove {
          
         }
       }
+
+     
 
       // ====== Отображение контролов модуля ======
       module.controls.forEach((item) => (item.visible = true));
@@ -292,38 +299,194 @@ export class MouseMove {
     this.sceneSetup.requestRender();
   }
 
+
+
+  epmtyBoxesOver() {
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(plannerConfig.empties1level, false);
+
+    
+    if (intersects.length > 0) {
+      const obj = intersects[0].object;
+
+      // если навели на другой бокс — сбросить прошлый
+      if (this.emptyBox && this.emptyBox !== obj) {
+        this.emptyBox.material.opacity = 0;
+          this.plannerStore.controls.show = false;
+
+
+      }
+
+      this.emptyBox = obj;
+      this.emptyBox.material.opacity = 0.2;
+
+      const worldPos = new THREE.Vector3();
+      this.emptyBox.getWorldPosition(worldPos);
+
+
+      const screenPos = worldPos.clone().project(this.camera);
+      const canvas = this.sceneSetup.renderer.domElement;
+
+      this.plannerStore.controls.position.x = Math.round(
+        (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
+      );
+      this.plannerStore.controls.position.y = Math.round(
+        (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
+      );
+      this.plannerStore.controls.title = 'вставить модуль';
+      this.plannerStore.controls.show = true;
+
+
+    } else if (this.emptyBox) {
+      // если ушли со всех боксов — вернуть норму
+      this.emptyBox.material.opacity = 0;
+          this.plannerStore.controls.show = false;
+
+
+      this.emptyBox = null;
+    }
+  }
+
+
   epmtyBoxesOver2() {
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsEmpties2L = this.raycaster.intersectObjects(
-        plannerConfig.empties2levelDirect,
-    false
-  );
+    const intersects = this.raycaster.intersectObjects(plannerConfig.empties2level, false);
 
-  let found = false;
-      if (intersectsEmpties2L.length > 0) {
-          const obj = intersectsEmpties2L[0].object;
-          if (this.hoveredObject !== obj) {
-              if (this.hoveredObject) {
-                  this.hoveredObject.material.opacity = 0.0;
-                  this.hoveredObject.material.color.set(0x00ff00);
-                  this.hoveredObject.children[0].visible = false
-              }
-              this.hoveredObject = obj;
-              this.hoveredObject.material.opacity = 0.5;
-              this.hoveredObject.material.color.set(0xffff00);
-              this.hoveredObject.children[0].visible = true
+    
+    if (intersects.length > 0) {
+      const obj = intersects[0].object;
 
-          }
-          found = true;
-      }
+      // если навели на другой бокс — сбросить прошлый
+      if (this.emptyBox && this.emptyBox !== obj) {
+        this.emptyBox.material.opacity = 0;
+          this.plannerStore.controls.show = false;
 
-      if (!found && this.hoveredObject) {
-        this.hoveredObject.children[0].visible = false
-          this.hoveredObject.material.opacity = 0.0;
-          this.hoveredObject.material.color.set(0x00ff00);
-          this.hoveredObject = null;
 
       }
+
+      this.emptyBox = obj;
+      this.emptyBox.material.opacity = 0.2;
+
+      const worldPos = new THREE.Vector3();
+      this.emptyBox.getWorldPosition(worldPos);
+
+
+      const screenPos = worldPos.clone().project(this.camera);
+      const canvas = this.sceneSetup.renderer.domElement;
+
+      this.plannerStore.controls.position.x = Math.round(
+        (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
+      );
+      this.plannerStore.controls.position.y = Math.round(
+        (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
+      );
+      this.plannerStore.controls.title = 'вставить модуль';
+      this.plannerStore.controls.show = true;
+
+
+    } else if (this.emptyBox) {
+      // если ушли со всех боксов — вернуть норму
+      this.emptyBox.material.opacity = 0;
+          this.plannerStore.controls.show = false;
+
+
+      this.emptyBox = null;
+    }
+  }
+
+  boxesInSectorOver() {
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(plannerConfig.selectedObject.empties, false);
+   
+
+    if (intersects.length > 0) {
+      const obj = intersects[0].object;
+
+      // если навели на другой бокс — сбросить прошлый
+      if (this.emptyBoxInSector && this.emptyBoxInSector !== obj) {
+        this.emptyBoxInSector.material.opacity = 0;
+          this.plannerStore.controls.show = false;
+
+
+      }
+
+      this.emptyBoxInSector = obj;
+      this.emptyBoxInSector.material.opacity = 0.2;
+
+      const worldPos = new THREE.Vector3();
+      this.emptyBoxInSector.getWorldPosition(worldPos);
+
+
+      const screenPos = worldPos.clone().project(this.camera);
+      const canvas = this.sceneSetup.renderer.domElement;
+
+      this.plannerStore.controls.position.x = Math.round(
+        (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
+      );
+      this.plannerStore.controls.position.y = Math.round(
+        (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
+      );
+      this.plannerStore.controls.title = 'вставить модуль';
+      this.plannerStore.controls.show = true;
+
+
+    } else if (this.emptyBoxInSector) {
+      // если ушли со всех боксов — вернуть норму
+      this.emptyBoxInSector.material.opacity = 0;
+          this.plannerStore.controls.show = false;
+
+
+      this.emptyBoxInSector = null;
+    }
+  }
+
+
+    boxesInSectorOver2(model) {
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(model.empties, false);
+   
+
+    if (intersects.length > 0) {
+      const obj = intersects[0].object;
+
+      // если навели на другой бокс — сбросить прошлый
+      if (this.emptyBoxInSector && this.emptyBoxInSector !== obj) {
+        this.emptyBoxInSector.material.opacity = 0;
+          this.plannerStore.controls.show = false;
+
+
+      }
+
+      this.emptyBoxInSector = obj;
+      this.emptyBoxInSector.material.opacity = 0.2;
+
+      const worldPos = new THREE.Vector3();
+      this.emptyBoxInSector.getWorldPosition(worldPos);
+
+
+      const screenPos = worldPos.clone().project(this.camera);
+      const canvas = this.sceneSetup.renderer.domElement;
+
+      this.plannerStore.controls.position.x = Math.round(
+        (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
+      );
+      this.plannerStore.controls.position.y = Math.round(
+        (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
+      );
+      this.plannerStore.controls.title = 'вставить модуль';
+      this.plannerStore.controls.show = true;
+
+
+    } else if (this.emptyBoxInSector) {
+      // если ушли со всех боксов — вернуть норму
+      this.emptyBoxInSector.material.opacity = 0;
+          this.plannerStore.controls.show = false;
+
+
+      this.emptyBoxInSector = null;
+    }
   }
 
   // epmtyBoxesMouseOver() {

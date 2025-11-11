@@ -310,7 +310,7 @@ export class UtilsManager {
         ? rules.left?.[side]
         : rules.direct;
 
-    console.log("✅ Итоговое ограничение:", rule);
+  
     plannerConfig.roomBounds = rule;
   }
 

@@ -24,9 +24,11 @@ export class EmptyManager {
     let totalWidth = this.kitchenStore.sideSizes.side_a;
 
     //  const filtedDirect = plannerConfig.penalsArray.filter(model=> model.side === 'direct')
-    plannerConfig.iconsArray1L = plannerConfig.iconsArray1L.filter(
-      (icon) => icon.name === "left1level"
-    );
+    // plannerConfig.iconsArray1L = plannerConfig.iconsArray1L.filter(
+    //   (icon) => icon.name === "left1level"
+    // );
+
+   plannerConfig.empties1level = plannerConfig.empties1level.filter(item=> item.name === 'gapBoxLeftL1')
 
     // времменно добавляем пеналы
     const models = plannerConfig.modelsDirect;
@@ -94,9 +96,12 @@ export class EmptyManager {
     let totalWidth = this.kitchenStore.sideSizes.side_c;
 
     //   const filtedLeft = plannerConfig.penalsArray.filter(model=> model.side == 'left')
-    plannerConfig.iconsArray1L = plannerConfig.iconsArray1L.filter(
-      (icon) => icon.name == "direct1level"
-    );
+    // plannerConfig.iconsArray1L = plannerConfig.iconsArray1L.filter(
+    //   (icon) => icon.name == "direct1level"
+    // );
+
+   plannerConfig.empties1level = plannerConfig.empties1level.filter(item=> item.name === 'gapBoxDirectL1')
+
 
     const models = plannerConfig.modelsLeft;
     // const models = plannerConfig.modelsLeft.map(p => ({ ...p }))
@@ -146,23 +151,18 @@ export class EmptyManager {
   }
 
   addGapBox(startX, endX, referenceBox, posY, side, leftOffset) {
-    const icon = this.loaderModels.get("icon");
-    icon.visible = true;
-    icon.name = "direct1level";
-
-    plannerConfig.iconsArray1L.push(icon);
-
     const gap = endX - startX;
     if (gap <= 0) return;
 
     const geometry = new THREE.BoxGeometry(gap, 0.7, 0.3);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      opacity: 0,
-      transparent: true,
+    const material = new THREE.MeshStandardMaterial({
+      color: 'yellow',
+      // transparent: true,
+      // opacity: 0,
+  
     });
     const gapBox = new THREE.Mesh(geometry, material);
-    gapBox.name = "gapBox1level";
+    gapBox.name = "gapBoxDirectL1";
 
     const lineHotizontal = new Line(
       this.sceneSetup,
@@ -174,12 +174,7 @@ export class EmptyManager {
     gapBox.add(lineHotizontal.group);
     gapBox.userData.side = "direct";
 
-    // plannerConfig.empties2levelDirect.push(gapBox);
-
-    // plannerConfig.iconsArray2L.push(icon)
-
-    gapBox.add(icon);
-    // icon.position.set(0,1,0)
+     plannerConfig.empties1level.push(gapBox);
 
     if (side === "left") gapBox.rotation.y = Math.PI / 2;
 
@@ -190,22 +185,19 @@ export class EmptyManager {
   }
 
   addGapBoxLeft(startX, endX, referenceBox, posY, side) {
-    const icon = this.loaderModels.get("icon");
-    icon.visible = true;
-    icon.name = "left1level";
-    plannerConfig.iconsArray1L.push(icon);
-
+  
     const gap = endX - startX;
     if (gap <= 0) return;
 
     const geometry = new THREE.BoxGeometry(gap, 0.7, 0.3);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      opacity: 0,
+    const material = new THREE.MeshStandardMaterial({
+      color: 'yellow',
       transparent: true,
+      opacity: 0,
+  
     });
     const gapBox = new THREE.Mesh(geometry, material);
-    gapBox.name = "gapBoxLeft1level";
+    gapBox.name = "gapBoxLeftL1";
 
     const lineHotizontal = new Line(
       this.sceneSetup,
@@ -215,17 +207,12 @@ export class EmptyManager {
       1
     );
     gapBox.add(lineHotizontal.group);
-
-    plannerConfig.empties2levelLeft.push(gapBox);
-
-    gapBox.add(icon);
+    plannerConfig.empties1level.push(gapBox);
 
     gapBox.rotation.y = Math.PI / 2;
-
     gapBox.userData.side = "left";
 
-    // позиция
-
+  
     if (side === "left") gapBox.position.set(0.15, 0.45, startX + gap / 2);
 
     this.scene.add(gapBox);
@@ -234,20 +221,20 @@ export class EmptyManager {
   calculateEmpties() {
 
 
-    this.removeObjectsByName("gapBox1level");
-    this.removeObjectsByName("gapBoxLeft1level");
+ //   this.removeObjectsByName("gapBoxDirectL1");
+ //   this.removeObjectsByName("gapBoxLeftL1");
+//
+ //    plannerConfig.empties1level.length = 0;
 
-    plannerConfig.empties2levelDirect.length = 0;
-    plannerConfig.empties2levelLeft.length = 0;
 
     if (plannerConfig.modelsDirect.length >= 0) {
-     this.createGapBoxes();
+  //   this.createGapBoxes();
     }
     if (
       this.kitchenStore.type === "left" &&
       plannerConfig.modelsLeft.length >= 0
     ) {
-      this.createGapBoxesLeft();
+   //   this.createGapBoxesLeft();
     }
   }
 
