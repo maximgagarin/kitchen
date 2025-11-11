@@ -565,6 +565,7 @@ export class PlannerManager {
     if (!this.isMoving && !this.copyController.moving) {
       this.mouseMove.epmtyBoxesMouseOver2();
       this.mouseMove.epmtyBoxesMouseOver();
+    
     }
 
     if ( this.moveInSector.isMoving && !this.isMoving) {

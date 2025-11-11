@@ -16,6 +16,9 @@ export class MouseMove {
     this.plannerStore = usePlannerStore();
   }
 
+
+
+
   showControls() {
     if (this.plannerStore.movingModule) return; // если движение модуля — выход
 
@@ -55,6 +58,11 @@ export class MouseMove {
 
       // ====== Обработка SECTOR ======
       if (module.name === "sector") {
+
+        module.modules.forEach(item=>{
+          item.centerControl.visible = true
+        })
+
         const intersectsSubModules = this.raycaster.intersectObjects(
           module.modules.map((m) => m.raycasterBox),
           false
@@ -64,7 +72,7 @@ export class MouseMove {
           const hoveredSubId = intersectsSubModules[0].object.userData.id;
           const model = module.modules.find((m) => m.id == hoveredSubId);
 
-           model.centerControl.visible = true
+         //  model.centerControl.visible = true
 
           console.log('model', model)
 
@@ -284,39 +292,39 @@ export class MouseMove {
     this.sceneSetup.requestRender();
   }
 
-  // epmtyBoxesMouseOver2() {
-  //   this.raycaster.setFromCamera(this.mouse, this.camera);
-  //   const intersectsEmpties2L = this.raycaster.intersectObjects(
-  //   [...plannerConfig.empties2levelDirect, ...plannerConfig.empties2levelLeft],
-  //   false
-  // );
+  epmtyBoxesOver2() {
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersectsEmpties2L = this.raycaster.intersectObjects(
+        plannerConfig.empties2levelDirect,
+    false
+  );
 
-  // let found = false;
-  //     if (intersectsEmpties2L.length > 0) {
-  //         const obj = intersectsEmpties2L[0].object;
-  //         if (this.hoveredObject !== obj) {
-  //             if (this.hoveredObject) {
-  //                 this.hoveredObject.material.opacity = 0.0;
-  //                 this.hoveredObject.material.color.set(0x00ff00);
-  //                 this.hoveredObject.children[0].visible = false
-  //             }
-  //             this.hoveredObject = obj;
-  //             this.hoveredObject.material.opacity = 0.5;
-  //             this.hoveredObject.material.color.set(0xffff00);
-  //             this.hoveredObject.children[0].visible = true
+  let found = false;
+      if (intersectsEmpties2L.length > 0) {
+          const obj = intersectsEmpties2L[0].object;
+          if (this.hoveredObject !== obj) {
+              if (this.hoveredObject) {
+                  this.hoveredObject.material.opacity = 0.0;
+                  this.hoveredObject.material.color.set(0x00ff00);
+                  this.hoveredObject.children[0].visible = false
+              }
+              this.hoveredObject = obj;
+              this.hoveredObject.material.opacity = 0.5;
+              this.hoveredObject.material.color.set(0xffff00);
+              this.hoveredObject.children[0].visible = true
 
-  //         }
-  //         found = true;
-  //     }
+          }
+          found = true;
+      }
 
-  //     if (!found && this.hoveredObject) {
-  //       this.hoveredObject.children[0].visible = false
-  //         this.hoveredObject.material.opacity = 0.0;
-  //         this.hoveredObject.material.color.set(0x00ff00);
-  //         this.hoveredObject = null;
+      if (!found && this.hoveredObject) {
+        this.hoveredObject.children[0].visible = false
+          this.hoveredObject.material.opacity = 0.0;
+          this.hoveredObject.material.color.set(0x00ff00);
+          this.hoveredObject = null;
 
-  //     }
-  // }
+      }
+  }
 
   // epmtyBoxesMouseOver() {
 
