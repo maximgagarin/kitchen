@@ -76,7 +76,7 @@ provide("plannerManager", plannerManager);
 onMounted(() => {
   setTimeout(() => {
     showLoading.value = false;
-  }, 5000);
+  }, 2000);
 
     icons.forEach(src => {
     const link = document.createElement('link')

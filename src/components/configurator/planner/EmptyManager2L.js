@@ -269,6 +269,23 @@ export class EmptyManager2L {
       this.createGapBoxesLeft();
     }
   }
+  castShadow(cabinet){
+
+
+    
+    
+    cabinet.traverse((child) => {
+      if (child.isMesh) {
+      if (child.name.toLowerCase().includes("glass")) return;
+     
+       child.material.roughness = 0;
+       child.material.metalness = 0;
+       child.castShadow = true;
+       child.receiveShadow = false;
+       child.material.needsUpdate = true;
+      }
+    });
+  }
 
   removeObjectsByName(name) {
     const objectsToRemove = [];
@@ -316,6 +333,7 @@ export class EmptyManager2L {
     let side;
     if (box.name == "gapBoxLeft") side = "left";
     if (box.name == "gapBoxDirect") side = "direct";
+    if (box.name == "gapBoxRight") side = "right";
 
     const cabinetName = `${type}-${width * 1000}`;
 
@@ -328,6 +346,8 @@ export class EmptyManager2L {
     let model;
 
     model = this.loaderModels.get(cabinetName);
+
+  
 
     if (!model) {
       console.log("model not found");
@@ -351,6 +371,9 @@ export class EmptyManager2L {
 
     model.visible = true;
 
+     
+    this.castShadow(model)
+
     const instance = new SectorInstanse(width, this.sceneSetup);
 
     const instanceInSector = new Model_In_Sector(model, this.sceneSetup, false);
@@ -363,6 +386,8 @@ export class EmptyManager2L {
     this.scene.add(instance.root);
     instance.root.position.y = 1.41;
     instance.width = width;
+    instance.fullName = cabinetName
+    instance.type = type
 
     instance.id = id;
     model.userData.id = id;

@@ -294,6 +294,7 @@ export class LoaderModels {
       { name: 'icon', path: '/models/icon.glb' },
       { name: 'test', path: '/models/test.glb' },
       { name: 'box-for-hole', path: '/models/box-for-hole.glb' },
+      { name: 'test1', path: '/models/test.glb' },
 
      
     ];

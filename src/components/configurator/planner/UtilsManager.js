@@ -414,16 +414,23 @@ export class UtilsManager {
     this.sceneSetup.requestRender();
   }
 
+
+
   shadow(){
       //   включить тень
+
+
+    const array = [...plannerConfig.modelsDirect2L ]
     const excludedNames = ['p', 'm', 'd'];
 
-    plannerConfig.models.forEach(model => {
+    array.forEach(model => {
+     
       if (!excludedNames.includes(model.name)) {
         model.root.traverse((child) => {
           if (child.isMesh) {
-          //  child.castShadow = true;
-          //  child.receiveShadow = true;
+              if (child.name.toLowerCase().includes("glass")) return;
+           child.castShadow = true;
+           child.receiveShadow = true;
           }
         });
       }

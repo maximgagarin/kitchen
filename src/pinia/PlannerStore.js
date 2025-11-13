@@ -54,17 +54,26 @@ export const usePlannerStore = defineStore("plannerStore", () => {
   });
 
   const modelsListL2 = ref({
+    ПС: [0.3, 0.4, , 0.6, 0.8],
+    ПГС: [0.8],
+    ПГ: [0.35, 0.5, 0.6, 0.8],
+    П: [0.15, 0.2, 0.3, 0.35, 0.4, 0.45 , 0.5, 0.6, 0.7, 0.8],
+    ПК: [0.4],
+
+
+
+
     ВП: [0.15, 0.2, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8],
     ВПС: [0.3, 0.4, , 0.6, 0.7, 0.8],
     ВПГ: [0.35, 0.5, 0.6, 0.8],
     ВПГС: [0.5, 0.6, 0.8],
+    ПЛВ: [0.4],
+
+
     ПЛД: [0.5, 0.6, 0.8],
 
     ОПМ: [0.4, 0.6],
-    ПГС: [0.8],
-    ПЛВ: [0.4],
     ОПМГ: [0.6],
-    ПГ: [0.35, 0.5, 0.6, 0.8],
   });
 
   const sectorWidth = ref(0.4);
@@ -91,7 +100,7 @@ export const usePlannerStore = defineStore("plannerStore", () => {
 
   const hoveredModuleID = ref(null);
 
-  const movingModule = ref(false)
+  const movingModule = ref(false);
 
   // подсказа кноки управления модулем
   const controls = ref({

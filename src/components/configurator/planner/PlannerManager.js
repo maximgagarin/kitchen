@@ -779,7 +779,7 @@ export class PlannerManager {
     this.utils.calcCornerModules();
     this.utils.calcCornerModules2L();
     //   this.utils.roomBoundsPenal()
-    //this.utils.shadow()
+  //  this.utils.shadow()
 
 
     // this.scene.traverse(o => {

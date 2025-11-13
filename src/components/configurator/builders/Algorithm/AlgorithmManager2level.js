@@ -659,11 +659,25 @@ export class AlgorithmManager2level {
     model.position.set(position.x, position.y, position.z);
     model.rotation.y = rotationY;
     model.visible = true;
+
+    this.castShadow(model)
   
  
 
    
   }
+
+
+    castShadow(cabinet){
+    cabinet.traverse((child) => {
+      if (child.isMesh) {
+         if (child.name.toLowerCase().includes("glass")) return;
+       child.castShadow = true;
+       child.receiveShadow = false;
+      }
+    });
+  }
+
 
   deleteDirect() {
     // algorithmConfig.level2.namesToDeleteDirect.forEach((name) => {

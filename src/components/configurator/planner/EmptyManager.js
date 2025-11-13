@@ -159,8 +159,8 @@ export class EmptyManager {
 
     const lineHotizontal = new Line(
       this.sceneSetup,
-      { x: -gap / 2, y: 0.3, z: -0.14 },
-      { x: gap / 2, y: 0.3, z: -0.14 },
+      { x: -gap / 2, y: 0.3, z: -0.29 },
+      { x: gap / 2, y: 0.3, z: -0.29 },
       0.4,
       1
     );
@@ -194,8 +194,8 @@ export class EmptyManager {
 
     const lineHotizontal = new Line(
       this.sceneSetup,
-      { x: -gap / 2, y: 0.3, z: -0.14 },
-      { x: gap / 2, y: 0.3, z: -0.14 },
+      { x: -gap / 2, y: 0.3, z: -0.29 },
+      { x: gap / 2, y: 0.3, z: -0.29 },
       0.4,
       1
     );
@@ -236,8 +236,8 @@ export class EmptyManager {
   castShadow(cabinet){
     cabinet.traverse((child) => {
       if (child.isMesh) {
-  //      child.castShadow = true;
-   //     child.receiveShadow = true;
+       child.castShadow = true;
+       child.receiveShadow = true;
       }
     });
   }

@@ -1,22 +1,29 @@
 <template>
   <!-- Блок превью -->
   <div
-    class="fixed w-[350px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-300"
+    class="fixed w-[350px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-300 transform origin-top-left"
     :style="{
-      top: (plannerStore.emptyPosition.y + 150) + 'px',
-      left: (plannerStore.emptyPosition.x + 30) + 'px',
+      top: plannerStore.emptyPosition.y + 220 + 'px',
+      left: plannerStore.emptyPosition.x + 30 + 'px',
       opacity: hoveredItem ? 1 : 0,
-      transform: hoveredItem ? 'scale(1)' : 'scale(0.95)',
+      scale: hoveredItem ? 1 : 0.95,
     }"
   >
     <transition name="fade" mode="out-in">
-      <img
+      <div
         v-if="hoveredItem"
-        :key="hoveredItem.src"
-        :src="hoveredItem.src"
-        alt="Модуль"
-        class="w-full h-full object-contain p-4"
-      />
+        :key="hoveredItem.img"
+        class="w-full h-full flex flex-col items-center justify-center p-2"
+      >
+        <img
+          :src="hoveredItem.img"
+          alt="Модуль"
+          class="max-w-full max-h-[90%] object-contain "
+        />
+        <p class="text-gray-600 text-center text-sm break-words">
+          {{ hoveredItem.label }}
+        </p>
+      </div>
     </transition>
   </div>
 
@@ -51,7 +58,7 @@
           :value="type.value"
           class="hidden"
         />
-        {{ type.label }}
+              <img  :src="type.icon" alt="Описание иконки" width="32" height="32">
       </label>
     </div>
 
@@ -91,16 +98,28 @@ const selectedType = ref("");
 const selectedWidth = ref(null);
 const hoveredItem = ref(null);
 
+
+
 const moduleTypes = [
-  { value: "ВП", label: "ВП" , src:"/img/2level/ВПС.png" },
-  { value: "ВПС", label: "ВПС" ,src:"/img/2level/ВП.png"},
-  { value: "ВПГ", label: "ВПГ", src:"/img/2level/ВПГ.png" },
-  { value: "ВПГС", label: "ВПГС" , src:"/img/2level/ВПС.png"},
-  { value: "ПЛД", label: "ПЛД" , src:"/img/2level/ВПС.png"},
-  { value: "ОПМ", label: "ОПМ" , src:"/img/2level/ВПС.png"},
-  { value: "ПГС", label: "ПГС" , src:"/img/2level/ВПС.png"},
-  { value: "ПЛВ", label: "ПЛВ" , src:"/img/2level/ВПС.png"},
-  { value: "ОПМГ", label: "ОПМГ" , src:"/img/2level/ВПС.png"},
+  { value: "ПС", label: "ПС"      , icon: '/img/icons/c.png',  src:"/img/2level/ВПС.png" },
+  { value: "ПГС", label: "ПГС"   , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+  { value: "ПГ", label: "ПГ"   , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+  { value: "П", label: "П"   , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+
+  { value: "ВП", label: "ВП"      , icon: '/img/icons/c.png',  src:"/img/2level/ВПС.png" },
+  { value: "ВПС", label: "ВПС"    , icon: '/img/icons/c.png' ,img: "/img/2level/ВП.png"},
+  { value: "ВПГ", label: "ВПГ",     icon: '/img/icons/c.png' , img: "/img/2level/ВПГ.png" },
+  { value: "ВПГС", label: "ВПГС" , icon: '/img/icons/c.png' , img: "/img/2level/ВПС.png"},
+
+
+  { value: "ПЛД", label: "ПЛД"    , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+
+  { value: "ОПМ", label: "ОПМ"   , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+
+  { value: "ПЛВ", label: "ПЛВ"   , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+  { value: "ОПМГ", label: "ОПМГ" , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+  { value: "ПК", label: "ПК"   , icon: '/img/icons/c.png'  , img: "/img/2level/ВПС.png"},
+
 ];
 
 

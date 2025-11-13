@@ -23,7 +23,7 @@ export class CabinetBuilder {
 
     this.start();
 
-  //     this.test1()
+    //   this.test2()
 
     this.height = config.kitchen_size.height;
     this.tableTopAll = [];
@@ -47,16 +47,46 @@ export class CabinetBuilder {
     this.scene.add(gapBox)
   }
 
+    castShadow(cabinet){
+    cabinet.traverse((child) => {
+      if (child.isMesh) {
+             
+      child.material.shadowSide = null; // или THREE.DoubleSide
+            child.material.polygonOffset = true;
+            child.material.polygonOffsetFactor = 1;
+            child.material.polygonOffsetUnits = 1;
+            child.material.normalScale = new THREE.Vector2(1, 1);
+      child.material.normalMap = null;
+       child.material.roughness = 0;
+       child.material.metalness = 0;
+       child.castShadow = true;
+       child.receiveShadow = false;
+      }
+    })
+  }
+
   test2() {
     setTimeout(() => {
       console.log("123");
-      const model = this.loaderModels.get("ПГС2-600");
-      model.visible = true;
-      model.position.set(1, 1.44, 1);
-      this.scene.add(model);
-      this.getObjectTexturesSize(model);
+
+      const list = ['test1', 'П-600', 'ПЛВ-400']
+
+      let x = 1
+
+      list.forEach(item=>{
+         const model = this.loaderModels.get(item);
+          model.visible = true;
+          model.position.set(x, 1.44, 0.3);
+          this.scene.add(model);
+          this.castShadow(model)
+
+          x+=1
+
+      })
+
+     
       this.sceneSetup.requestRender();
-    }, 12000);
+    }, 4000);
   }
 
   test3(){
