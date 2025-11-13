@@ -466,15 +466,12 @@ export class PlannerManager {
     
     //пустые боксы
     if (!this.isMoving && !this.copyController.moving &&  !this.isDragging) {
-    
- 
       this.mouseMove.epmtyBoxesOver2()
       this.mouseMove.epmtyBoxesOver()
       this.mouseMove.showControls()
 
 
-      if(plannerConfig.selectedObject.name === 'sector'){
-    
+      if(plannerConfig.selectedObject.name === 'sector' && !this.moveInSector.isMoving){
         this.mouseMove.boxesInSectorOver()
       }
 
