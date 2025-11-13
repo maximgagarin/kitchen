@@ -198,6 +198,8 @@ export class ChangeController {
     instance.side = side;
     instance.id = id;
     instance.raycasterBox.userData.id = id;
+    instance.frontBox.userData.id = id
+
     instance.fullname = cabinetName;
     cabinet.position.copy(position);
     cabinet.position[rule.axis] = newPos;

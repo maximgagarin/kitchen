@@ -257,6 +257,8 @@ export class ResizableModule {
     instance.level = oldLevel
     instance.id = oldId
     instance.raycasterBox.userData.id= oldId
+    instance.frontBox.userData.id = oldId
+
 
     model.rotation.y = side == "direct" ? 0 :Math.PI / 2;
 

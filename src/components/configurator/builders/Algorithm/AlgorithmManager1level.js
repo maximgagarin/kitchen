@@ -640,6 +640,7 @@ export class AlgorithmManager1level {
     instance.id = id
     model.userData.id = id
     instance.raycasterBox.userData.id = id
+    instance.frontBox.userData.id = id
     plannerConfig.modelsDirect.push(instance)
     this.scene.add(model); 
     const position = { x: 0, y: 0, z: 0 };
@@ -716,6 +717,8 @@ export class AlgorithmManager1level {
       model.rotation.y = Math.PI / 2;
       model.visible = true;
       model.name = name;
+    instance.frontBox.userData.id = id
+
 
       if(type == 'd'){
         algorithmConfig.oven.side = 'left'
@@ -772,6 +775,8 @@ export class AlgorithmManager1level {
       model.rotation.y = -Math.PI / 2;
       model.visible = true;
       model.name = name;
+    instance.frontBox.userData.id = id
+
 
       if(type == 'd'){
         algorithmConfig.oven.side = 'left'

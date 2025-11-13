@@ -348,6 +348,8 @@ export class EmptyManager {
     instance.id = id;
     instance.fullname = cabinetName;
     instance.raycasterBox.userData.id = id;
+    instance.frontBox.userData.id = id
+
     cabinet.position.copy(position);
     cabinet.rotation.y = isLeft ? Math.PI / 2 : 0;
 

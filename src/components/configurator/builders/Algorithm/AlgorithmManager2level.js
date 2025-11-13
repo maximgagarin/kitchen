@@ -583,6 +583,8 @@ export class AlgorithmManager2level {
     instance.id = id
     model.userData.id = id
     instance.raycasterBox.userData.id = id
+    instance.frontBox.userData.id = id
+    
 
     let nameTodelete = modelName + side
     model.name = modelName + side;

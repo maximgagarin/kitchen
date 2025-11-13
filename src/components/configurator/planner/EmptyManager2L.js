@@ -331,9 +331,9 @@ export class EmptyManager2L {
     console.log('box', box)
 
     let side;
-    if (box.name == "gapBoxLeft") side = "left";
-    if (box.name == "gapBoxDirect") side = "direct";
-    if (box.name == "gapBoxRight") side = "right";
+    if (box.name === "gapBoxLeft") side = "left";
+    if (box.name === "gapBoxDirect") side = "direct";
+    if (box.name === "gapBoxRight") side = "right";
 
     const cabinetName = `${type}-${width * 1000}`;
 
@@ -392,6 +392,7 @@ export class EmptyManager2L {
     instance.id = id;
     model.userData.id = id;
     instance.raycasterBox.userData.id = id;
+    instance.frontBox.userData.id = id;
 
     //this.plannerStore.sectorWidth = width
     //this.plannerStore.sectorReady = true

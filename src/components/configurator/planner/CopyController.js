@@ -222,6 +222,8 @@ export class CopyController {
     instance.side = this.side;
     instance.id = this.id;
     instance.raycasterBox.userData.id = this.id;
+    instance.frontBox.userData.id = this.id
+
     instance.root.position.copy(position);
     instance.root.rotation.y = this.rule.rotation
 
@@ -360,6 +362,8 @@ export class CopyController {
     this.instance = new SectorInstanse(this.width, this.sceneSetup);
     this.instance.id = id;
     this.instance.raycasterBox.userData.id = id;
+    this.instance.frontBox.userData.id = id
+
     this.instance.level = 2;
     this.instance.width = this.width;
     this.instance.ready = true;

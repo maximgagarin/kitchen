@@ -26,12 +26,13 @@ export class MouseMove {
     this.mouse.set(this.mouseStore.normalizedX , this.mouseStore.normalizedY )
 
     if (this.plannerStore.movingModule) return; // если движение модуля — выход
+    if (this.sceneSetup.cameraMoving) return
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     // Проверяем пересечение с основными модулями
     const intersectsModules = this.raycaster.intersectObjects(
-      plannerConfig.models.map((m) => m.raycasterBox),
+      plannerConfig.models.map((m) => m.frontBox),
       false
     );
 
@@ -190,18 +191,7 @@ export class MouseMove {
     }
   }
 
-  epmtyBoxesMouseOver() {
-    this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersectsControls = this.raycaster.intersectObjects(  plannerConfig.iconsArray1L,  true );
-
-    if (intersectsControls.length > 0) {
-      document.body.style.cursor = "pointer"; //  "pointer" как на кнопках
-    } else {
-      document.body.style.cursor = "default";
-    }
-  }
 
  
 
@@ -255,6 +245,8 @@ export class MouseMove {
 
 
   epmtyBoxesOver() {
+    if (this.sceneSetup.cameraMoving) return
+    
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(plannerConfig.empties1level, false);
 
@@ -265,7 +257,10 @@ export class MouseMove {
       // если навели на другой бокс — сбросить прошлый
       if (this.emptyBox && this.emptyBox !== obj) {
         this.emptyBox.material.opacity = 0;
-          this.plannerStore.controls.show = false;
+          this.plannerStore.addModule.show = false;
+
+      
+          plannerConfig.selectedEmpty = null;
 
 
       }
@@ -280,20 +275,27 @@ export class MouseMove {
       const screenPos = worldPos.clone().project(this.camera);
       const canvas = this.sceneSetup.renderer.domElement;
 
-      this.plannerStore.controls.position.x = Math.round(
+      this.plannerStore.addModule.position.x = Math.round(
         (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
       );
-      this.plannerStore.controls.position.y = Math.round(
+      this.plannerStore.addModule.position.y = Math.round(
         (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
       );
-      this.plannerStore.controls.title = 'вставить модуль';
-      this.plannerStore.controls.show = true;
+      this.plannerStore.addModule.title = 'вставить модуль';
+      this.plannerStore.addModule.show = true;
+      this.plannerStore.addModule.level = 1;
+
+      plannerConfig.selectedEmpty = this.emptyBox;
+
+
 
 
     } else if (this.emptyBox) {
       // если ушли со всех боксов — вернуть норму
       this.emptyBox.material.opacity = 0;
-          this.plannerStore.controls.show = false;
+      this.plannerStore.addModule.show = false;
+      plannerConfig.selectedEmpty = null
+
 
 
       this.emptyBox = null;
@@ -302,6 +304,8 @@ export class MouseMove {
 
 
   epmtyBoxesOver2() {
+    if (this.sceneSetup.cameraMoving) return
+
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(plannerConfig.empties2level, false);
 
@@ -312,7 +316,7 @@ export class MouseMove {
       // если навели на другой бокс — сбросить прошлый
       if (this.emptyBox2L && this.emptyBox2L !== obj) {
         this.emptyBox2L.material.opacity = 0;
-          this.plannerStore.controls.show = false;
+          this.plannerStore.addModule.show = false;
 
 
       }
@@ -327,20 +331,24 @@ export class MouseMove {
       const screenPos = worldPos.clone().project(this.camera);
       const canvas = this.sceneSetup.renderer.domElement;
 
-      this.plannerStore.controls.position.x = Math.round(
+      this.plannerStore.addModule.position.x = Math.round(
         (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
       );
-      this.plannerStore.controls.position.y = Math.round(
+      this.plannerStore.addModule.position.y = Math.round(
         (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
       );
-      this.plannerStore.controls.title = 'вставить модуль';
-      this.plannerStore.controls.show = true;
+      this.plannerStore.addModule.title = 'вставить модуль';
+      this.plannerStore.addModule.level = 2;
+
+      this.plannerStore.addModule.show = true;
+      plannerConfig.selectedEmpty2L = this.emptyBox2L;
+
 
 
     } else if (this.emptyBox2L) {
       // если ушли со всех боксов — вернуть норму
       this.emptyBox2L.material.opacity = 0;
-          this.plannerStore.controls.show = false;
+          this.plannerStore.addModule.show = false;
 
 
       this.emptyBox2L = null;
@@ -359,7 +367,7 @@ export class MouseMove {
       // если навели на другой бокс — сбросить прошлый
       if (this.emptyBoxInSector && this.emptyBoxInSector !== obj) {
         this.emptyBoxInSector.material.opacity = 0;
-          this.plannerStore.controls.show = false;
+        this.plannerStore.addModule.show = false;
 
 
       }
@@ -374,20 +382,26 @@ export class MouseMove {
       const screenPos = worldPos.clone().project(this.camera);
       const canvas = this.sceneSetup.renderer.domElement;
 
-      this.plannerStore.controls.position.x = Math.round(
+      this.plannerStore.addModule.position.x = Math.round(
         (screenPos.x * 0.5 + 0.5) * canvas.clientWidth
       );
-      this.plannerStore.controls.position.y = Math.round(
+      this.plannerStore.addModule.position.y = Math.round(
         (-screenPos.y * 0.5 + 0.5) * canvas.clientHeight
       );
-      this.plannerStore.controls.title = 'вставить модуль';
-      this.plannerStore.controls.show = true;
+      this.plannerStore.addModule.title = 'вставить модуль';
+      this.plannerStore.addModule.show = true;
+
+      this.plannerStore.addModule.level = 'sector';
+
+
+      plannerConfig.selectedEmptyInSector = this.emptyBoxInSector
+
 
 
     } else if (this.emptyBoxInSector) {
       // если ушли со всех боксов — вернуть норму
       this.emptyBoxInSector.material.opacity = 0;
-          this.plannerStore.controls.show = false;
+          this.plannerStore.addModule.show = false;
 
 
       this.emptyBoxInSector = null;

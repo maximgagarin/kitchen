@@ -143,6 +143,15 @@ export class ModelInstanse2L {
 
   
 
+    const frontBox = new THREE.Mesh(
+    new THREE.BoxGeometry(size.x, size.y, 0.05),
+    new THREE.MeshBasicMaterial({  visible:false})
+    );
+
+    frontBox.position.set(0, this.objectSize.y/2, (this.objectSize.z/2)-0.05)
+    this.frontBox = frontBox
+    this.root.add(frontBox)
+
     const helper = new THREE.Mesh(
     new THREE.BoxGeometry(size.x, size.y, size.z),
     new THREE.MeshBasicMaterial({  visible:false })

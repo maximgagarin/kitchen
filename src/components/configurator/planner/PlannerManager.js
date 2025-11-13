@@ -76,7 +76,7 @@ export class PlannerManager {
     this.copyController = new CopyController(  this.sceneSetup,   this.loaderModels );
     this.emptyManager2L = new EmptyManager2L(  this.sceneSetup,   this.loaderModels  );
     this.combinationController = new CombinationController(this.sceneSetup);
-    this.swapController = new SwapController(this.sceneSetup);
+    this.swapController = new SwapController(this.sceneSetup, this.emptyManager, this.emptyManager2L);
     this.moveInSector = new MoveInSector(this.sceneSetup);
     this.utils = new UtilsManager(this.sceneSetup, this.loaderModels);
     this.menuController = new MenuController(  this.sceneSetup,   this.loaderModels  );
@@ -278,30 +278,15 @@ export class PlannerManager {
       if (intersectsEmpties.length > 0) {
       //  console.log("empty");
 
-        let empty = intersectsEmpties[0].object;
+        // let empty = intersectsEmpties[0].object;
+        // plannerConfig.selectedEmptyInSector = empty;
+        // this.plannerStore.empty2levelHeight = empty.userData.height
+        // const box = new THREE.Box3().setFromObject( plannerConfig.selectedEmptyInSector );
+        // plannerConfig.selectedEmptyInSectorMinY = box.min.y;
 
-    
+        // plannerConfig.selectedEmptyInSectorWorldPos =   plannerConfig.selectedEmptyInSector.getWorldPosition(  new THREE.Vector3()  );
 
-     
-
-        plannerConfig.selectedEmptyInSector = empty;
-
-        this.plannerStore.empty2levelHeight = empty.userData.height
-
-        const box = new THREE.Box3().setFromObject(
-          plannerConfig.selectedEmptyInSector
-        );
-
-
-
-        plannerConfig.selectedEmptyInSectorMinY = box.min.y;
-
-        plannerConfig.selectedEmptyInSectorWorldPos =
-          plannerConfig.selectedEmptyInSector.getWorldPosition(
-            new THREE.Vector3()
-          );
-
-        this.plannerStore.sectorMenu = true;
+        // this.plannerStore.sectorMenu = true;
       }
 
       //выделенный модуль в секторе
@@ -485,7 +470,7 @@ export class PlannerManager {
  
       this.mouseMove.epmtyBoxesOver2()
       this.mouseMove.epmtyBoxesOver()
-        this.mouseMove.showControls()
+      this.mouseMove.showControls()
 
 
       if(plannerConfig.selectedObject.name === 'sector'){
@@ -552,37 +537,37 @@ export class PlannerManager {
 
     this.utils.clearSettings();
 
-    const intersectsModules = this.raycaster.intersectObjects( plannerConfig.models.map((m) => m.raycasterBox),  false );
+    const intersectsModules = this.raycaster.intersectObjects( plannerConfig.models.map((m) => m.frontBox),  false );
     const intersectsEmpties = this.raycaster.intersectObjects(plannerConfig.empties1level, false  );
 
 
     if (intersectsEmpties.length > 0) {
-     console.log(intersectsEmpties[0].object);
-     this.emptiesIntersetsClick(intersectsEmpties[0].object);
+     
+    // this.emptiesIntersetsClick(intersectsEmpties[0].object);
     }
 
     const intersectsEmpties2L = this.raycaster.intersectObjects( plannerConfig.empties2level,  false );
 
 
 
-    if (intersectsEmpties.length > 0) {
-      this.emptiesIntersetsClick(intersectsEmpties[0].object);
-    }
+ 
 
     if (intersectsEmpties2L.length > 0) {
-      this.handleClickEmpties2L(intersectsEmpties2L[0].object);
+    //  this.handleClickEmpties2L(intersectsEmpties2L[0].object);
     }
 
     if (intersectsModules.length > 0 && !this.copyController.moving) {
       const id = intersectsModules[0].object.userData.id;
       const module = plannerConfig.models.find((m) => m.id === id);
 
-      if (module.level == 1) {
+      console.log('id', id)
+
+      if (module.level === 1) {
         plannerConfig.selectedObject = module;
         this.setSelectObjectSettings(module);
       }
 
-      if (module.level == 2) {
+      if (module.level === 2) {
         plannerConfig.selectedObject = module;
         console.log(plannerConfig.selectedObject);
         this.setLevel2Setttings();

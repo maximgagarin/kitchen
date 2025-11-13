@@ -112,6 +112,16 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     title: "",
   });
 
+  const addModule = ref({
+    level:1,
+    show: false,
+    position: {
+      x: 0,
+      y: 0,
+    },
+    title: "",
+  });
+
   const showControlTitle = ref(false);
 
   const controlTitlePosition = ref({
@@ -149,5 +159,6 @@ export const usePlannerStore = defineStore("plannerStore", () => {
     hoveredModuleID,
     controls,
     movingModule,
+    addModule
   };
 });

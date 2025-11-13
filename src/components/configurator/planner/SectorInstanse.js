@@ -179,28 +179,14 @@ export class SectorInstanse {
 
   createBox(){
    // const box = new THREE.Box3().setFromObject(this.modelScene);
-    const is900 = this.kitchenStore.modules_height.height2level == 0.9
+    const is900 = this.kitchenStore.modules_height.height2level === 0.9
 
     
 
-   // const size = new THREE.Vector3();
-    
-    //const center = new THREE.Vector3();
-    //box.getSize(size);
-  //  box.getSize(this.objectSize)
-
-   
-
-   // computeBoundingBox
-
-  // 
-   // box.getCenter(center);
 
     const center = is900 ? 0.45 : 0.35
 
 
-
-  
 
     const helper = new THREE.Mesh(
     new THREE.BoxGeometry(this.size,  is900 ? 0.9 : 0.7, 0.3),
@@ -209,23 +195,27 @@ export class SectorInstanse {
     helper.position.y = center
   
     helper.name = 'boxHelper'
-  //  helper.userData.controller = this;
+
     
     
 
     this.raycasterBox = helper; // сохраняем для Raycaster
-    if(this.box){
-     // console.log('root')
+    if(this.box){ 
       this.root.add(this.raycasterBox)
     }
-    if(!this.box){
-     // console.log('ssene')
+    if(!this.box){  
       this.root.attach(this.raycasterBox);
     }
 
-    const axis = new THREE.AxesHelper(5)
-         
-   // helper.add(axis)
+    const frontBox = new THREE.Mesh(
+    new THREE.BoxGeometry(this.size, is900 ? 0.9 : 0.7, 0.05),
+    new THREE.MeshBasicMaterial({  visible:false })
+    );
+
+    frontBox.position.set(0, is900 ? 0.4 : 0.35, 0.1)
+    this.frontBox = frontBox
+    this.root.add(frontBox)
+
 
 
     const box = new THREE.Box3().setFromObject(this.root);

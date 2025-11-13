@@ -8,8 +8,10 @@ import { TableTop } from "../builders/Algorithm/TableTop";
 import { array } from "three/tsl";
 
 export class SwapController {
-  constructor(sceneSetup) {
+  constructor(sceneSetup,   emptyManager, emptyManager2L) {
     this.kitchenSizesStore = useKitchenSizesStore();
+    this.emptyManager = emptyManager
+    this.emptyManager2L = emptyManager2L
     this.penalStore = usePenalStore();
 
     this.sceneSetup = sceneSetup;
@@ -126,6 +128,8 @@ export class SwapController {
       onComplete: () => {
         this.sceneSetup.requestRender();
         this.swapSelected = false;
+        this.emptyManager.calculateEmpties();
+      
         //  this.tableTop.create()
       },
     });
@@ -162,6 +166,8 @@ export class SwapController {
       onComplete: () => {
         this.sceneSetup.requestRender();
         this.swapSelected = false;
+        this.emptyManager.calculateEmpties();
+
         //   this.tableTop.create()
       },
     });
@@ -251,6 +257,9 @@ export class SwapController {
       onComplete: () => {
         this.sceneSetup.requestRender();
         this.swapSelectedInSector = false;
+        this.emptyManager2L.calculateEmpties();
+      
+
         //  this.tableTop.create()
       },
     });
@@ -285,6 +294,8 @@ export class SwapController {
       onComplete: () => {
         this.sceneSetup.requestRender();
         this.swapSelectedInSector = false;
+        this.emptyManager2L.calculateEmpties();
+
         //   this.tableTop.create()
       },
     });
@@ -412,6 +423,9 @@ export class SwapController {
           this.movedBack = false;
           plannerConfig.moveBack.otherBox = null;
           plannerConfig.isCollision = false;
+        this.emptyManager2L.calculateEmpties();
+        this.emptyManager.calculateEmpties();
+
           this.tableTop.create();
         },
       });

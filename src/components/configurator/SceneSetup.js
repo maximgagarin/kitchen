@@ -81,6 +81,15 @@ export class SceneSetup {
     this.controls.addEventListener("change", () => {
       this.needsRender = true;
       this.cameraMoving = true;
+     
+    });
+
+    this.controls.addEventListener('start', () => {
+      this.cameraMoving = true;
+    });
+
+    this.controls.addEventListener('end', () => {
+      this.cameraMoving = false;
     });
 
     window.addEventListener("resize", () => this.onWindowResize());

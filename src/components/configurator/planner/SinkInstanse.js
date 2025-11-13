@@ -98,7 +98,14 @@ export class SinkInstanse {
     helper.name = 'boxHelper'
   //  helper.userData.controller = this;
 
+    const frontBox = new THREE.Mesh(
+    new THREE.BoxGeometry(size.x, 0.8, 0.05),
+    new THREE.MeshBasicMaterial({   visible:false })
+    );
 
+    frontBox.position.set(0, 0.45, (this.objectSize.z/2)-0.05)
+    this.frontBox = frontBox
+    this.root.add(frontBox)
   
    
 
