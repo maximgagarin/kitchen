@@ -25,22 +25,35 @@ export class CopyController {
     this.mouse = new THREE.Vector2();
     this.point = null;
     this.moving = false;
+    this.model = null;
     this.setToRow = false;
     this.rules = {
       direct: {
         axis: "x",
         modulesArray: "modelsDirect",
+        modulesArray2L: "modelsDirect2L",
         deleteArray: "namesToDeleteDirect",
+        rotation: 0,
+        collisArray: (level) => level === 1 ? [...plannerConfig.modelsDirect] : [...plannerConfig.modelsDirect2L],
       },
       left: {
         axis: "z",
         modulesArray: "modelsLeft",
+        modulesArray2L: "modelsLeft2L",
+
         deleteArray: "namesToDeleteLeft",
+        rotation: Math.PI / 2,
+        collisArray: (level) => level === 2 ? [...plannerConfig.modelsDirect,...plannerConfig.modelsLeft] :
+          [...plannerConfig.modelsDirect2L,...plannerConfig.modelsLeft2L,] ,
       },
       right: {
         axis: "z",
         modulesArray: "modelsRight",
         deleteArray: "namesToDeleteRight",
+        collisArray: () => [
+          ...plannerConfig.modelsDirect,
+          ...plannerConfig.modelsRight,
+        ],
       },
     };
     this.bounds = {
@@ -58,128 +71,111 @@ export class CopyController {
 
   run() {
     const color = 0x00ffff;
-    const side = plannerConfig.copyObjectSide;
-    const name = plannerConfig.selectedObject.fullname;
 
-    console.log("name", name);
+    this.fullname = plannerConfig.selectedObject.fullname;
+    this.name = plannerConfig.selectedObject.name;
+    this.side = plannerConfig.selectedObject.side;
+    this.level = plannerConfig.selectedObject.level;
+    this.width = plannerConfig.selectedObject.width;
+    this.kitchenType = this.kitchenSizesStore.type;
+    this.typeSelected = plannerConfig.selectedObject.type;
+    
+    console.log('fullName', this.fullname)
 
-    const model = this.loaderModels.get(name);
-    if (!model) {
+    this.rule = this.rules[this.side];
+
+    this.collisArray = this.rule.collisArray(this.level);
+    this.intersects = null;
+    this.model = this.loaderModels.get(this.fullname);
+
+    console.log("this model", this.model);
+    if (!this.model) {
       console.log("ошибка загрузки");
       return;
     }
-    const box = new THREE.Box3().setFromObject(model);
-    const helper = new THREE.Box3Helper(box, color);
-    model.add(helper);
-    model.visible = false;
+    const box = new THREE.Box3().setFromObject(this.model);
+    this.copyHelper = new THREE.Box3Helper(box, color);
+    this.copyHelper.name = 'copyHelper'
 
-    plannerConfig.copyObject = model;
-    plannerConfig.copyObjectName = plannerConfig.selectedObject.name;
-    plannerConfig.copyObjectFullName = plannerConfig.selectedObject.fullname;
+    this.model.add(this.copyHelper);
+    this.model.visible = true;
+    this.model.rotation.y = this.rule.rotation;
 
-    plannerConfig.copyObjectSide = plannerConfig.selectedObject.side;
+    this.model.position.set(1, 0, 0);
 
-    model.position.set(1, 0, 0);
-    if (this.kitchenSizesStore.type == "left") model.position.set(0, 0, 1);
-    model.name = "copyObject";
-    this.scene.add(model);
+    this.model.name = "copyObject";
+    this.scene.add(this.model);
     this.moving = true;
-    this.point = new THREE.Vector3();
-    this.point.copy(plannerConfig.selectedObject.root.position);
   }
 
   moveNearWallsOnly() {
     this.mouse.set(this.mouseStore.normalizedX, this.mouseStore.normalizedY);
-    this.moving = true;
+
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
-    const level = plannerConfig.selectedObject.level;
-    const side = plannerConfig.selectedObject.side;
-
-    let intersects = [];
-
     // Выбор нужной плоскости в зависимости от уровня и стороны
-    if (level === 1) {
-      intersects = this.raycaster.intersectObject(
+    if (this.level === 1)
+      this.intersects = this.raycaster.intersectObject(
         plannerConfig.directPlane1level
       );
-    } else if (level === 2) {
-      if (side === "direct") {
-        intersects = this.raycaster.intersectObject(
+
+    if (this.level === 2) {
+      if (this.side === "direct")
+        this.intersects = this.raycaster.intersectObject(
           plannerConfig.directPlane2level
         );
-      } else if (side === "left") {
-        intersects = this.raycaster.intersectObject(plannerConfig.leftPlane);
-      }
+      if (this.side === "left")
+        this.intersects = this.raycaster.intersectObject(
+          plannerConfig.leftPlane
+        );
     }
 
-    if (!intersects || intersects.length === 0) return;
-
     // Обработка позиции
-    plannerConfig.copyObject.visible = true;
-    this.point = intersects[0].point.clone();
 
-    this.updateCopyObjectPosition(this.point, level);
+    this.point = this.intersects[0].point.clone();
+
+  
+    this.updateCopyObjectPosition();
     this.sceneSetup.requestRender();
   }
 
-  updateCopyObjectPosition(point, level) {
-    const desiredPos = new THREE.Vector3(point.x, 0, point.z);
-    const halfWidth = plannerConfig.copyObjectSize.x / 2;
-    const halfDepth = plannerConfig.copyObjectSize.z / 2;
+  updateCopyObjectPosition() {
+    const desiredPos = new THREE.Vector3(this.point.x, 0, this.point.z);
+    const halfWidth = this.width / 2;
 
     const bounds = this.bounds;
 
     // Ограничения по границам комнаты
-    desiredPos.x = THREE.MathUtils.clamp(
-      point.x,
-      bounds.minX + halfWidth,
-      bounds.maxX - halfWidth
-    );
+    desiredPos.x = THREE.MathUtils.clamp( this.point.x,  bounds.minX + halfWidth,  bounds.maxX - halfWidth );
 
-    desiredPos.z = THREE.MathUtils.clamp(
-      point.z,
-      bounds.minZ + halfWidth,
-      bounds.maxZ - halfWidth
-    );
+    desiredPos.z = THREE.MathUtils.clamp(  this.point.z,  bounds.minZ + halfWidth,   bounds.maxZ - halfWidth );
 
-    const yPos = level === 1 ? 0 : 1.41;
-    const zPos = level === 1 ? 0.3 : 0.15;
-    const xSideFixed = level === 1 ? 0.3 : 0.15;
+    const yPos = this.level === 1 ? 0 : 1.41;
+    const zPos = this.level === 1 ? 0.3 : 0.15;
+    const xSideFixed = this.level === 1 ? 0.3 : 0.15;
 
-    const type = this.kitchenSizesStore.type;
-    const side = plannerConfig.copyObjectSide;
+    if (this.kitchenSizesStore.type === "direct") {
+      this.model.position.set(desiredPos.x, yPos, zPos);
 
-    if (type === "direct") {
-      plannerConfig.copyObject.rotation.y = 0;
-      plannerConfig.copyObject.position.set(desiredPos.x, yPos, zPos);
-
-      //   console.log('x', desiredPos.x)
-    } else if (type === "left") {
-      if (side === "direct") {
-        plannerConfig.copyObject.rotation.y = 0;
-        plannerConfig.copyObject.position.set(desiredPos.x, yPos, zPos);
-      } else if (side === "left") {
-        console.log("ypos", yPos);
-        plannerConfig.copyObject.rotation.y = Math.PI / 2;
-        plannerConfig.copyObject.position.set(xSideFixed, yPos, desiredPos.z);
+     
+    } else if (this.kitchenSizesStore.type === "left") {
+      if (this.side === "direct") {
+        this.model.position.set(desiredPos.x, yPos, zPos);
+      } else if (this.side === "left") {
+        this.model.position.set(xSideFixed, yPos, desiredPos.z);
       }
     }
   }
 
   set() {
     if (!this.point) return;
-    const id = THREE.MathUtils.generateUUID();
-
-    const level = plannerConfig.selectedObject.level;
-    const side = plannerConfig.copyObjectSide;
-
-    const rule = this.rules[side];
-
-    plannerConfig.copyObject.updateMatrixWorld(true, true);
+    this.id = THREE.MathUtils.generateUUID();
 
     // Проверка на коллизию
-    const collision = this.checkCollision(plannerConfig.copyObject);
+    const collision = this.checkCollision(this.model);
+
+    console.log("collision", collision);
+
     if (collision) {
       plannerConfig.copyObject = false;
       this.moving = false;
@@ -189,79 +185,78 @@ export class CopyController {
       return;
     }
 
-    this.removeObjectsByName("copyObject");
+    const position = this.model.position.clone();
 
-    const name = plannerConfig.copyObjectFullName;
+    this.model.name = this.fullname;
+    this.model.position.set(0, 0, 0);
+    this.model.rotation.y = 0
 
-    const type = plannerConfig.copyObjectName;
+    const deleteArray = plannerConfig[this.rule.deleteArray];
 
-    console.log("type", type);
-
-    const model = this.loaderModels.get(name);
-    if (!model) {
-      console.log("Модуль не найден");
-      return;
-    }
-
-    const deleteArray = plannerConfig[rule.deleteArray];
-
-    deleteArray.push(name);
-
-    model.visible = true;
+    deleteArray.push(this.name);
 
     let instance;
-    if (level === 1) {
-      if (type === "m") {
-        instance = new SinkInstanse(model, this.sceneSetup);
+    if (this.level === 1) {
+      if (this.name === "m") {
+        instance = new SinkInstanse(this.model, this.sceneSetup);
         instance.name = "m";
       } else {
-        instance = new ModelInstanse(model, this.sceneSetup);
-        instance.name = plannerConfig.copyObjectName;
+        instance = new ModelInstanse(this.model, this.sceneSetup);
+        instance.name = this.name;
       }
 
       instance.level = 1;
-      if (side === "direct") plannerConfig.modelsDirect.push(instance);
-      if (side === "left") plannerConfig.modelsLeft.push(instance);
+      const modelArray = plannerConfig[this.rule.modulesArray];
+      modelArray.push(instance);
     }
 
-    if (level === 2) {
-      instance = new ModelInstanse2L(model, this.sceneSetup);
+    if (this.level === 2) {
+      instance = new ModelInstanse2L(this.model, this.sceneSetup);
       instance.level = 2;
-
-      if (side === "direct") plannerConfig.modelsDirect2L.push(instance);
-      if (side === "left") plannerConfig.modelsLeft2L.push(instance);
+     
+      const modelArray = plannerConfig[this.rule.modulesArray2L];
+      modelArray.push(instance);
     }
 
-    instance.fullname = plannerConfig.copyObjectFullName;
-    instance.side = side;
-    instance.id = id;
-    instance.raycasterBox.userData.id = id;
-
-    this.setObjectPosition(model, this.point, level, side);
+    instance.fullname = this.fullname;
+    instance.side = this.side;
+    instance.id = this.id;
+    instance.raycasterBox.userData.id = this.id;
+    instance.root.position.copy(position);
+    instance.root.rotation.y = this.rule.rotation
 
     plannerConfig.models.push(instance);
-    model.name = name;
-    this.scene.add(model);
+
+    // this.model.remove(this.copyHelper);
+    // this.copyHelper.geometry.dispose();
+    // this.copyHelper.material.dispose();
+    // this.copyHelper = null;
 
     this.setToRow = true;
     this.moving = false;
-    // this.calculateSlotPositions();
-    // this.calculateSlotPositions2L()
-    // this.calculateSlotsNew();
   }
 
   setSector() {
-    // const level = plannerConfig.selectedObject.level;
-    const side = plannerConfig.copyObjectSide;
+    console.log('setSector')
 
-    const collision = this.checkCollision(plannerConfig.copyObject);
+  
+
+    this.collisArray = this.rule.collisArray(this.level);
+
+
+    console.log('collis array', this.collisArray)
+
+   
+
+    const collision = this.checkCollision(this.model);
     if (collision) {
-      plannerConfig.copyObject = false;
+      this.model = null
       this.moving = false;
       this.plannerStore.showError();
       this.setToRow = false;
 
       this.scene.remove(this.instance.root);
+    
 
       //       plannerConfig.copyObject.root.traverse((child) => {
       //   if (child.geometry) {
@@ -287,23 +282,21 @@ export class CopyController {
     }
 
     //   console.log(level)
-    console.log(side);
+  
     this.setToRow = true;
     this.moving = false;
 
-    if (side === "direct") plannerConfig.modelsDirect2L.push(this.instance);
-    if (side === "left") plannerConfig.modelsLeft2L.push(this.instance);
+    if (this.side === "direct") plannerConfig.modelsDirect2L.push(this.instance);
+    if (this.side === "left") plannerConfig.modelsLeft2L.push(this.instance);
     plannerConfig.models.push(this.instance);
-    this.instance.side = side;
-    this.instance.level = 2;
+    this.instance.side = this.side;
+    this.instance.level = this.level;
 
-    console.log("models", plannerConfig.models);
+  
   }
 
   copySettings() {
-    console.log(plannerConfig.selectedObject.name);
-
-    if (plannerConfig.selectedObject.name == "sector") {
+    if (this.typeSelected === "sector") {
       this.setSector();
     } else {
       this.set();
@@ -311,44 +304,16 @@ export class CopyController {
 
     if (this.setToRow) {
       this.moving = false;
-      plannerConfig.copyObject = null;
-      plannerConfig.copyObjectName = "";
-      plannerConfig.copyObjectFullName = "";
-    } else {
-      // this.copyController.moveNearWallsOnly()
-    }
-  //  console.log(this.scene);
-  }
-
-  setObjectPosition(model, point, level, side) {
-    const cfg = this.levelConfig[level] || this.levelConfig[1];
-
-    if (side === "direct") {
-      model.rotation.y = 0;
-      model.position.set(point.x, cfg.y, cfg.z);
-    } else if (side === "left") {
-      model.rotation.y = Math.PI / 2;
-      model.position.set(cfg.x, cfg.y, point.z);
+      this.model = null;
     }
   }
 
   checkCollision(testInstance) {
-    const side = plannerConfig.copyObjectSide;
-
-    const arrays = {
-      direct: plannerConfig.modelsDirect,
-      left: plannerConfig.modelsLeft,
-    };
-
-    const modelsArray = arrays[side];
-    //    console.log('modelsArray', modelsArray)
-
     const gap = 0.01;
-
     const selectedBox = new THREE.Box3().setFromObject(testInstance);
     selectedBox.expandByScalar(-gap); // уменьшаем на зазор
 
-    for (let model of plannerConfig.models) {
+    for (let model of this.collisArray) {
       const otherBox = new THREE.Box3().setFromObject(model.root);
 
       //  console.log('selectedBox', selectedBox)
@@ -368,14 +333,23 @@ export class CopyController {
 
   clone() {
     //клонирование сектора
+    
     const id = THREE.MathUtils.generateUUID();
 
-    const modelsGroup =
-      plannerConfig.selectedObject.root.getObjectByName("modelsGroup");
-    const side = plannerConfig.selectedObject.side;
-    const width = plannerConfig.selectedObject.width;
 
 
+    const modelsGroup =  plannerConfig.selectedObject.root.getObjectByName("modelsGroup");
+
+    this.side = plannerConfig.selectedObject.side;
+    this.width = plannerConfig.selectedObject.width;
+    this.level = 2
+    this.typeSelected = 'sector'
+    this.rule = this.rules[this.side]
+
+    console.log(' this.side' ,  this.side)
+    console.log(' this.level' ,  this.level)
+    console.log('  this.width' ,  this.width)
+    
 
     if (!modelsGroup) {
       console.warn("modelsGroup не найден!");
@@ -384,46 +358,54 @@ export class CopyController {
 
     const clonedGroup = modelsGroup.clone(true);
     this.removeHelpersFromGroup(clonedGroup);
+    
 
-    this.instance = new SectorInstanse(width, this.sceneSetup);
+    this.instance = new SectorInstanse(this.width, this.sceneSetup);
     this.instance.id = id;
     this.instance.raycasterBox.userData.id = id;
     this.instance.level = 2;
-    this.instance.width = width;
+    this.instance.width = this.width;
     this.instance.ready = true;
     this.instance.root.name = "SectorTest";
 
     this.scene.add(this.instance.root);
-    //   instance.root.position.set(0.15, 1.41, 1.15);
-    this.instance.side = side;
-    //  plannerConfig.models.push(instance)
+
+    this.instance.side = this.side;
+
 
     clonedGroup.name = "clonedGroup";
+ 
     plannerConfig.namesToDeleteDirect2L.push("clonedGroup");
     plannerConfig.namesToDeleteDirect2L.push("SectorTest");
 
     clonedGroup.children.forEach((model, i) => {
-
-      this.removeControlsFromGroup(model)
+      this.removeControlsFromGroup(model);
 
       const modelClone = model.clone(true); // полностью клонируем
       modelClone.name = "test";
       plannerConfig.namesToDeleteDirect2L.push("test");
-      const instanseInSector = new Model_In_Sector(
-        modelClone,
-        this.sceneSetup,
-        false
-      );
+      const instanseInSector = new Model_In_Sector( modelClone,   this.sceneSetup,   false );
       this.instance.modules.push(instanseInSector);
       this.instance.modelsGroup.add(modelClone); // добавляем клон
     });
 
-    plannerConfig.copyObject = this.instance.root;
+    this.model = this.instance.root;
     this.moving = true;
-    plannerConfig.copyObjectSide = side;
+
+    console.log('this model', this.model)
+
+    // const color = 0x00ffff;
+
+
+    // const box = new THREE.Box3().setFromObject(this.model);
+    // this.copyHelper = new THREE.Box3Helper(box, color);
+    // this.copyHelper.name = 'copyHelper'
+
+    // this.model.add(this.copyHelper);
+  
   }
 
-    removeControlsFromGroup(group) {
+  removeControlsFromGroup(group) {
     const toRemove = [];
     const namesToRemove = ["centerControl"];
 

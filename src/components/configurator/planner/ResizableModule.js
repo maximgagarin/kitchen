@@ -30,6 +30,7 @@ export class ResizableModule {
 
     //выбранный controls у модели
     this.selectedControls = false;
+    this.arraysToCheck=[]
   }
 
   setSettings(intersectObject, event) {
@@ -41,7 +42,7 @@ export class ResizableModule {
     // console.log('startZ', this.startZ)
     // console.log('eventZ', event.clientZ)
 
-   // console.log("selectedControls", this.selectedControls);
+    console.log("selectedControls", this.selectedControls);
   }
 
   set() {
@@ -74,7 +75,7 @@ export class ResizableModule {
     const typeControl = this.selectedControls.name;
     if (Math.abs(deltaX) >= threshold) {
       let direction;
-      if (typeControl == "rightControl") {
+      if (typeControl === "rightControl") {
         direction = deltaX > 0 ? 1 : -1;
       } else {
         direction = deltaX > 0 ? -1 : 1;
@@ -87,23 +88,24 @@ export class ResizableModule {
   }
 
   loadModule() {
-    const side = plannerConfig.sideOfSelected;
+    const side = plannerConfig.selectedObject.side;
 
-  //  console.log("sideOfResize", side);
+
 
     this.plannerStore.hasCollision = false;
-  //  console.log(plannerConfig.selectedObject);
+;
     const type = plannerConfig.selectedObject.name;
     const typeControl = this.selectedControls.name;
-    const oldindex = plannerConfig.selectedObject.slot;
+
     const oldside = plannerConfig.selectedObject.side;
     const oldLevel = plannerConfig.selectedObject.level
     const oldId = plannerConfig.selectedObject.id
 
+
    // console.log(oldindex);
 
     let oldX, oldZ;
-    if (typeControl == "rightControl") {
+    if (typeControl === "rightControl") {
       oldX =
         plannerConfig.selectedObject.root.position.x -
         plannerConfig.selectedObject.objectSize.x / 2;
@@ -114,7 +116,7 @@ export class ResizableModule {
     }
 
     if (side == "left") {
-      if (typeControl == "rightControl") {
+      if (typeControl === "rightControl") {
         oldZ =
           plannerConfig.selectedObject.root.position.z +
           plannerConfig.selectedObject.objectSize.x / 2;
@@ -124,6 +126,8 @@ export class ResizableModule {
           plannerConfig.selectedObject.objectSize.x / 2;
       }
     }
+
+    console.log('typeControl', typeControl)
 
     const width = this.allowedWidths[this.currentIndex];
    // console.log("width", width);
@@ -155,75 +159,71 @@ export class ResizableModule {
     model.visible = true;
     model.updateMatrixWorld(true, true);
 
-    if(side == 'left') nameToDelete = name + 'left'
-    if(side == 'direct') nameToDelete = name + 'direct'
+    if(side === 'left') nameToDelete = name + 'left'
+    if(side === 'direct') nameToDelete = name + 'direct'
 
 
 
    
   
     model.name = nameToDelete;
-    side == 'left'?   plannerConfig.namesToDeleteLeft.push(nameToDelete) :   plannerConfig.namesToDeleteDirect.push(nameToDelete)
+    side === 'left'?   plannerConfig.namesToDeleteLeft.push(nameToDelete) :   plannerConfig.namesToDeleteDirect.push(nameToDelete)
 
 
 
     //Создаём временный экземпляр для проверки
     const testInstance = new ModelInstanse(model.clone());
     testInstance.name = type;
-    testInstance.slot = oldindex;
+  
 
-    testInstance.root.rotation.y = side == "direct" ?   0 : Math.PI / 2;
+    testInstance.root.rotation.y = side === "direct" ?   0 : Math.PI / 2;
 
-    if (side == "direct") {
-      if (typeControl == "rightControl") {
+
+    console.log('oldX', oldX)
+
+    if (side === "direct") {
+      if (typeControl === "rightControl") {
         testInstance.root.position.set(oldX + width / 2, 0, 0.3);
       } else {
         testInstance.root.position.set(oldX - width / 2, 0, 0.3);
       }
     }
 
-    if (side == "left") {
-      if (typeControl == "rightControl") {
+    if (side === "left") {
+      if (typeControl === "rightControl") {
         testInstance.root.position.set(0.3, 0, oldZ - width / 2);
       } else {
         testInstance.root.position.set(0.3, 0, oldZ + width / 2);
       }
     }
 
+
+
     // Удаляем временно текущий объект из моделей, чтобы он не мешал проверке
     const current = plannerConfig.selectedObject;
 
-    let indexInModels
+    
+    const models = [...plannerConfig.modelsDirect , ...plannerConfig.modelsLeft]
 
-    if(side == 'direct'){
-       indexInModels = plannerConfig.modelsDirect.indexOf(current);
-       if (indexInModels !== -1) {
-      plannerConfig.modelsDirect.splice(indexInModels, 1);
-    }
-    }
-
-    if(side == 'left'){
-       indexInModels = plannerConfig.modelsLeft.indexOf(current);
-       if (indexInModels !== -1) {
-      plannerConfig.modelsLeft.splice(indexInModels, 1);
-    }
-    }
-
+    const filtredArray = models.filter(model=> model.root.uuid !== current.root.uuid)
 
 
      
    
+    console.log('testPOs', testInstance.root.position)
 
-    const hasCollision = this.checkSimpleCollision(testInstance);
+    const hasCollision = this.checkSimpleCollision(testInstance, filtredArray);
+
+    console.log('array', plannerConfig.arraySwap)
 
     // Возвращаем назад, если коллизия
-    if (side == 'direct' && indexInModels !== -1) {
-      plannerConfig.modelsDirect.splice(indexInModels, 0, current);
-    }
+    // if (side == 'direct' && indexInModels !== -1) {
+    //   plannerConfig.modelsDirect.splice(indexInModels, 0, current);
+    // }
 
-     if (side == 'left' && indexInModels !== -1) {
-      plannerConfig.modelsLeft.splice(indexInModels, 0, current);
-    }
+    //  if (side == 'left' && indexInModels !== -1) {
+    //   plannerConfig.modelsLeft.splice(indexInModels, 0, current);
+    // }
 
 
     if (hasCollision) {
@@ -252,7 +252,6 @@ export class ResizableModule {
 
 
    
-    instance.slot = oldindex;
     instance.side = oldside;
     instance.fullname = name
     instance.level = oldLevel
@@ -316,7 +315,7 @@ export class ResizableModule {
   }
 
  
-   checkSimpleCollision(testInstance) {
+   checkSimpleCollision(testInstance, filtredArray) {
      const gap = 0.02;
  
      const selectedBox = new THREE.Box3().setFromObject(
@@ -324,20 +323,22 @@ export class ResizableModule {
      );
      selectedBox.expandByScalar(-gap); // уменьшаем на зазор
  
-     for (let model of plannerConfig.arraySwap) {
+     for (let model of filtredArray) {
        if (model.root.uuid === testInstance.root.uuid) continue;
  
        const otherBox = new THREE.Box3().setFromObject(model.root);
  
        if (selectedBox.intersectsBox(otherBox)) {
 
-        console.log('test', testInstance)
-        console.log('testPos', testInstance.root.position)
-        console.log('othrer', model)
-        console.log('othrerpos', model.root.pos)
+        // console.log('test', testInstance)
+        // console.log('testPos', testInstance.root.position)
+        // console.log('othrer', model)
+        // console.log('othrerpos', model.root.position)
 
-        console.log('selectBox', selectedBox)
-        console.log('OtherBox', otherBox)
+        // console.log('selectBox', selectedBox)
+        // console.log('modelUUI', model.root.uuid)
+        // console.log('testUUI', testInstance.root.uuid)
+        // console.log('OtherBox', otherBox)
          
  
          return true;
