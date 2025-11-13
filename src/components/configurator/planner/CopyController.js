@@ -335,9 +335,6 @@ export class CopyController {
     //клонирование сектора
     
     const id = THREE.MathUtils.generateUUID();
-
-
-
     const modelsGroup =  plannerConfig.selectedObject.root.getObjectByName("modelsGroup");
 
     this.side = plannerConfig.selectedObject.side;
@@ -367,6 +364,7 @@ export class CopyController {
     this.instance.width = this.width;
     this.instance.ready = true;
     this.instance.root.name = "SectorTest";
+    this.instance.root.rotation.y = this.rule.rotation
 
     this.scene.add(this.instance.root);
 

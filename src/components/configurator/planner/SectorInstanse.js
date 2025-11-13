@@ -239,7 +239,7 @@ export class SectorInstanse {
 
     this.root.attach(boxHelper)
     this.boxHelper = boxHelper
-    this.boxHelper.visible = true
+    this.boxHelper.visible = false
 
    // this.width = this.objectSize.x
   //  this.root.add(axis)
