@@ -354,7 +354,7 @@ export class LoaderModels {
         });
         
         object.traverse((child) => {
-          if (child.isMesh && child.name.toLowerCase().includes('panel_door')) {
+          if (child.isMesh && child.name.toLowerCase().includes('door')) {
             child.material = panelDoor
           }
         });
