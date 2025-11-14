@@ -457,7 +457,7 @@ export class UtilsManager {
     this.selectedPenal = null;
     this.plannerStore.selectedObject.isSelect = false;
     this.plannerStore.selectedObject.name = "";
-    plannerConfig.selectedEmpty = false;
+ //   plannerConfig.selectedEmpty = false;
     //this.selectedEmpty = intersect
     this.allowedWidths = null;
     this.currentIndex = null;

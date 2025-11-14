@@ -31,7 +31,7 @@ export let glass = new THREE.MeshPhysicalMaterial({
   transparent: true,         // Прозрачный материал
   opacity: 0.3,               // Прозрачность
 
- // envMap: envMap,            // Карта окружения
+  envMap: envMap,            // Карта окружения
   envMapIntensity: 1.5,      // Яркость отражений (увеличь для большего эффекта)
 
   reflectivity: 1.0,         // Сильные отражения (важно для стекла без transmission)
@@ -235,29 +235,42 @@ export const cabinetMaterial = new THREE.MeshStandardMaterial({
   roughness: 0.5,
 });
 
-export const door2 = new THREE.MeshPhysicalMaterial({
-  color: 0xdcdcdc,
 
-  //aoMap: metalAO,
-  // displacementMap: displacementMap,
-  displacementScale: 0.9,
-  metalness: 0.2, // Металл
-  roughness: 0.2, // Гладкая поверхность
-  clearcoat: 1.0, // Покрытие (эффект лака)
-  clearcoatRoughness: 0.9, // Гладкость покрытия
+
+export const shelfMaterial = new THREE.MeshPhysicalMaterial({
+  color: 0xDCDCDC,
+
+});
+
+export const panel = new THREE.MeshPhysicalMaterial({
+  color: 0xC0C0C0,
+});
+
+export const panelDoor = new THREE.MeshPhysicalMaterial({
+  color: 0x808080,
+});
+
+export const wallMaterial2 = new THREE.MeshPhysicalMaterial({
+  color: 0x808080,
 });
 
 
+
 export const glassMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0xffffff,
+  color: 0xADD8E6,
   metalness: 0,
   roughness: 0,
-  transmission: 1, // это ключ к "настоящему" стеклу
+ // transmission: 1, // это ключ к "настоящему" стеклу
   transparent: true,
-  opacity: 1,
-  ior: 1.45, // индекс преломления стекла
-  thickness: 0.2, // толщина, влияет на искажения
-  envMapIntensity: 1,
+  opacity: 0.1,
+   
+  
+      // регулируй прозрачность
+  shininess: 100,      // бликов больше
+  specular: 0xffffff,  // белые блики как у стекла
+//  ior: 1.45, // индекс преломления стекла
+ // thickness: 0.2, // толщина, влияет на искажения
+  //envMapIntensity: 1,
 });
 
 export const lowerCabinetMaterial = new THREE.MeshPhysicalMaterial({

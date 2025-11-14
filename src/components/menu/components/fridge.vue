@@ -257,6 +257,7 @@ function addFridge() {
     const id = THREE.MathUtils.generateUUID()
     fridgeInstance.id = id
     fridgeInstance.raycasterBox.userData.id = id
+    fridgeInstance.frontBox.userData.id = id
     model.userData.id = id
 
 

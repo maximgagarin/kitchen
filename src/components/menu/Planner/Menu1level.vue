@@ -3,8 +3,8 @@
     class="fixed w-[350px] h-[350px] bg-gray-100 pointer-events-none rounded-md shadow-lg overflow-hidden transition-all duration-300"
     
       :style="{
-      top: (plannerStore.emptyPosition.y  - 360) + 'px',
-      left: (plannerStore.emptyPosition.x +10  ) + 'px',
+      top: (plannerStore.addModule.position.y -350 ) + 'px',
+      left: (plannerStore.addModule.position.x +100  ) + 'px',
             opacity: hoveredItem ? 1 : 0,
       transform: hoveredItem ? 'scale(1)' : 'scale(0.95)',
     }"
@@ -25,8 +25,8 @@
     v-if="plannerStore.objectMenu"
     class="fixed   p-3 bg-white rounded-lg shadow-lg border border-gray-300 z-50 pointer-events-auto text-[13px]"
         :style="{
-      top: plannerStore.emptyPosition.y + 'px',
-      left: plannerStore.emptyPosition.x + 'px',
+      top: plannerStore.addModule.position.y + 'px',
+      left: (plannerStore.addModule.position.x + 100 )+ 'px',
     }"
   >
     <!-- Заголовок -->
@@ -181,14 +181,14 @@ const typeOptions =  [
 
 function changeModule() {
   if (selectedType.value == "penal") {
-    plannerManager.value.addModule(
+    plannerManager.value.addModule( "level1",
       selectedPenal.value.name,
       selectedSize.value,
       "penal"
     );
   } else {
     console.log("elsr");
-    plannerManager.value.addModule(selectedType.value, selectedWidth.value);
+    plannerManager.value.addModule("level1",selectedType.value, selectedWidth.value);
   }
 
   plannerStore.objectMenu = false;

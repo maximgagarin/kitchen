@@ -17,6 +17,10 @@ export class MouseMove {
     this.emptyBox = null
        this.emptyBox2L = null;
     this.emptyBoxInSector = null
+    this.selected = null
+
+
+    this.emptyBoxIn = null
   }
 
 
@@ -66,25 +70,30 @@ export class MouseMove {
       // ====== Обработка SECTOR ======
       if (module.name === "sector") {
 
+        console.log('sector')
+
         // this.boxesInSectorOver2(module)
 
-        module.modules.forEach(item=>{
-          item.centerControl.visible = true
-        })
+        module.modules.forEach(item=>{  item.centerControl.visible = true })
 
-        const intersectsSubModules = this.raycaster.intersectObjects(
-          module.modules.map((m) => m.raycasterBox),
-          false
-        );
+        const intersectsSubModules = this.raycaster.intersectObjects(module.modules.map((m) => m.raycasterBox),  false   );
+
+        // пустые боксы
+        const intersectEmptiesInSector =  this.raycaster.intersectObjects(module.empties , false);
+
+        // if(intersectEmptiesInSector.length>0){
+        //   this.emptyBoxIn = intersectEmptiesInSector[0].object
+        //   console.log('obj' ,  this.emptyBoxIn)
+        //    this.emptyBoxIn.material.opacity = 0.2;
+
+        // }
 
         if (intersectsSubModules.length > 0) {
+
           const hoveredSubId = intersectsSubModules[0].object.userData.id;
           const model = module.modules.find((m) => m.id == hoveredSubId);
 
-         //  model.centerControl.visible = true
-
-      //    console.log('model', model)
-
+     
 
           // пересечение с кнопкой centerControl
           const intersectControls = this.raycaster.intersectObject(model.centerControl,   false  );
@@ -188,6 +197,9 @@ export class MouseMove {
         this.plannerStore.hoveredModuleID = null;
         this.plannerStore.controls.show = false;
       }
+      // if(this.emptyBoxIn){
+      //    this.emptyBoxIn.material.opacity = 0
+      // }
     }
   }
 
@@ -246,6 +258,12 @@ export class MouseMove {
 
   epmtyBoxesOver() {
     if (this.sceneSetup.cameraMoving) return
+    if(this.plannerStore.objectMenu) return
+    if(this.plannerStore.objectMenuL2) return
+    if(this.plannerStore.changeMenu) return
+    if(this.plannerStore.sectorMenu) return 
+
+
     
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(plannerConfig.empties1level, false);
@@ -258,11 +276,6 @@ export class MouseMove {
       if (this.emptyBox && this.emptyBox !== obj) {
         this.emptyBox.material.opacity = 0;
           this.plannerStore.addModule.show = false;
-
-      
-          plannerConfig.selectedEmpty = null;
-
-
       }
 
       this.emptyBox = obj;
@@ -294,7 +307,7 @@ export class MouseMove {
       // если ушли со всех боксов — вернуть норму
       this.emptyBox.material.opacity = 0;
       this.plannerStore.addModule.show = false;
-      plannerConfig.selectedEmpty = null
+   //   plannerConfig.selectedEmpty = null
 
 
 
@@ -304,7 +317,12 @@ export class MouseMove {
 
 
   epmtyBoxesOver2() {
+    if(this.plannerStore.objectMenu) return
+    if(this.plannerStore.objectMenuL2) return
+    if(this.plannerStore.sectorMenu) return
     if (this.sceneSetup.cameraMoving) return
+    if(this.plannerStore.changeMenu) return
+
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(plannerConfig.empties2level, false);
@@ -356,6 +374,8 @@ export class MouseMove {
   }
 
   boxesInSectorOver() {
+    if(this.plannerStore.objectMenu) return
+    if(this.plannerStore.objectMenuL2) return
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(plannerConfig.selectedObject.empties, false);

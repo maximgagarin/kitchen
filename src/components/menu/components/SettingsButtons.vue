@@ -64,7 +64,8 @@ function moveCamera() {
   //  this.controls.target.copy(targetPosition);
 
   cabinetBuilder.value.sceneSetup.moveCameraTo(
-    new Vector3(7, 4, 7),
+    // new Vector3(-0.5, 3, 4),
+     new Vector3(1, 3, 3),
     new Vector3(1.5, 1, 0),
     1.5,
     () => {}
@@ -82,8 +83,11 @@ function toggleShadows() {
   console.log(isShadowOn);
 
   if (isShadowOn) {
+
     models.forEach((model) => {
-      model.root.traverse((child) => {
+      const scene = model.root.getObjectByName('Scene')
+      console.log('scene', scene)
+      scene.traverse((child) => {
         if (child.isMesh) {
           if (child.name.toLowerCase().includes("glass")) return;
         

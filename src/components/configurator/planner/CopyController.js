@@ -43,8 +43,8 @@ export class CopyController {
 
         deleteArray: "namesToDeleteLeft",
         rotation: Math.PI / 2,
-        collisArray: (level) => level === 2 ? [...plannerConfig.modelsDirect,...plannerConfig.modelsLeft] :
-          [...plannerConfig.modelsDirect2L,...plannerConfig.modelsLeft2L,] ,
+        collisArray: (level) => level === 2 ? [...plannerConfig.modelsDirect2L,...plannerConfig.modelsLeft2L] :
+          [...plannerConfig.modelsDirect,...plannerConfig.modelsLeft,] ,
       },
       right: {
         axis: "z",
@@ -229,10 +229,10 @@ export class CopyController {
 
     plannerConfig.models.push(instance);
 
-    // this.model.remove(this.copyHelper);
-    // this.copyHelper.geometry.dispose();
-    // this.copyHelper.material.dispose();
-    // this.copyHelper = null;
+    this.model.remove(this.copyHelper);
+    this.copyHelper.geometry.dispose();
+    this.copyHelper.material.dispose();
+    this.copyHelper = null;
 
     this.setToRow = true;
     this.moving = false;
@@ -240,6 +240,11 @@ export class CopyController {
 
   setSector() {
     console.log('setSector')
+
+    this.model.remove(this.copyHelper);
+    this.copyHelper.geometry.dispose();
+    this.copyHelper.material.dispose();
+    this.copyHelper = null;
 
   
 
@@ -396,14 +401,14 @@ export class CopyController {
 
     console.log('this model', this.model)
 
-    // const color = 0x00ffff;
+    const color = 0x00ffff;
 
 
-    // const box = new THREE.Box3().setFromObject(this.model);
-    // this.copyHelper = new THREE.Box3Helper(box, color);
-    // this.copyHelper.name = 'copyHelper'
+    const box = new THREE.Box3().setFromObject(this.model);
+    this.copyHelper = new THREE.Box3Helper(box, color);
+    this.copyHelper.name = 'copyHelper'
 
-    // this.model.add(this.copyHelper);
+    this.model.add(this.copyHelper);
   
   }
 

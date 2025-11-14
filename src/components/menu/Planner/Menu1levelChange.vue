@@ -162,6 +162,7 @@ const typeOptions = computed(() => [
 function changeModule() {
   if (plannerStore.selectedType.value == "penal") {
     plannerManager.value.addModule(
+       "changeL1",
       selectedPenal.value.name,
       selectedSize.value,
       "penal"
@@ -171,7 +172,7 @@ function changeModule() {
     console.log('type' , plannerStore.selectedType)
     console.log('selectedWidth' , plannerStore.selectedWidth)
     
-    plannerManager.value.addModule(plannerStore.selectedType, plannerStore.selectedWidth);
+    plannerManager.value.addModule("changeL1", plannerStore.selectedType, plannerStore.selectedWidth);
   }
 
  // plannerStore.objectMenu = false;

@@ -252,7 +252,10 @@ export class EmptyManager {
 
     let isLeft, oldInstance, oldindex, oldside;
 
+    console.log('plannerConfig.selectedEmpty', plannerConfig.selectedEmpty)
+
     let position = plannerConfig.selectedEmpty.position.clone();
+    if(!position) return
     position.y = 0;
     console.log(position);
 
@@ -370,7 +373,7 @@ export class EmptyManager {
     this.plannerStore.selectedObject.name = false;
     this.plannerStore.objectMenu = false;
     plannerConfig.selectedObject = false;
-    plannerConfig.selectedEmpty = false;
+  //  plannerConfig.selectedEmpty = false;
 
     // this.calculateSlotPositions();
     this.sceneSetup.requestRender();

@@ -113,15 +113,15 @@ export class PlannerManager {
   }
 
   // если выбран модуль  меняем размер или пустой бокс добавляем модуль
-  addModule(type, width, penal) {
-    if (plannerConfig.selectedObject.level == 1) {
+  addModule(variant , type, width, penal) {
+    if (variant === 'changeL1') {
       console.log("changeSelected");
       this.changeController.changeSelected(type, width);
       this.emptyManager.calculateEmpties();
       this.createTableTop()
       this.sceneSetup.requestRender();
       
-    } else if (plannerConfig.selectedEmpty) {
+    } else if (variant === 'level1') {
       console.log("addToEmpty");
 
       this.emptyManager.addToEmpty(type, width, penal);
@@ -131,15 +131,18 @@ export class PlannerManager {
    
     
       this.sceneSetup.requestRender();
-    } else if (plannerConfig.selectedEmpty2L.name) {
+    } else if (variant === 'level2') {
       console.log("addToEmpty2");
 
       this.emptyManager2L.addToEmpty(type, width);
-    } else if (plannerConfig.selectedEmptyInSector) {
+    } else if (variant === 'sector') {
       console.log("addToEmptySector");
 
       this.emptyManager2L.addToGroup(type, width);
     }
+
+      this.sceneSetup.requestRender();
+
   }
 
 
@@ -454,9 +457,9 @@ export class PlannerManager {
 
 
   setMouse(event){
-        this.mouse.set( (event.clientX / window.innerWidth) * 2 - 1,  -(event.clientY / window.innerHeight) * 2 + 1 );
-    this.plannerStore.emptyPosition.x = event.clientX + 50;
-    this.plannerStore.emptyPosition.y = event.clientY - 100;
+    this.mouse.set( (event.clientX / window.innerWidth) * 2 - 1,  -(event.clientY / window.innerHeight) * 2 + 1 );
+    this.plannerStore.emptyPosition.x = event.clientX 
+    this.plannerStore.emptyPosition.y = event.clientY 
 
   }
 
@@ -758,7 +761,7 @@ export class PlannerManager {
       this.plannerStore.changeMenu = false;
       this.plannerStore.sectorMenu = false
 
-      plannerConfig.selectedEmpty2L = false;
+   //   plannerConfig.selectedEmpty2L = false;
       this.plannerStore.selectedType = null
       this.plannerStore.selectedWidth =null
 

@@ -55,7 +55,7 @@ export const usePlannerStore = defineStore("plannerStore", () => {
 
   const modelsListL2 = ref({
     ПС: [0.3, 0.4, , 0.6, 0.8],
-    ПГС: [0.8],
+    ПГС: [0.5, 0.6 , 0.8],
     ПГ: [0.35, 0.5, 0.6, 0.8],
     П: [0.15, 0.2, 0.3, 0.35, 0.4, 0.45 , 0.5, 0.6, 0.7, 0.8],
     ПК: [0.4],
@@ -74,6 +74,10 @@ export const usePlannerStore = defineStore("plannerStore", () => {
 
     ОПМ: [0.4, 0.6],
     ОПМГ: [0.6],
+
+    ОПМВ: [0.4, 0.6],
+    ОПМВГ: [0.5, 0.6, 0.8],
+
   });
 
   const sectorWidth = ref(0.4);

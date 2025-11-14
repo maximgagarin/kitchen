@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { addOutline } from "./addOutline";
-import { glass , whiteMaterial , blackMaterial} from "./materials";
+import { glassMaterial , whiteMaterial , blackMaterial, shelfMaterial, panel , panelDoor} from "./materials";
 
 export class LoaderModels {
   constructor(scene) {
@@ -328,9 +328,34 @@ export class LoaderModels {
 
 
         //материал дял корпуса
-         object.traverse((child) => {
+        object.traverse((child) => {
           if (child.isMesh && child.name.toLowerCase().includes('panel')) {
             child.material = whiteMaterial;
+          }
+        });
+
+        object.traverse((child) => {
+          if (child.isMesh && child.name.toLowerCase().includes('glass')) {
+            child.material = glassMaterial;
+          }
+        });
+
+        object.traverse((child) => {
+          if (child.isMesh && child.name.toLowerCase().includes('shelf')) {
+            child.material = panelDoor
+          }
+        });
+
+        
+        object.traverse((child) => {
+          if (child.isMesh && child.name.toLowerCase().includes('panel')) {
+            child.material = panel
+          }
+        });
+        
+        object.traverse((child) => {
+          if (child.isMesh && child.name.toLowerCase().includes('panel_door')) {
+            child.material = panelDoor
           }
         });
 

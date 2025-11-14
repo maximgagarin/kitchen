@@ -121,9 +121,9 @@ export class AlgorithmManager2level {
     algorithmConfig.level2.resultLeft.length = 0
     algorithmConfig.level2.resultRight.length = 0
 
-     const puModule =    this.kitchenSizesStore.modules_height.height2level === 0.7  ? { key: 'ПУ', value: 'ПУ-0.65' }  :
+     const puModule =    this.kitchenSizesStore.modules_height.height2level === 0.7  ? { key: 'ПУ', value: 'ПУЛ-0.65' }  :
       this.kitchenSizesStore.modules_height.height2level === 0.9
-      ? { key: 'ПУ', value: 'ПУ900-0.65' }
+      ? { key: 'ПУ', value: 'ПУЛ900-0.65' }
       : null
 
 
@@ -671,7 +671,10 @@ export class AlgorithmManager2level {
 
 
     castShadow(cabinet){
-    cabinet.traverse((child) => {
+
+    const scene = cabinet.getObjectByName('Scene')
+
+    scene.traverse((child) => {
       if (child.isMesh) {
          if (child.name.toLowerCase().includes("glass")) return;
        child.castShadow = true;

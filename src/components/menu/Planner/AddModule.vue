@@ -20,10 +20,21 @@ import { plannerConfig } from '../../configurator/planner/planerConfig';
 const plannerStore = usePlannerStore()
 
 function handle(){
-    if(plannerStore.addModule.level === 1 ) plannerStore.objectMenu = true;
-    if(plannerStore.addModule.level ===2 ) plannerStore.objectMenuL2 = true; // включаем меню
+    if(plannerStore.addModule.level === 1 ){
+      console.log('addTo l1')
+      plannerStore.objectMenu = true;
+      plannerStore.objectMenuL2 = false;
+    } 
+    if(plannerStore.addModule.level ===2 ) {
+      console.log('add to l2')
+      plannerStore.objectMenuL2 = true; // включаем меню
+      plannerStore.objectMenu = false;
+
+    }
 
     if(plannerStore.addModule.level === 'sector'){
+
+      console.log('add to sector')
 
       let empty = plannerConfig.selectedEmptyInSector
     

@@ -29,7 +29,7 @@
       left: (plannerStore.emptyPosition.x + 30) + 'px',
     }"
   >
-    <p class="mb-2 text-gray-600">Добавить</p>
+    <p class="mb-2 text-gray-600">вставить в сектор</p>
 
     <!-- Выбор типа -->
     <div class="flex flex-wrap gap-2 mb-3">
@@ -118,7 +118,7 @@ const filteredWidths = computed(() => {
 
 function changeModule() {
   console.log("elsr");
-  plannerManager.value.addModule(selectedType.value, selectedWidth.value);
+  plannerManager.value.addModule("sector", selectedType.value, selectedWidth.value);
 
   plannerStore.objectMenu = false;
   selectedType.value = "";
